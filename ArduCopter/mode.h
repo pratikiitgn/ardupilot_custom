@@ -312,6 +312,7 @@ public:
     float sat_I_gain_ph_th(float sum);
     float sat_I_gain_psi(float sum);
     void thrust_measurement_code();
+<<<<<<< HEAD
     float Traj_plan_roll(float error);
     void Nodemcu_data();
     void quad_states();
@@ -319,7 +320,10 @@ public:
     void system_identification_x_axis();
     void system_identification_y_axis();
     void system_identification_z_axis();
-    // void Log_Write_position();
+    void custom_PID_position_controller();
+
+=======
+>>>>>>> c1ce09e202c7119b9ec0a2fa55e61ca76b9e5ac9
 
 protected:
 
@@ -1443,7 +1447,9 @@ public:
     int Inverse_thrust_function(float Force);
     float saturation_for_yaw_angle_error(float error);
     void attitude_altitude_controller();
-
+    void battery_check();
+    void custom_PID_position_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    
 protected:
 
     const char *name() const override { return "STABILIZE"; }
