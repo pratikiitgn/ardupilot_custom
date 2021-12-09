@@ -312,7 +312,6 @@ public:
     float sat_I_gain_ph_th(float sum);
     float sat_I_gain_psi(float sum);
     void thrust_measurement_code();
-<<<<<<< HEAD
     float Traj_plan_roll(float error);
     void Nodemcu_data();
     void quad_states();
@@ -321,9 +320,6 @@ public:
     void system_identification_y_axis();
     void system_identification_z_axis();
     void custom_PID_position_controller();
-
-=======
->>>>>>> c1ce09e202c7119b9ec0a2fa55e61ca76b9e5ac9
 
 protected:
 
