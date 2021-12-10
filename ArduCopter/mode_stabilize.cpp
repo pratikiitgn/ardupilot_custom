@@ -12,6 +12,7 @@
 
 
 #define ESC_HZ 490
+#define PI 3.14
 // Hello 
 
 int code_starting_flag = 0;
@@ -156,6 +157,11 @@ float timer_x_des       = 0.0;
 int timer_x_des_flag    = 0;
 float timer_x_des_start = 0.0;
 
+// Variables for geometric controller
+Matrix3f R_log;
+Vector3f e_R_log;
+Vector3f e_Omega_log;
+
 void ModeStabilize::run()
 {
         // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
@@ -193,14 +199,15 @@ void ModeStabilize::run()
     ///////////// For system iedntification  /////////////
         // system_identification_main();
 
-    ///////////// For attitude controller controller  /////////////
+    ///////////// For attitude and altitude controller /////////////
         attitude_altitude_controller();
 
     }
 
         // hal.console->printf("Hello captain from general");
     // hal.console->printf("landing_timer -> %f \n",landing_timer);
-    hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
+
+    // hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
 
 
 ///////////// OLD CODE  /////////////
@@ -279,10 +286,12 @@ void ModeStabilize::attitude_altitude_controller(){
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
-                custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
+                // custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
+                custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 custom_pwm_code();
+                hal.console->printf("M1->%f,M2->%f,M3->%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
             }
-        }else if (RC_Channels::get_radio_in(CH_6) > 1600){
+        }else if (RC_Channels::get_radio_in(CH_6) > 1600){                                                                              
             if(copter.motors->armed()){
                 // custom_PID_position_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 // custom_pwm_code();
@@ -290,6 +299,167 @@ void ModeStabilize::attitude_altitude_controller(){
         }
 }
 
+void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
+
+    // float mass = 1.236;
+    float arm_length = 0.161;
+    float FM_devided_FF ;
+    if (battvolt >= 11.5 ){
+         FM_devided_FF = 0.24;
+    }else{
+         FM_devided_FF = 0.31;
+    }
+
+///////////////////// Altitude controller /////////////////////
+
+    float e_z   = z_des - quad_z;
+
+    float Kp_z        = 2.0;    // 2.0 (best)
+    float Kd_z        = 1.0;    // 1.0 (best)
+    // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+    // F     =  10.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+    F     =  10.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+    // F = 5.0;
+    if (landing_timer > 2.0){
+        F = 5.0;
+    }
+
+    // F = 10.0;
+    if (F > 20.0){
+        F = 20.0;
+    }
+
+    if (F < 0.0){
+        F =  0.0;
+    }
+
+///////////////////// geometric attitude controller /////////////////////
+
+    Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
+    Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
+
+    Vector3f rpy_d(des_phi*PI/180.0,des_theta*PI/180.0,des_psi*PI/180.0);
+    Vector3f Omegad(des_phi_dot*PI/180.0,des_theta_dot*PI/180.0,des_psi_dot*PI/180.0);
+
+    Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+    Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
+
+    R_log = Rd;
+
+    // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R[0][0],R[0][1],R[0][2],R[1][0],R[1][1],R[1][2],R[2][0],R[2][1],R[2][2]);
+    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+
+    // Gains 
+    Matrix3f KR(
+                0.5,0.0,0.0,
+                0.0,0.0,0.0,
+                0.0,0.0,0.0
+                );
+    Matrix3f KOmega(
+                0.0,0.0,0.0,
+                0.0,0.0,0.0,
+                0.0,0.0,0.0
+                );
+
+    Vector3f M( Matrix_vector_mul(KR,e_R(R,Rd) + Matrix_vector_mul(KOmega,e_Omega(R,Rd,Omega,Omegad))));
+    // Vector3f M(e_R(R,Rd));
+    // Vector3f M( Matrix_vector_mul(KR,e_R(R,Rd)));
+    // Vector3f M(Matrix_vector_mul(KOmega,e_Omega(R,Rd,Omega,Omegad)));
+
+    Mb1 = -M[0];
+    Mb2 = M[1];
+    Mb3 = M[2];
+
+    // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
+
+    // Mb2 = 0.0;
+    // Mb3 = 0.0;
+
+    e_R_log     = M;
+    e_Omega_log = e_Omega(R,Rd,Omega,Omegad);
+
+    F = 5.0;
+    float function_F1 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+    float function_F2 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+
+    PWM1 = Inverse_thrust_function(function_F1);
+    PWM2 = Inverse_thrust_function(function_F2);
+    PWM3 = Inverse_thrust_function(function_F3);
+    PWM4 = Inverse_thrust_function(function_F4);
+
+}
+
+Vector3f ModeStabilize::e_R(Matrix3f R, Matrix3f Rd){
+    // Rd.transpose()*R;
+    // Vector3f error_vec(vee_map(Rd.transpose()*R - R.transpose()*Rd));
+    Vector3f error_vec(vee_map(matrix_transpose(Rd)*R - matrix_transpose(R)*Rd));
+    // matrix_transpose()
+
+    return error_vec;
+
+}
+
+Vector3f ModeStabilize::Matrix_vector_mul(Matrix3f R, Vector3f v){
+    Vector3f mul_vector(
+                        R[0][0]*v[0] + R[0][1]*v[1] + R[0][2]*v[2] ,
+                        R[1][0]*v[0] + R[1][1]*v[1] + R[1][2]*v[2] ,
+                        R[2][0]*v[0] + R[2][1]*v[1] + R[2][2]*v[2]
+                        );
+    return mul_vector;
+}
+
+Matrix3f ModeStabilize::matrix_transpose(Matrix3f R){
+    
+    Matrix3f R_T(
+            R[0][0],R[1][0],R[2][0],
+            R[0][1],R[1][1],R[2][1],
+            R[0][2],R[1][2],R[2][2]
+            );
+    return R_T;
+}
+
+Vector3f ModeStabilize::e_Omega(Matrix3f R, Matrix3f Rd, Vector3f Omega, Vector3f Omegad){
+
+    Vector3f error_vec(Omega - (matrix_transpose(R)*Rd)*Omegad);
+    return error_vec;
+
+}
+
+Vector3f ModeStabilize::vee_map(Matrix3f R){
+
+    Vector3f vector(R[2][1],R[0][2],R[1][0]);
+    return vector;
+}
+
+Matrix3f ModeStabilize::eulerAnglesToRotationMatrix(Vector3f rpy){
+     // Calculate rotation about x axis
+    Matrix3f R_x (
+               1,       0,              0,
+               0,       cosf(rpy[0]),   -sinf(rpy[0]),
+               0,       sinf(rpy[0]),   cosf(rpy[0])
+               );
+
+    // Calculate rotation about y axis
+    Matrix3f R_y (
+               cosf(rpy[1]),    0,      sinf(rpy[1]),
+               0,               1,      0,
+               -sinf(rpy[1]),   0,      cosf(rpy[1])
+               );
+
+    // Calculate rotation about z axis
+    Matrix3f R_z (
+               cosf(rpy[2]),    -sinf(rpy[2]),      0,
+               sinf(rpy[2]),    cosf(rpy[2]),       0,
+               0,               0,                  1);
+
+    // Combined rotation matrix
+    Matrix3f R = R_z * R_y * R_x;
+
+    return R;
+}
 
 void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
 
@@ -624,6 +794,8 @@ void ModeStabilize::quad_states(){
     imu_roll_dot    =  (ahrs.get_gyro().x);             // degrees/second
     imu_pitch_dot   =  -(ahrs.get_gyro().y);             // degrees/second    
     imu_yaw_dot     = -(ahrs.get_gyro().z);             // degrees/second
+
+
 
 }
 

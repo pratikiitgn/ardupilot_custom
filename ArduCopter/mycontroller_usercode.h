@@ -45,3 +45,8 @@ extern float Mb3;
 extern float x_des;
 extern float y_des;
 extern float z_des;
+
+// Variable for geometric controller
+extern Matrix3f R_log;
+extern Vector3f e_R_log;
+extern Vector3f e_Omega_log;
