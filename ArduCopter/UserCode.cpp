@@ -53,18 +53,26 @@ void Copter::userhook_init()
 #ifdef USERHOOK_FASTLOOP
 void Copter::userhook_FastLoop()
 {
+
+
+    // char temp = hal.serial(2)->read();
+    // hal.console->printf("%s\n",temp);
+
+
+    // gains_data_from_Rpi();
+
     // put your 100Hz code here
-    Log_Write_position();
-    Log_Write_velocity();
-    log_attitude_tracking();
-    log_sys_ID_ph_func();
+    // Log_Write_position();
+    // Log_Write_velocity();
+    // log_attitude_tracking();
+    // log_sys_ID_ph_func();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     
     
-    imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
-    imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
-    imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
+    // imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
+    // imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
+    // imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
  
 
     // hal.console->printf("From usercode \n");
@@ -164,6 +172,8 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
+        getEncoderData();
+
 }
 #endif
 
@@ -183,6 +193,10 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
     // put your aux switch #3 handler here (CHx_OPT = 49)
 }
 #endif
+
+void Copter::gains_data_from_Rpi(){
+
+}
 
 void Copter::Log_Write_position()
 {
@@ -262,10 +276,11 @@ void Copter::getEncoderData()
     char endChar = '/';
     bool new_data = false;
 
-    char attitude[] = "50000_50000";
+    char attitude[] = "50001_50000";
     while (hal.serial(2)->available()>0 && new_data == false)
         {
             char temp = hal.serial(2)->read();
+            // hal.console->printf("%c\n",temp);
             if (receiving_data == true)
             {
                 if (temp != endChar)
@@ -286,8 +301,10 @@ void Copter::getEncoderData()
                 receiving_data = true;
                 index = 0; 
             }
+
         }
-        // hal.uartE->printf("%s\n",attitude);
+
+        hal.console->printf("%s\n",attitude);
 
         char roll_char[]        = "11111";
         char pitch_char[]       = "11111";

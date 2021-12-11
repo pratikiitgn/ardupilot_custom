@@ -204,7 +204,6 @@ void ModeStabilize::run()
 
     }
 
-        // hal.console->printf("Hello captain from general");
     // hal.console->printf("landing_timer -> %f \n",landing_timer);
 
     // hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
