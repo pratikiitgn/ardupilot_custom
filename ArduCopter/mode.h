@@ -1459,7 +1459,7 @@ public:
     Vector3f vee_map(Matrix3f R);
     Matrix3f matrix_transpose(Matrix3f R);
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
-
+    Vector3f sat_e_I(Vector3f vec);
 protected:
 
     const char *name() const override { return "STABILIZE"; }

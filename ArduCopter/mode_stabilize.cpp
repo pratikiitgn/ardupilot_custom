@@ -162,6 +162,25 @@ Matrix3f R_log;
 Vector3f e_R_log;
 Vector3f e_Omega_log;
 
+
+float KR1           = 0.0;
+float KOmega1       = 0.0;
+float KI1           = 0.0;
+
+float KR2           = 0.0;
+float KOmega2       = 0.0;
+float KI2           = 0.0;
+
+float KR3           = 0.0;
+float KOmega3       = 0.0;
+float KI3           = 0.0;
+
+float KR1_old       = 0.0;
+float KOmega1_old   = 0.0;
+float KI1_old       = 0.0;
+
+Vector3f e_I_val_old (0.0,0.0,0.0);
+
 void ModeStabilize::run()
 {
         // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
@@ -282,6 +301,8 @@ void ModeStabilize::attitude_altitude_controller(){
         quad_x_ini =  cosf(yaw_initially)*quad_x_ini_inertial + sinf(yaw_initially)*quad_y_ini_inertial;
         quad_y_ini = -sinf(yaw_initially)*quad_x_ini_inertial + cosf(yaw_initially)*quad_y_ini_inertial;
 
+        //// Initial the gains
+
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
@@ -337,48 +358,112 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
     Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
     Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
 
+    float des_phi_offset    = 8.0;
+    float des_theta_offset  = 0.0;
+
+    des_phi     = des_phi + des_phi_offset;
+    des_theta   = des_theta + des_theta_offset;
+
     Vector3f rpy_d(des_phi*PI/180.0,des_theta*PI/180.0,des_psi*PI/180.0);
     Vector3f Omegad(des_phi_dot*PI/180.0,des_theta_dot*PI/180.0,des_psi_dot*PI/180.0);
 
     Matrix3f R(eulerAnglesToRotationMatrix(rpy));
     Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
 
+    float c2 = 2.0;
+    float c1 = 1.0;
+
+    Vector3f e_R_val        = e_R(R,Rd);
+    Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
+    Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
+    Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
+    e_I_val_old    = e_I_val;
+
     R_log = Rd;
+
+    e_R_log = e_R_val;
 
     // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R[0][0],R[0][1],R[0][2],R[1][0],R[1][1],R[1][2],R[2][0],R[2][1],R[2][2]);
     // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
     // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
 
-    // Gains 
+    // Auto tuning Gains 
+
+    // KR1         = KR1_old     + c1*e_R_val[0]*e_Omega_val[0];
+    // KR1_old     = KR1;
+
+    // KOmega1     = KOmega1_old + c2*e_R_val[0]*e_Omega_val[0];
+    // KOmega1_old = KOmega1;
+
+    // KI1         = KI1_old     + e_I_val * (Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2) + e_Omega_val);
+    // KI1_old     = KI1;
+
+    // float KI1_lim = 5;
+
+    // if (KI1 > KI1_lim){
+    //     KI1 = KI1_lim;
+    // }
+    // if (KI1 < KI1_lim){
+    //     KI1 = KI1_lim;
+    // }
+
+/////////////////////// Manual gain tuning  ///////////////////////
+
+    KR1         = 0.6;  // 0.6 (TB best)  //0.4
+    KOmega1     = 10.5; // 10.5(TB best)  //0.5
+    KI1         = 0.1;  // 0.1 (TB best)  //0.1
+
+    KR2         = 1.0;  // 1.0 (TB good)
+    KOmega2     = 13.5; // 13.5(TB good)
+    KI2         = 0.1;  // 0.1 (TB good)
+
+    KR3         = 4.0;  // 1.0 (TB good)
+    KOmega3     = 5.0; // 13.5(TB good)
+    KI3         = 0.1;  // 0.1 (TB good)
+
+    // hal.console->printf("%f,%f,%f\n",KR1,KOmega1,KI1);
+    // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
+
     Matrix3f KR(
-                0.5,0.0,0.0,
-                0.0,0.0,0.0,
-                0.0,0.0,0.0
+                KR1,0.0,0.0,
+                0.0,KR2,0.0,
+                0.0,0.0,KR3
                 );
     Matrix3f KOmega(
-                0.0,0.0,0.0,
-                0.0,0.0,0.0,
-                0.0,0.0,0.0
+                KOmega1,0.0,0.0,
+                0.0,KOmega2,0.0,
+                0.0,0.0,KOmega3
                 );
+    Matrix3f KI(
+                KI1,0.0,0.0,
+                0.0,KI2,0.0,
+                0.0,0.0,KI3
+                );
+    // Intertia matrix
+    Matrix3f JJ(
+            0.0113, 0.0 , 0.0,
+            0.0, 0.0133,0.0,
+            0.0,0.0,0.0187
+    );
 
-    Vector3f M( Matrix_vector_mul(KR,e_R(R,Rd) + Matrix_vector_mul(KOmega,e_Omega(R,Rd,Omega,Omegad))));
+    Vector3f M( Matrix_vector_mul(KR,e_R_val) + Matrix_vector_mul(KOmega,e_Omega_val) + Matrix_vector_mul(KI,e_I_val_sum) + Omega % Matrix_vector_mul(JJ,Omega));
     // Vector3f M(e_R(R,Rd));
     // Vector3f M( Matrix_vector_mul(KR,e_R(R,Rd)));
     // Vector3f M(Matrix_vector_mul(KOmega,e_Omega(R,Rd,Omega,Omegad)));
 
     Mb1 = -M[0];
-    Mb2 = M[1];
-    Mb3 = M[2];
+    Mb2 = -M[1];
+    Mb3 =  M[2];
 
     // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
 
     // Mb2 = 0.0;
     // Mb3 = 0.0;
 
-    e_R_log     = M;
-    e_Omega_log = e_Omega(R,Rd,Omega,Omegad);
+    // e_R_log     = M;
+    // e_Omega_log = e_Omega(R,Rd,Omega,Omegad);
 
-    F = 5.0;
+    F = 10.0;
     float function_F1 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
     float function_F2 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
     float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
@@ -425,6 +510,19 @@ Vector3f ModeStabilize::e_Omega(Matrix3f R, Matrix3f Rd, Vector3f Omega, Vector3
     Vector3f error_vec(Omega - (matrix_transpose(R)*Rd)*Omegad);
     return error_vec;
 
+}
+
+Vector3f ModeStabilize::sat_e_I(Vector3f vec){
+    float sat_lim = 0.5;
+    for (int ii=0; ii<3; ii++){
+        if (vec[ii] > sat_lim){
+            vec[ii] = sat_lim;
+        }
+        if (vec[ii] < -sat_lim){
+            vec[ii] = -sat_lim;
+        }
+    }
+    return vec;
 }
 
 Vector3f ModeStabilize::vee_map(Matrix3f R){

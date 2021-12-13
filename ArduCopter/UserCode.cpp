@@ -134,7 +134,7 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
     
     // For e_R_log and e_Omega
-    hal.serial(2)->printf("%f,%f,%f,%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2],e_Omega_log[0],e_Omega_log[1],e_Omega_log[2]);
+    hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,e_R_log[0],e_R_log[1],e_R_log[2],e_Omega_log[0],e_Omega_log[1],e_Omega_log[2]);
 
 }
 #endif
@@ -304,7 +304,7 @@ void Copter::getEncoderData()
 
         }
 
-        hal.console->printf("%s\n",attitude);
+        // hal.console->printf("%s\n",attitude);
 
         char roll_char[]        = "11111";
         char pitch_char[]       = "11111";
