@@ -53,18 +53,26 @@ void Copter::userhook_init()
 #ifdef USERHOOK_FASTLOOP
 void Copter::userhook_FastLoop()
 {
+
+
+    // char temp = hal.serial(2)->read();
+    // hal.console->printf("%s\n",temp);
+
+
+    // gains_data_from_Rpi();
+
     // put your 100Hz code here
-    Log_Write_position();
-    Log_Write_velocity();
-    log_attitude_tracking();
-    log_sys_ID_ph_func();
+    // Log_Write_position();
+    // Log_Write_velocity();
+    // log_attitude_tracking();
+    // log_sys_ID_ph_func();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     
     
-    imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
-    imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
-    imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
+    // imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
+    // imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
+    // imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
  
 
     // hal.console->printf("From usercode \n");
@@ -115,14 +123,19 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f\n",arm_disarm_flag,Pf,Pm1,Pm2,Pm3,Pm4,PWM1,PWM2,PWM3,PWM4,imu_roll,imu_pitch,imu_yaw,quad_z);
 
     //// Data logging outdoor////
-    // hal.serial(2)->printf("%d",arm_disarm_flag);
-    // hal.serial(2)->printf("%f,%f,%f,%f,%f,%f",quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw);
-    // hal.serial(2)->printf("%f,%f,%f,%f",H_roll,H_pitch,H_yaw_rate,H_yaw);
-    // hal.serial(2)->printf("%f,%f,%f,%f",F,Mb1,Mb2,Mb3);
-    // hal.serial(2)->printf("\n");
+    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
 
-    hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
-    hal.console->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+    //// Geometric controller ////
+    
+    //// For rotation matrix
+    // hal.serial(2)->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R_log[0][0],R_log[0][1],R_log[0][2],R_log[1][0],R_log[1][1],R_log[1][2],R_log[2][0],R_log[2][1],R_log[2][2]);
+    
+    //// For e_R_log
+    // hal.serial(2)->printf("%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
+    
+    // For e_R_log and e_Omega
+    hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,e_R_log[0],e_R_log[1],e_R_log[2],e_Omega_log[0],e_Omega_log[1],e_Omega_log[2]);
+
 }
 #endif
 
@@ -159,6 +172,8 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
+        getEncoderData();
+
 }
 #endif
 
@@ -178,6 +193,10 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
     // put your aux switch #3 handler here (CHx_OPT = 49)
 }
 #endif
+
+void Copter::gains_data_from_Rpi(){
+
+}
 
 void Copter::Log_Write_position()
 {
@@ -257,10 +276,11 @@ void Copter::getEncoderData()
     char endChar = '/';
     bool new_data = false;
 
-    char attitude[] = "50000_50000";
+    char attitude[] = "50001_50000";
     while (hal.serial(2)->available()>0 && new_data == false)
         {
             char temp = hal.serial(2)->read();
+            // hal.console->printf("%c\n",temp);
             if (receiving_data == true)
             {
                 if (temp != endChar)
@@ -281,8 +301,10 @@ void Copter::getEncoderData()
                 receiving_data = true;
                 index = 0; 
             }
+
         }
-        // hal.uartE->printf("%s\n",attitude);
+
+        // hal.console->printf("%s\n",attitude);
 
         char roll_char[]        = "11111";
         char pitch_char[]       = "11111";

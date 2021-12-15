@@ -1,9 +1,5 @@
 #pragma once
 
-// float x_pos;
-// float y_pos;
-// float z_pos;
-
 extern float H_roll;
 extern float H_pitch;
 
@@ -46,3 +42,11 @@ extern float Mb1;
 extern float Mb2;
 extern float Mb3;
 
+extern float x_des;
+extern float y_des;
+extern float z_des;
+
+// Variable for geometric controller
+extern Matrix3f R_log;
+extern Vector3f e_R_log;
+extern Vector3f e_Omega_log;
