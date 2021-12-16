@@ -1460,6 +1460,8 @@ public:
     Matrix3f matrix_transpose(Matrix3f R);
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
     Vector3f sat_e_I(Vector3f vec);
+    void data_logging_portenta();
+    
 protected:
 
     const char *name() const override { return "STABILIZE"; }

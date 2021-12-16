@@ -158,10 +158,14 @@ int timer_x_des_flag    = 0;
 float timer_x_des_start = 0.0;
 
 // Variables for geometric controller
-Matrix3f R_log;
+Matrix3f R_log(1.0,0.0,0.0,
+               0.0,1.0,0.0,
+               0.0,0.0,1.0);
+Matrix3f Rd_log(1.0,0.0,0.0,
+               0.0,1.0,0.0,
+               0.0,0.0,1.0);
 Vector3f e_R_log;
 Vector3f e_Omega_log;
-
 
 float KR1           = 0.0;
 float KOmega1       = 0.0;
@@ -183,6 +187,8 @@ Vector3f e_I_val_old (0.0,0.0,0.0);
 
 void ModeStabilize::run()
 {
+        // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
+
         // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
 
     if (code_starting_flag == 0){
@@ -208,6 +214,8 @@ void ModeStabilize::run()
             arm_disarm_flag = 0;
         }
     
+    ///////////// Data logging portenta  /////////////
+        data_logging_portenta();
     ///////////// Checking batter voltage  /////////////
         battery_check();
     ///////////// Taking pilot inputs  /////////////
@@ -220,6 +228,11 @@ void ModeStabilize::run()
 
     ///////////// For attitude and altitude controller /////////////
         attitude_altitude_controller();
+
+    ///////////// To Rpi 4 /////////////
+
+    // hal.serial(2)->printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n",arm_disarm_flag,R_log[0][0],R_log[0][1],R_log[0][2],R_log[1][0],R_log[1][1],R_log[1][2],R_log[2][0],R_log[2][1],R_log[2][2],Rd_log[0][0],Rd_log[0][1],Rd_log[0][2],Rd_log[1][0],Rd_log[1][1],Rd_log[1][2],Rd_log[2][0],Rd_log[2][1],Rd_log[2][2]);
+
 
     }
 
@@ -281,6 +294,10 @@ void ModeStabilize::run()
 
 }
 
+void ModeStabilize::data_logging_portenta(){
+    // hal.serial(2)->printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n",arm_disarm_flag,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw);
+}
+
 void ModeStabilize::battery_check(){
     battvolt=copter.battery_volt();
 }
@@ -309,7 +326,7 @@ void ModeStabilize::attitude_altitude_controller(){
                 // custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 custom_pwm_code();
-                hal.console->printf("M1->%f,M2->%f,M3->%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
+                // hal.console->printf("M1->%f,M2->%f,M3->%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){                                                                              
             if(copter.motors->armed()){
@@ -358,7 +375,7 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
     Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
     Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
 
-    float des_phi_offset    = 8.0;
+    float des_phi_offset    = 1.0;
     float des_theta_offset  = 0.0;
 
     des_phi     = des_phi + des_phi_offset;
@@ -371,15 +388,16 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
     Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
 
     float c2 = 2.0;
-    float c1 = 1.0;
+    // float c1 = 1.0;
 
     Vector3f e_R_val        = e_R(R,Rd);
     Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
     Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
     Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
-    e_I_val_old    = e_I_val;
+    e_I_val_old             = e_I_val;
 
-    R_log = Rd;
+    R_log   = R;
+    Rd_log  = Rd;
 
     e_R_log = e_R_val;
 
@@ -409,17 +427,17 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
 
 /////////////////////// Manual gain tuning  ///////////////////////
 
-    KR1         = 0.6;  // 0.6 (TB best)  //0.4
-    KOmega1     = 10.5; // 10.5(TB best)  //0.5
+    KR1         = 0.3;  // 0.6 (TB best)  //0.4
+    KOmega1     = 13.5; // 10.5(TB best)  //0.5
     KI1         = 0.1;  // 0.1 (TB best)  //0.1
 
-    KR2         = 1.0;  // 1.0 (TB good)
-    KOmega2     = 13.5; // 13.5(TB good)
-    KI2         = 0.1;  // 0.1 (TB good)
+    KR2         = 0.4;  // 1.0  (TB good)
+    KOmega2     = 19.0; // 13.5 (TB good)
+    KI2         = 0.1;  // 0.1  (TB good)
 
-    KR3         = 4.0;  // 1.0 (TB good)
-    KOmega3     = 5.0; // 13.5(TB good)
-    KI3         = 0.1;  // 0.1 (TB good)
+    KR3         = 6.0;  // 1.0  (TB good)
+    KOmega3     = 10.0; // 13.5 (TB good)
+    KI3         = 0.1;  // 0.1  (TB good)
 
     // hal.console->printf("%f,%f,%f\n",KR1,KOmega1,KI1);
     // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
@@ -463,7 +481,7 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
     // e_R_log     = M;
     // e_Omega_log = e_Omega(R,Rd,Omega,Omegad);
 
-    F = 10.0;
+    // F = 10.0;
     float function_F1 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
     float function_F2 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
     float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
