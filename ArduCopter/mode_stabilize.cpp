@@ -8,7 +8,7 @@
 #include <AP_Motors/AP_Motors_Class.h>
 #include "mycontroller_usercode.h"
 #include <AP_Logger/LogStructure.h>
-#include <AP_Logger/AP_Logger.h>  
+#include <AP_Logger/AP_Logger.h>
 
 
 #define ESC_HZ 490

@@ -9,6 +9,11 @@
 #include <math.h>
 #include <AP_GPS/AP_GPS.h>
 
+static AP_HAL::OwnPtr<AP_HAL::Device> spi_dev;
+
+#include <utility>
+#include <stdio.h>
+
 #if HAL_OS_POSIX_IO
 #include <stdio.h>
 #endif
@@ -22,6 +27,9 @@ float encoder_pitch_dot_feedback    = 0.0;
 float imu_roll_log      = 0.0;
 float imu_pitch_log     = 0.0;
 float imu_yaw_log       = 0.0;
+
+char sz[20];
+
 
 // const AP_HAL::HAL& hal = AP_HAL::get_HAL();
 
@@ -45,7 +53,7 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    hal.serial(2)->begin(230400);
+    hal.serial(2)->begin(115200);
 
 }
 #endif
@@ -53,6 +61,20 @@ void Copter::userhook_init()
 #ifdef USERHOOK_FASTLOOP
 void Copter::userhook_FastLoop()
 {
+
+    Portenta_data();
+    hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
+
+    // To access the CAM device data
+    getEncoderData();
+
+    hal.console->printf("Roll %f, pith %f", encoder_roll_feedback, encoder_pitch_feedback);
+
+    ////////////////////// For SPI communicatio
+    // spi_dev->read_registers(reg, buf, size);
+
+    // spi_dev->read_registers(MPUREG_WHOAMI, &whoami, 1);
+    // printf("20789 SPI whoami: 0x%02x\n", whoami);
 
 
     // char temp = hal.serial(2)->read();
@@ -144,8 +166,9 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("Pratik\n");
 
     // For portenta 
-    hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
-
+    // hal.spi->get_device
+    // _dev
+    
 
 }
 #endif
@@ -184,7 +207,6 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
-        getEncoderData();
 
 }
 #endif
@@ -206,79 +228,62 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
 }
 #endif
 
-void Copter::gains_data_from_Rpi(){
+
+void Copter::Portenta_data(){
+    bool receiving_data = false;
+    int index = 0;
+    char startChar = ',';
+    char endChar = '/';
+    // bool new_data = false;
+
+    char rev_data[] = "50001_50000";
+    while (hal.serial(2)->available()>0){
+        char temp = hal.serial(2)->read();
+        if (receiving_data == true)
+            {
+                if (temp != endChar)
+                {   
+                    rev_data[index] = temp;
+                    index++;
+                }
+                else
+                {
+                    rev_data[index] = '\0';
+                    receiving_data = false;
+                    // new_data = false;
+                    index = 0;
+                }
+            }
+            else if (temp == startChar)
+            {
+                receiving_data = true;
+                index = 0; 
+            }
+    }
+
+    char data_1[]        = "11111";
+    char data_2[]       = "11111";
+
+        for (int i = 0; i < 11; i++)
+        {
+            if (i < 5)  
+            {
+                data_1[i]                = rev_data[i];
+            } else if (i >= 6 && i < 11 )
+            {
+                data_2[i - 6]            = rev_data[i];
+            }
+        }
+
+        int data_1_int      = atoi(data_1);
+        int data_2_int      = atoi(data_2);
+
+        float data_1_final  = (float)((data_1_int  - 50000.0) / 100.0);
+        float data_2_final = (float)((data_2_int  - 50000.0) / 100.0);
+
+        hal.console->printf("1-> %f, 2-> %f\n",data_1_final,data_2_final);
 
 }
-
-void Copter::Log_Write_position()
-{
-    struct log_position pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_POSI_MSG),
-        time_us  : AP_HAL::micros64(),
-        x        : quad_x,
-        y        : quad_y,
-        z        : quad_z,
-        phi      : imu_roll_log,
-        theta    : imu_pitch_log,
-        psi      : imu_yaw_log,
-        phi_p    : encoder_roll_feedback,
-        theta_p  : encoder_pitch_feedback,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
-    // hal.console->printf("From log write position \n");
-
-}
-
-void Copter::Log_Write_velocity()
-{
-    struct log_velocity pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_VELO_MSG),
-        time_us  : AP_HAL::micros64(),
-        x_dot        : quad_x_dot,
-        y_dot        : quad_y_dot,
-        z_dot        : quad_z_dot,
-        phi_dot      : imu_roll_dot,
-        theta_dot    : imu_pitch_dot,
-        psi_dot      : imu_yaw_dot,
-        phi_p_dot    : encoder_roll_dot_feedback,
-        theta_p_dot  : encoder_pitch_dot_feedback,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}
-
-void Copter::log_attitude_tracking()
-{
-    struct log_att_trac pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_ATT_TRA_MSG),
-        time_us  : AP_HAL::micros64(),
-        phi      : imu_roll_log,
-        theta    : imu_pitch_log,
-        psi      : imu_yaw_log,
-        phi_h    : H_roll,
-        theta_h  : H_pitch,
-        psi_h    : H_yaw,
-        psi_h_dot: H_yaw_rate,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}
-
-void Copter::log_sys_ID_ph_func()
-{
-    struct log_sys_ID_ph pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_SID_PH_MSG),
-        time_us  : AP_HAL::micros64(),
-        PWM1     : PWM1,
-        PWM2     : PWM2,
-        PWM3     : PWM3,
-        PWM4     : PWM4,
-        Pf       : Pf,
-        phi      : imu_roll_log,
-        theta    : imu_pitch_log,
-        psi      : imu_yaw_log,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}
-
 
 void Copter::getEncoderData()
 {
@@ -354,4 +359,78 @@ void Copter::getEncoderData()
 
         // hal.uartE->printf("%0.3f,", encoder_roll_feedback);
         // hal.uartE->printf("%0.3f\n", encoder_pitch_feedback);
+}
+
+
+void Copter::gains_data_from_Rpi(){
+
+}
+
+void Copter::Log_Write_position()
+{
+    struct log_position pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_POSI_MSG),
+        time_us  : AP_HAL::micros64(),
+        x        : quad_x,
+        y        : quad_y,
+        z        : quad_z,
+        phi      : imu_roll_log,
+        theta    : imu_pitch_log,
+        psi      : imu_yaw_log,
+        phi_p    : encoder_roll_feedback,
+        theta_p  : encoder_pitch_feedback,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+    // hal.console->printf("From log write position \n");
+
+}
+
+void Copter::Log_Write_velocity()
+{
+    struct log_velocity pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_VELO_MSG),
+        time_us  : AP_HAL::micros64(),
+        x_dot        : quad_x_dot,
+        y_dot        : quad_y_dot,
+        z_dot        : quad_z_dot,
+        phi_dot      : imu_roll_dot,
+        theta_dot    : imu_pitch_dot,
+        psi_dot      : imu_yaw_dot,
+        phi_p_dot    : encoder_roll_dot_feedback,
+        theta_p_dot  : encoder_pitch_dot_feedback,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Copter::log_attitude_tracking()
+{
+    struct log_att_trac pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_ATT_TRA_MSG),
+        time_us  : AP_HAL::micros64(),
+        phi      : imu_roll_log,
+        theta    : imu_pitch_log,
+        psi      : imu_yaw_log,
+        phi_h    : H_roll,
+        theta_h  : H_pitch,
+        psi_h    : H_yaw,
+        psi_h_dot: H_yaw_rate,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Copter::log_sys_ID_ph_func()
+{
+    struct log_sys_ID_ph pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_SID_PH_MSG),
+        time_us  : AP_HAL::micros64(),
+        PWM1     : PWM1,
+        PWM2     : PWM2,
+        PWM3     : PWM3,
+        PWM4     : PWM4,
+        Pf       : Pf,
+        phi      : imu_roll_log,
+        theta    : imu_pitch_log,
+        psi      : imu_yaw_log,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
 }

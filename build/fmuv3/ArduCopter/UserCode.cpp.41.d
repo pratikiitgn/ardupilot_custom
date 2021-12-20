@@ -620,4 +620,5 @@ ArduCopter/UserCode.cpp.41.o: ../../ArduCopter/UserCode.cpp ap_config.h \
  ../../libraries/AP_CANManager/AP_CANSensor.h \
  ../../ArduCopter/Parameters.h ../../ArduCopter/avoidance_adsb.h \
  ../../libraries/AP_Avoidance/AP_Avoidance.h \
- ../../ArduCopter/mycontroller_usercode.h
+ ../../ArduCopter/mycontroller_usercode.h \
+ ../../libraries/AP_Common/missing/utility

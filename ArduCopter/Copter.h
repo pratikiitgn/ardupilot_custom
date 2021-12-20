@@ -918,6 +918,7 @@ private:
     void log_sys_ID_ph_func();
     void getEncoderData();
     void gains_data_from_Rpi();
+    void Portenta_data();
 
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;
