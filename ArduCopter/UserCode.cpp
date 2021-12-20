@@ -54,6 +54,8 @@ void Copter::userhook_init()
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
     hal.serial(2)->begin(115200);
+    hal.serial(4)->begin(115200);
+
 
 }
 #endif
@@ -62,13 +64,12 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
 
-    Portenta_data();
-    hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
+    // Portenta_data();
+    // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
 
     // To access the CAM device data
     getEncoderData();
-
-    hal.console->printf("Roll %f, pith %f", encoder_roll_feedback, encoder_pitch_feedback);
+    hal.console->printf("Roll %f, pith %f\n", encoder_roll_feedback, encoder_pitch_feedback);
 
     ////////////////////// For SPI communicatio
     // spi_dev->read_registers(reg, buf, size);
@@ -294,9 +295,9 @@ void Copter::getEncoderData()
     bool new_data = false;
 
     char attitude[] = "50001_50000";
-    while (hal.serial(2)->available()>0 && new_data == false)
+    while (hal.serial(4)->available()>0 && new_data == false)
         {
-            char temp = hal.serial(2)->read();
+            char temp = hal.serial(4)->read();
             // hal.console->printf("%c\n",temp);
             if (receiving_data == true)
             {
