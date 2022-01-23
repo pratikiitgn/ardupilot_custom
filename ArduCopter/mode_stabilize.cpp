@@ -185,6 +185,15 @@ float KI1_old       = 0.0;
 
 Vector3f e_I_val_old (0.0,0.0,0.0);
 
+// CAC commands
+float CAC_roll      = 0.0;
+float CAC_pitch     = 0.0;
+
+float Des_roll      = 0.0;
+float Des_pitch     = 0.0;
+float Des_roll_dot  = 0.0;
+float Des_pitch_dot = 0.0;
+
 void ModeStabilize::run()
 {
         // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
@@ -331,9 +340,16 @@ void ModeStabilize::attitude_altitude_controller(){
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){                                                                              
             if(copter.motors->armed()){
                 // custom_PID_position_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
-                // custom_pwm_code();
+                // CAC_PD_controller();
+                custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
+                custom_pwm_code();
+
             }
         }
+}
+
+void ModeStabilize::CAC_PD_controller(){
+
 }
 
 void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
@@ -890,6 +906,12 @@ void ModeStabilize::quad_states(){
     quad_y = -quad_y;
 
     quad_z =  (inertial_nav.get_position().z / 100.0) - quad_z_ini;
+
+    if (quad_x < -9.9){quad_x = -9.9;}
+    if (quad_x > 9.9){quad_x = 9.9;}
+
+    if (quad_y < -9.9){quad_y = -9.9;}
+    if (quad_y > 9.9){quad_y = 9.9;}
 
     if (quad_z < 0){quad_z = 0;}
     if (quad_z > 5){quad_z = 5;}

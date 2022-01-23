@@ -57,3 +57,8 @@ extern Vector3f e_Omega_log;
 // extern float des_phi;
 // extern float des_theta;
 // extern float des_yaw;
+
+
+// From the CAM device 
+extern float encoder_roll_feedback;
+extern float encoder_pitch_feedback;

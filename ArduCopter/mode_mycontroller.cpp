@@ -10,7 +10,7 @@
 
 
 bool ModeMyController::init(bool){
-    hal.serial(2)->begin(115200);
+    // hal.serial(2)->begin(115200);
 
     return true;
 }

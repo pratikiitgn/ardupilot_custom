@@ -919,7 +919,8 @@ private:
     void getEncoderData();
     void gains_data_from_Rpi();
     void Portenta_data();
-
+    void getHumanIMUdata();
+    void getHumanEncoderdata();
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;
     bool get_wp_bearing_deg(float &bearing) const override;
