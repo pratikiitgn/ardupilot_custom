@@ -87,7 +87,7 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
 
     //// uncomment following code for the data sending for quadcopter+payload system outdoor
-    // hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
+    hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
 
     //// [start] uncomment following code for CAM device validations
     // int check = 0;
@@ -98,12 +98,12 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback);
 
     //// [IROS'22] uncomment following code for CAM device validations
-    int check = 0;
-    if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
-        check = 1;
-    }
+    // int check = 0;
+    // if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
+    //     check = 1;
+    // }
 
-    hal.serial(1)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
+    // hal.serial(1)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
     // 1+7+7+7+6+6+1+7+7+7+7+7+11
 
     // hal.console->printf("Roll %f, pith %f\n", encoder_roll_feedback, encoder_pitch_feedback);
