@@ -1,6 +1,11 @@
 #pragma once
 
 #include "Copter.h"
+#include <math.h>
+#include <vector>
+
+ 
+
 class Parameters;
 class ParametersG2;
 
@@ -169,7 +174,7 @@ protected:
     RC_Channel *&channel_yaw;
     float &G_Dt;
 
-    
+
     // note that we support two entirely different automatic takeoffs:
 
     // "user-takeoff", which is available in modes such as ALT_HOLD
@@ -319,7 +324,8 @@ public:
     void system_identification_x_axis();
     void system_identification_y_axis();
     void system_identification_z_axis();
-    // void Log_Write_position();
+    void custom_PID_position_controller();
+
 
 protected:
 
@@ -1443,7 +1449,20 @@ public:
     int Inverse_thrust_function(float Force);
     float saturation_for_yaw_angle_error(float error);
     void attitude_altitude_controller();
-
+    void battery_check();
+    void custom_PID_position_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    float euler_to_Rotation_mat(float ph, float th, float ps);
+    void custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    Vector3f e_R(Matrix3f R, Matrix3f Rd);
+    Vector3f e_Omega(Matrix3f R, Matrix3f Rd, Vector3f Omega, Vector3f Omegad);
+    Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
+    Vector3f vee_map(Matrix3f R);
+    Matrix3f matrix_transpose(Matrix3f R);
+    Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
+    Vector3f sat_e_I(Vector3f vec);
+    void data_logging_portenta();
+    void CAC_PD_controller();
+    
 protected:
 
     const char *name() const override { return "STABILIZE"; }

@@ -1,11 +1,8 @@
 #pragma once
 
-// float x_pos;
-// float y_pos;
-// float z_pos;
-
 extern float H_roll;
 extern float H_pitch;
+extern float H_yaw;
 
 extern float imu_roll;
 extern float imu_pitch;
@@ -26,6 +23,7 @@ extern float quad_z_dot;
 extern float H_yaw;
 extern float H_yaw_rate;
 extern float z_des;
+extern float H_throttle;
 
 extern uint16_t PWM1;
 extern uint16_t PWM2;
@@ -46,3 +44,21 @@ extern float Mb1;
 extern float Mb2;
 extern float Mb3;
 
+extern float x_des;
+extern float y_des;
+extern float z_des;
+
+// Variable for geometric controller
+extern Matrix3f R_log;
+extern Matrix3f Rd_log;
+extern Vector3f e_R_log;
+extern Vector3f e_Omega_log;
+
+// extern float des_phi;
+// extern float des_theta;
+// extern float des_yaw;
+
+
+// From the CAM device 
+extern float encoder_roll_feedback;
+extern float encoder_pitch_feedback;

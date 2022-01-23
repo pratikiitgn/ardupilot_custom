@@ -156,7 +156,7 @@ bool AP_Baro_DPS280::init()
         return false;
     }
     dev->get_semaphore()->take_blocking();
-
+ 
     // setup to allow reads on SPI
     if (dev->bus_type() == AP_HAL::Device::BUS_TYPE_SPI) {
         dev->set_read_flag(0x80);

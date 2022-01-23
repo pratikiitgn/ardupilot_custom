@@ -88,6 +88,9 @@
 #define HAL_INS_MPU9250_NAME "mpu9250"
 #define HAL_INS_MPU9250_EXT_NAME "mpu9250_ext"
 
+#define HAL_PORTENTA_IN "portenta_in"
+#define HAL_PORTENTA_OUT "portenta_out"
+
 #define HAL_INS_MPU6500_NAME "mpu6500"
 
 #define HAL_INS_ICM20608_NAME "icm20608"
