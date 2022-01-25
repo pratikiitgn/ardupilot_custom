@@ -64,11 +64,10 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    hal.serial(1)->begin(115200);
-    hal.serial(2)->begin(2000000);
-    hal.serial(4)->begin(115200);
-    hal.serial(5)->begin(115200);
-
+    // hal.serial(2)->begin(2000000);
+    // hal.serial(2)->begin(2000000);
+    hal.serial(4)->begin(2000000);
+    // hal.serial(5)->begin(115200);
 
 }
 #endif
@@ -78,16 +77,21 @@ void Copter::userhook_FastLoop()
 {
 
     // To access the CAM device data
-    getEncoderData();
+    // getEncoderData();
 
-    getHumanIMUdata();
-    getHumanEncoderdata();
+    // getHumanIMUdata();
+    // getHumanEncoderdata();
 
     // Portenta_data();
     // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
 
     //// uncomment following code for the data sending for quadcopter+payload system outdoor
-    hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
+
+    hal.serial(4)->printf("%1d,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f\n",arm_disarm_flag,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw);
+    // 1+7+7+7+7+7+7
+    // hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
+    // hal.console->printf("H_roll --> %5.3f\n",H_roll);
+    // 1+5+5+5+7+7+7+6+6+7+7+7+4+4+4+4+6+6
 
     //// [start] uncomment following code for CAM device validations
     // int check = 0;
@@ -104,7 +108,7 @@ void Copter::userhook_FastLoop()
     // }
 
     // hal.serial(1)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
-    // 1+7+7+7+6+6+1+7+7+7+7+7+11
+    // 1+7+7+7+6+6+1+7+7+7+7+7+1
 
     // hal.console->printf("Roll %f, pith %f\n", encoder_roll_feedback, encoder_pitch_feedback);
 
@@ -340,8 +344,8 @@ void Copter::getHumanEncoderdata()
         if (HH_pitch_feedback > max_lim){HH_pitch_feedback = max_lim;}
         if (HH_pitch_feedback < -max_lim){HH_pitch_feedback = -max_lim;}
 
-    hal.console->printf("Encoder data --> %s",human_handle_encoder_data);
-    hal.console->printf(" OF -> %1.1f, Yaw -> %4.2f, Pitch-> %4.2f\n",HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback);
+    // hal.console->printf("Encoder data --> %s",human_handle_encoder_data);
+    // hal.console->printf(" OF -> %1.1f, Yaw -> %4.2f, Pitch-> %4.2f\n",HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback);
 
 }
 
