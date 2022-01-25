@@ -2,6 +2,7 @@
 
 extern float H_roll;
 extern float H_pitch;
+extern float H_yaw;
 
 extern float imu_roll;
 extern float imu_pitch;
