@@ -45,7 +45,7 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    hal.serial(4)->begin(115200);
+    hal.serial(4)->begin(2000000);
 
 }
 #endif
