@@ -65,9 +65,10 @@ void Copter::userhook_init()
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
     hal.serial(1)->begin(115200);
-    hal.serial(2)->begin(2000000);
-    hal.serial(4)->begin(115200);
-    hal.serial(5)->begin(115200);
+    // hal.serial(2)->begin(2000000);  // For human IMU data
+    hal.serial(2)->begin(115200);  // For human IMU data
+    hal.serial(4)->begin(115200);   // For CAM device data
+    hal.serial(5)->begin(115200);   // For human encoder data
 
 
 }
@@ -79,7 +80,6 @@ void Copter::userhook_FastLoop()
 
     // To access the CAM device data
     getEncoderData();
-
     getHumanIMUdata();
     getHumanEncoderdata();
 
@@ -87,7 +87,7 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
 
     //// uncomment following code for the data sending for quadcopter+payload system outdoor
-    hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
+    // hal.serial(2)->printf("%1d,%5.2f,%5.2f,%5.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d,%6.2f,%6.2f_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4,encoder_roll_feedback,encoder_pitch_feedback);
 
     //// [start] uncomment following code for CAM device validations
     // int check = 0;
@@ -98,15 +98,14 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback);
 
     //// [IROS'22] uncomment following code for CAM device validations
-    // int check = 0;
-    // if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
-    //     check = 1;
-    // }
-
-    // hal.serial(1)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f_",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
+    int check = 0;
+    if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
+        check = 1;
+    }
+    hal.serial(2)->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f\n",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
     // 1+7+7+7+6+6+1+7+7+7+7+7+11
 
-    // hal.console->printf("Roll %f, pith %f\n", encoder_roll_feedback, encoder_pitch_feedback);
+    // hal.console->printf("%1d,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%1.0f,%7.2f,%7.2f,%7.2f,%7.2f,%7.2f\n",check,imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback,HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback,HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
 
     ////////////////////// For SPI communicatio
     // spi_dev->read_registers(reg, buf, size);
@@ -122,7 +121,7 @@ void Copter::userhook_FastLoop()
     // gains_data_from_Rpi();
 
     // put your 100Hz code here
-    // Log_Write_position();
+    Log_Write_position();
     // Log_Write_velocity();
     // log_attitude_tracking();
     // log_sys_ID_ph_func();
@@ -130,9 +129,9 @@ void Copter::userhook_FastLoop()
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     
     
-    // imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
-    // imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
-    // imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
+    imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
+    imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
+    imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
  
 
     // hal.console->printf("From usercode \n");
@@ -340,8 +339,8 @@ void Copter::getHumanEncoderdata()
         if (HH_pitch_feedback > max_lim){HH_pitch_feedback = max_lim;}
         if (HH_pitch_feedback < -max_lim){HH_pitch_feedback = -max_lim;}
 
-    hal.console->printf("Encoder data --> %s",human_handle_encoder_data);
-    hal.console->printf(" OF -> %1.1f, Yaw -> %4.2f, Pitch-> %4.2f\n",HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback);
+    // hal.console->printf("Encoder data --> %s",human_handle_encoder_data);
+    // hal.console->printf(" OF -> %1.1f, Yaw -> %4.2f, Pitch-> %4.2f\n",HH_on_off_feedback,HH_yaw_feedback,HH_pitch_feedback);
 
 }
 
@@ -481,22 +480,22 @@ void Copter::getEncoderData()
         encoder_roll_feedback  = (float)((encoder_roll_int  - 50000.0) / 100.0);
         encoder_pitch_feedback = (float)((encoder_pitch_int - 50000.0) / 100.0);
 
-        if (encoder_roll_feedback > 60.0){
-            encoder_roll_feedback = 60.0;
+        if (encoder_roll_feedback > 65.0){
+            encoder_roll_feedback = 65.0;
         }
-        if (encoder_roll_feedback < -60.0){
-            encoder_roll_feedback = -60.0;
-        }
-
-        if (encoder_pitch_feedback > 60.0){
-            encoder_pitch_feedback = 60.0;
-        }
-        if (encoder_pitch_feedback < -60.0){
-            encoder_pitch_feedback = -60.0;
+        if (encoder_roll_feedback < -65.0){
+            encoder_roll_feedback = -65.0;
         }
 
-        // hal.uartE->printf("%0.3f,", encoder_roll_feedback);
-        // hal.uartE->printf("%0.3f\n", encoder_pitch_feedback);
+        if (encoder_pitch_feedback > 65.0){
+            encoder_pitch_feedback = 65.0;
+        }
+        if (encoder_pitch_feedback < -65.0){
+            encoder_pitch_feedback = -65.0;
+        }
+
+        // hal.console->printf("%0.3f,", encoder_roll_feedback);
+        // hal.console->printf("%0.3f\n", encoder_pitch_feedback);
 }
 
 
