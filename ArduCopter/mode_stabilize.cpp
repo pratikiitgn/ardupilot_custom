@@ -194,6 +194,9 @@ float Des_pitch     = 0.0;
 float Des_roll_dot  = 0.0;
 float Des_pitch_dot = 0.0;
 
+float rate_counter_time = 0.0;
+float t_start_else_loop_end = 0.0;
+int rate_counter = 0;
 void ModeStabilize::run()
 {
         // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
@@ -215,6 +218,16 @@ void ModeStabilize::run()
         code_starting_flag = 1;
 
     }else{
+
+        rate_counter_time = (AP_HAL::millis() - t_start_else_loop_end)/1000.0;
+
+        if (rate_counter_time > 1.0){
+            hal.console->printf("Rate -> %d\n",rate_counter);
+            rate_counter = 0;
+            t_start_else_loop_end = AP_HAL::millis();
+        }else{
+            rate_counter =  rate_counter + 1;
+        }
 
     ///////////// Arming checks  /////////////
         if (copter.motors->armed()){
@@ -241,7 +254,6 @@ void ModeStabilize::run()
     ///////////// To Rpi 4 /////////////
 
     // hal.serial(2)->printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n",arm_disarm_flag,R_log[0][0],R_log[0][1],R_log[0][2],R_log[1][0],R_log[1][1],R_log[1][2],R_log[2][0],R_log[2][1],R_log[2][2],Rd_log[0][0],Rd_log[0][1],Rd_log[0][2],Rd_log[1][0],Rd_log[1][1],Rd_log[1][2],Rd_log[2][0],Rd_log[2][1],Rd_log[2][2]);
-
 
     }
 
@@ -328,13 +340,18 @@ void ModeStabilize::attitude_altitude_controller(){
         quad_y_ini = -sinf(yaw_initially)*quad_x_ini_inertial + cosf(yaw_initially)*quad_y_ini_inertial;
 
         //// Initial the gains
+        PWM1 = 1000;
+        PWM2 = 1000;
+        PWM3 = 1000;
+        PWM4 = 1000;
 
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
                 // custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
-                custom_pwm_code();
+                // custom_pwm_code();
+                
                 // hal.console->printf("M1->%f,M2->%f,M3->%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){                                                                              
@@ -342,7 +359,7 @@ void ModeStabilize::attitude_altitude_controller(){
                 // custom_PID_position_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 // CAC_PD_controller();
                 custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
-                custom_pwm_code();
+                // custom_pwm_code();
 
             }
         }
@@ -845,7 +862,7 @@ void ModeStabilize::system_identification_y_axis(){
 void ModeStabilize::custom_pwm_code(){
 
     // if (RC_Channels::get_radio_in(CH_6) > 1600){
-
+        // LOGGING_ENABLED == ENABLED;
         copter.init_rc_out();
         SRV_Channels::cork();
         hal.rcout->write(0,PWM1);
@@ -853,6 +870,7 @@ void ModeStabilize::custom_pwm_code(){
         hal.rcout->write(2,PWM3);
         hal.rcout->write(3,PWM4);
         SRV_Channels::push();
+        
 
         // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
 }

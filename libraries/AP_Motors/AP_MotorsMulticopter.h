@@ -3,7 +3,6 @@
 #pragma once
 
 #include "AP_Motors_Class.h"
-
 #ifndef AP_MOTORS_DENSITY_COMP
 #define AP_MOTORS_DENSITY_COMP 1
 #endif

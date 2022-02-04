@@ -9,7 +9,7 @@
 #include <math.h>
 #include <AP_GPS/AP_GPS.h>
 
-static AP_HAL::OwnPtr<AP_HAL::Device> spi_dev;
+// static AP_HAL::OwnPtr<AP_HAL::Device> spi_dev;
 
 #include <utility>
 #include <stdio.h>
@@ -64,12 +64,13 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    hal.serial(1)->begin(115200);
+    // hal.serial(1)->begin(115200);
     // hal.serial(2)->begin(2000000);  // For human IMU data
-    hal.serial(2)->begin(115200);  // For human IMU data
+    // hal.serial(2)->begin(115200);  // For human IMU data
     hal.serial(4)->begin(115200);   // For CAM device data
-    hal.serial(5)->begin(115200);   // For human encoder data
+    // hal.serial(5)->begin(115200);   // For human encoder data
 
+    // copter.log_init();
 
 }
 #endif
@@ -80,8 +81,8 @@ void Copter::userhook_FastLoop()
 
     // To access the CAM device data
     getEncoderData();
-    getHumanIMUdata();
-    getHumanEncoderdata();
+    // getHumanIMUdata();
+    // getHumanEncoderdata();
 
     // Portenta_data();
     // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
@@ -122,8 +123,8 @@ void Copter::userhook_FastLoop()
 
     // put your 100Hz code here
     Log_Write_position();
-    // Log_Write_velocity();
-    // log_attitude_tracking();
+    Log_Write_velocity();
+    log_attitude_tracking();
     // log_sys_ID_ph_func();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
@@ -208,6 +209,19 @@ void Copter::userhook_FastLoop()
     
     //// Mav proxy debugging
     // hal.console->printf("roll-> %f, pitch-> %f, yaw-> %f, roll_c-> %f, pitch_c-> %f \n",imu_roll,imu_pitch,imu_yaw,encoder_roll_feedback,encoder_pitch_feedback);
+
+    // AP::logger().Write(
+    //     "POTT",
+    //     "TimeUS,function,pos,source,result",
+    //     "s----",
+    //     "F----",
+    //     "QHBBB",
+    //     AP_HAL::micros64(),
+    //     uint16_t(imu_roll_log),
+    //     uint8_t(1),
+    //     uint8_t(1),
+    //     uint8_t(1)
+    //     );
 
 
 }
