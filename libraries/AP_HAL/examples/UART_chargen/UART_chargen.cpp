@@ -45,7 +45,7 @@ void setup(void)
 #endif
     // uart = hal.serial(3);   // 1st GPS
 #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS
-    uart = hal.serial(1);  // telemetry 1
+    // uart = hal.serial(1);  // telemetry 1
 #endif
     // uart = hal.serial(2);  // telemetry 2
     // uart = hal.serial(4);  // 2nd GPS

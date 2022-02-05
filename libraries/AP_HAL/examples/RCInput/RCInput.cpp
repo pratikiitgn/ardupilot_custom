@@ -54,11 +54,11 @@ void read_channels(void)
 {
     uint8_t nchannels = hal.rcin->num_channels();  // Get the numbers channels detected by RC_INPUT.
     if (nchannels == 0) {
-        hal.serial(1)->printf("No channels detected\n");
+        // hal.serial(1)->printf("No channels detected\n");
         return;
     }
     if (max_channels_display == 0) {
-        hal.serial(1)->printf("Channels detected: %2u\n", nchannels);
+        // hal.serial(1)->printf("Channels detected: %2u\n", nchannels);
         // hal.serial(1)->printf("Set max_channels_display > 0 to display channels values\n","");
         return;
     }
@@ -81,15 +81,15 @@ void read_channels(void)
 
     if (changed) {
         for (uint8_t i = 0; i < max_channels_display; i++) {
-            hal.serial(1)->printf("%2u:%04u ", (unsigned)i+1, (unsigned)last_value[i]);
+            // hal.serial(1)->printf("%2u:%04u ", (unsigned)i+1, (unsigned)last_value[i]);
         }
-        hal.serial(1)->printf("\n");
+        // hal.serial(1)->printf("\n");
     }
 }
 
 void loop(void) {
     read_channels();
-    hal.serial(1)->printf("Chalu che");
+    // hal.serial(1)->printf("Chalu che");
     hal.scheduler->delay(100);
 }
 

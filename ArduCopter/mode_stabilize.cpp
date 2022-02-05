@@ -329,6 +329,12 @@ void ModeStabilize::attitude_altitude_controller(){
 
         //// Initializing the states of the quadcopters
         quad_z_ini =  inertial_nav.get_position().z / 100.0;
+        
+        // if (copter.rangefinder_alt_ok()){
+            // float abcd = copter.rangefinder_state.alt_cm_filt.get();
+            // hal.console->printf("Altitude from TFMini -> %f\n",abcd);
+        // }
+
         // yaw_initially = (360.0-(ahrs.yaw_sensor)/ 100.0)*3.141/180.0;     // rad;
         yaw_initially = 0.0;
         H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
@@ -360,7 +366,6 @@ void ModeStabilize::attitude_altitude_controller(){
                 // CAC_PD_controller();
                 custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 // custom_pwm_code();
-
             }
         }
 }
@@ -385,7 +390,7 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
     float e_z   = z_des - quad_z;
 
     float Kp_z        = 2.0;    // 2.0 (best)
-    float Kd_z        = 1.0;    // 1.0 (best)
+    float Kd_z        = 2.0;    // 1.0 (best)
     // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
     // F     =  10.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
     F     =  10.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
@@ -460,17 +465,17 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
 
 /////////////////////// Manual gain tuning  ///////////////////////
 
-    KR1         = 0.3;  // 0.6 (TB best)  //0.4
-    KOmega1     = 13.5; // 10.5(TB best)  //0.5
-    KI1         = 0.1;  // 0.1 (TB best)  //0.1
+    KR1         = 0.6;  // 0.6 (TB best)  //0.4
+    KOmega1     = 15; // 10.5(TB best)  //0.5
+    KI1         = 0.0;  // 0.1 (TB best)  //0.1
 
-    KR2         = 0.4;  // 1.0  (TB good)
-    KOmega2     = 19.0; // 13.5 (TB good)
-    KI2         = 0.1;  // 0.1  (TB good)
+    KR2         = 1.0;  // 1.0  (TB good)
+    KOmega2     = 18; // 13.5 (TB good)
+    KI2         = 0.0;  // 0.1  (TB good)
 
     KR3         = 6.0;  // 1.0  (TB good)
     KOmega3     = 10.0; // 13.5 (TB good)
-    KI3         = 0.1;  // 0.1  (TB good)
+    KI3         = 0.0;  // 0.1  (TB good)
 
     // hal.console->printf("%f,%f,%f\n",KR1,KOmega1,KI1);
     // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
