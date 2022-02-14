@@ -713,6 +713,30 @@ struct PACKED log_velocity {
     float theta_p_dot;
 };
 
+struct PACKED log_iros_data {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float qp1;
+    float qp2;
+    float qp3;
+    float qc1;
+    float qc2;
+    float qc3;
+    float On_Off;
+};
+
+struct PACKED log_iros_raw_data_ {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float HH_ph;
+    float HH_th;
+    float HH_ps;
+    float HH_E_th;
+    float HH_E_ps;
+    float On_Off;
+};
+
+
 struct PACKED log_att_trac {
     LOG_PACKET_HEADER;
     uint64_t time_us;
@@ -725,17 +749,17 @@ struct PACKED log_att_trac {
     float psi_h_dot;
 };
 
-struct PACKED log_sys_ID_ph {
+struct PACKED log_th_Moment {
     LOG_PACKET_HEADER;
     uint64_t time_us;
     uint16_t PWM1;
     uint16_t PWM2;
     uint16_t PWM3;
     uint16_t PWM4;
-    uint16_t Pf;
-    float phi;
-    float theta;
-    float psi;
+    float F;
+    float M1;
+    float M2;
+    float M3;
 };
 
 // FMT messages define all message formats other than FMT
@@ -1375,8 +1399,12 @@ LOG_STRUCTURE_FROM_VISUALODOM \
       "VELO", "Qffffffff", "TimeUS,x_dot,y_dot,z_dot,ph_dot,th_dot,ps_dot,php_dot,thp_dot", "snnnkkkkk", "F--------", true }, \
     { LOG_ATT_TRA_MSG, sizeof(log_att_trac), \
       "LATT", "Qfffffff", "TimeUS,ph,th,psi,ph_h,th_h,ps_h,ps_h_dot", "sddddddk", "F-------", true }, \
-    { LOG_SID_PH_MSG, sizeof(log_sys_ID_ph), \
-      "SIDP", "QHHHHHfff", "TimeUS,P1,P2,P3,P4,Pf,ph,th,ps", "s-----ddd", "F--------", true }, \
+    { LOG_TH_MOM_MSG, sizeof(log_th_Moment), \
+      "LTMO", "QQQQQffff", "TimeUS,P1,P2,P3,P4,F,M1,M2,M3", "s--------", "F--------", true }, \
+    { LOG_IROS_MSG, sizeof(log_iros_data), \
+      "LIR1", "Qfffffff", "TimeUS,qp1,qp2,qp3,qc1,qc2,qc3,On_Off", "s-------", "F-------", true }, \
+    { LOG_IROS_RAW_MSG, sizeof(log_iros_raw_data_), \
+      "LIR2", "Qffffff", "TimeUS,HH_ph,HH_th,HH_ps,HH_E_th,HH_E_ps,On_Off", "s------", "F------", true }, \
 LOG_STRUCTURE_FROM_AIS \
 
 // message types 0 to 63 reserved for vehicle specific use
@@ -1458,7 +1486,9 @@ enum LogMessages : uint8_t {
     LOG_POSI_MSG,
     LOG_VELO_MSG,
     LOG_ATT_TRA_MSG,
-    LOG_SID_PH_MSG,
+    LOG_TH_MOM_MSG,
+    LOG_IROS_MSG,
+    LOG_IROS_RAW_MSG,
     _LOG_LAST_MSG_
 };
 

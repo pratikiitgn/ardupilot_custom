@@ -920,18 +920,25 @@ private:
     void Log_Write_position();
     void Log_Write_velocity();
     void log_attitude_tracking();
-    void log_sys_ID_ph_func();
     void getEncoderData();
     void gains_data_from_Rpi();
     void Portenta_data();
     void getHumanIMUdata();
     void getHumanEncoderdata();
+    void get_Gain_data_from_portenta();
+    void log_thurst_moment();
+    void get_IROS_data();
+    void log_IROS_raw_data();
+    void log_IROS_data();
+    Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
+    Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
+    Matrix3f hatmap(Vector3f v);
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;
     bool get_wp_bearing_deg(float &bearing) const override;
     bool get_wp_crosstrack_error_m(float &xtrack_error) const override;
-    
-    
+
+
 #if MODE_ACRO_ENABLED == ENABLED
 #if FRAME_CONFIG == HELI_FRAME
     ModeAcro_Heli mode_acro;

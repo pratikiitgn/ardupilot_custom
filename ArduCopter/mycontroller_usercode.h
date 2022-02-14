@@ -54,11 +54,38 @@ extern Matrix3f Rd_log;
 extern Vector3f e_R_log;
 extern Vector3f e_Omega_log;
 
+extern Vector3f qp;
+extern Vector3f qc;
+extern Vector3f Omega_p;
+extern Vector3f Omega_c;
+
+extern float qp1_dot_fil_final;
+extern float qp2_dot_fil_final;
+extern float qp3_dot_fil_final;
+
+extern float qc1_dot_fil_final;
+extern float qc2_dot_fil_final;
+extern float qc3_dot_fil_final;
+
 // extern float des_phi;
 // extern float des_theta;
 // extern float des_yaw;
 
-
 // From the CAM device 
 extern float encoder_roll_feedback;
 extern float encoder_pitch_feedback;
+
+// From human handle
+
+extern float HH_IMU_roll_feedback;
+extern float HH_IMU_pitch_feedback;
+extern float HH_IMU_yaw_feedback;
+extern float HH_pitch_feedback;
+extern float HH_yaw_feedback;
+extern float HH_on_off_feedback;
+
+extern float human_handle_yaw_modified;
+
+// extern float MG;
+// extern float KP_gain;
+// extern float KD_gain;

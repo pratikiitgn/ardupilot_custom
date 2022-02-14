@@ -1457,11 +1457,13 @@ public:
     Vector3f e_Omega(Matrix3f R, Matrix3f Rd, Vector3f Omega, Vector3f Omegad);
     Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
     Vector3f vee_map(Matrix3f R);
+    Matrix3f hatmap(Vector3f v);
     Matrix3f matrix_transpose(Matrix3f R);
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
     Vector3f sat_e_I(Vector3f vec);
     void data_logging_portenta();
     void CAC_PD_controller();
+    void IROS_controller_code();
     
 protected:
 
