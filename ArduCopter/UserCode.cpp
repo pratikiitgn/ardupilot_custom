@@ -32,7 +32,7 @@ float imu_yaw_log       = 0.0;
 char sz[20];
 
 char attitude[] = "50001_50000";
-char human_handle_IMU_data[] = "500000,500000,500000";
+char human_handle_IMU_data[] = "500000,500000,500000,500000,500000,500000";
 char human_handle_encoder_data[] = "0,500000,500000";
 char gain_data_portenta[] = "/00000,00000,00000\n";
 
@@ -50,7 +50,8 @@ Vector3f qp_prev(0.0,0.0,0.0);
 Vector3f qc_prev(0.0,0.0,0.0);
 Vector3f Omega_p(0.0,0.0,0.0);
 Vector3f Omega_c(0.0,0.0,0.0);
-
+Vector3f qpd(1.0,0.0,0.0);
+// Vector3f qp_in_HH_frame();
 // For filtering qp_dot and qc_dot
 
 // int fil_iter_qp_dot = 20;
@@ -80,8 +81,20 @@ float qp2_dot_fil8 = 0.0;
 float qp2_dot_fil9 = 0.0;
 float qp2_dot_fil10 = 0.0;
 
+float qp1_dot_fil1 = 0.0;
+float qp1_dot_fil2 = 0.0;
+float qp1_dot_fil3 = 0.0;
+float qp1_dot_fil4 = 0.0;
+float qp1_dot_fil5 = 0.0;
+float qp1_dot_fil6 = 0.0;
+float qp1_dot_fil7 = 0.0;
+float qp1_dot_fil8 = 0.0;
+float qp1_dot_fil9 = 0.0;
+float qp1_dot_fil10 = 0.0;
+
 float qp3_dot_fil_final = 0.0;
 float qp2_dot_fil_final = 0.0;
+float qp1_dot_fil_final = 0.0;
 
 float qc1_dot_fil1 = 0.0;
 float qc1_dot_fil2 = 0.0;
@@ -108,6 +121,19 @@ float qc2_dot_fil10 = 0.0;
 float qc1_dot_fil_final = 0.0;
 float qc2_dot_fil_final = 0.0;
 
+uint16_t PWM1 = 1000;
+uint16_t PWM2 = 1000;
+uint16_t PWM3 = 1000;
+uint16_t PWM4 = 1000;
+
+float F         = 0.0;
+float Mb1       = 0.0;
+float Mb2       = 0.0;
+float Mb3       = 0.0;
+
+float Ax = 0.0;
+float Ay = 0.0;
+float Az = 0.0;
 
 // For gains receiving from portenta
 
@@ -149,11 +175,12 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
 
-    // To access the CAM device data
+    // To access data 
     getEncoderData();
     getHumanIMUdata();
     getHumanEncoderdata();
     get_IROS_data();
+
     // get_Gain_data_from_portenta();
     // put your 100Hz code here
     Log_Write_position();
@@ -161,6 +188,8 @@ void Copter::userhook_FastLoop()
     log_attitude_tracking();
     log_IROS_data();
     log_IROS_raw_data();
+    log_IROS_HH_acc();
+    log_IROS_ATT_Track();
 
     // Portenta_data();
     // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
@@ -461,13 +490,13 @@ void Copter::getHumanEncoderdata()
             }
         }
 
-        int HH_on_off_int          = atoi(on_off);
-        int HH_yaw_int     = atoi(encoder_yaw);
-        int HH_pitch_int   = atoi(encoder_pitch);
+        int HH_on_off_int   = atoi(on_off);
+        int HH_yaw_int      = atoi(encoder_yaw);
+        int HH_pitch_int    = atoi(encoder_pitch);
 
         HH_on_off_feedback  =  (float)(HH_on_off_int);
         HH_yaw_feedback     =  (float)((HH_yaw_int - 500000.0) / 100.0);
-        HH_pitch_feedback   = (float)((HH_pitch_int - 500000.0) / 100.0);
+        HH_pitch_feedback   =  (float)((HH_pitch_int - 500000.0) / 100.0);
 
         float max_lim = 180;
 
@@ -492,6 +521,8 @@ void Copter::get_IROS_data(){
     Vector3f e_1(1,0,0);
 
     Matrix3f R_H(eulerAnglesToRotationMatrix(HH_rpy));
+    
+    // hal.console->printf("%5.2f,%5.2f,%5.2f\n",HH_IMU_vector[0],HH_IMU_vector[1],HH_IMU_vector[2]);
 
     // Calculate rotation about pitch axis of human handle
     // HH_pitch_feedback = 0.0;
@@ -502,36 +533,69 @@ void Copter::get_IROS_data(){
                -sinf(HH_pitch_feedback*PI/180.0),   0,      cosf(HH_pitch_feedback*PI/180.0)
                );
 
+    Matrix3f HH_R_y_IMU_pitch (
+               cosf((HH_pitch_feedback + HH_IMU_pitch_feedback)*PI/180.0),    0,      sinf((HH_pitch_feedback + HH_IMU_pitch_feedback)*PI/180.0),
+               0,               1,      0,
+               -sinf((HH_pitch_feedback + HH_IMU_pitch_feedback)*PI/180.0),   0,      cosf((HH_pitch_feedback + HH_IMU_pitch_feedback)*PI/180.0)
+               );
+
     // Calculate rotation about yaw axis of human handle
     Matrix3f HH_R_z (
               cosf(HH_yaw_feedback*PI/180),    -sinf(HH_yaw_feedback*PI/180),      0,
                sinf(HH_yaw_feedback*PI/180),    cosf(HH_yaw_feedback*PI/180),      0,
                0,               0,                  1);
 
-    qp = Matrix_vector_mul(R_H,(Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,e_1))));
+    Matrix3f HH_IMU_R_z (
+              cosf(HH_IMU_yaw_feedback*PI/180.0),    -sinf(HH_IMU_yaw_feedback*PI/180.0),      0,
+               sinf(HH_IMU_yaw_feedback*PI/180.0),    cosf(HH_IMU_yaw_feedback*PI/180.0),      0,
+               0,               0,                  1);
+
+    Matrix3f HH_IMU_R_y (
+               cosf(HH_IMU_pitch_feedback*PI/180.0),    0,      sinf(HH_IMU_pitch_feedback*PI/180.0),
+               0,               1,      0,
+               -sinf(HH_IMU_pitch_feedback*PI/180.0),   0,      cosf(HH_IMU_pitch_feedback*PI/180.0)
+               );
+
+    // Vector3f HH_IMU_vector(Matrix_vector_mul(HH_IMU_R_z,Matrix_vector_mul(HH_IMU_R_y,Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,e_1)))));
+    Vector3f HH_CAM_device_vec(Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,e_1)));
+    Vector3f HH_IMU_vector(Matrix_vector_mul(R_H,HH_CAM_device_vec));
+    // qp_in_HH_frame
+
+    // hal.console->printf("%5.2f,%5.2f,%5.2f   ",HH_IMU_vector[0],HH_IMU_vector[1],HH_IMU_vector[2]);
+    // hal.console->printf("%5.2f,%5.2f\n",HH_IMU_pitch_feedback,HH_pitch_feedback);
+    // hal.console->printf("%f\n", cosf(PI));
+    // qp = Matrix_vector_mul(R_H,(Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,e_1))));
     // qp =  Matrix_vector_mul(HH_R_y,Matrix_vector_mul(HH_R_z,Matrix_vector_mul(R_H,e_1)));
     // qp =  Matrix_vector_mul(R_H,e_1);
     // qp =  Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,Matrix_vector_mul(R_H,e_1)));
 
+    qp = Matrix_vector_mul(HH_R_z,Matrix_vector_mul(HH_R_y,e_1));
+
     float qpd1 = cosf(HH_IMU_yaw_feedback*PI/180);
     float qpd2 = sinf(HH_IMU_yaw_feedback*PI/180);
 
-    // float qpd12_sq = (qpd1*qpd1 + qpd2*qpd2);
+    qpd[0] = qpd1;
+    qpd[1] = qpd2;
+    qpd[2] = 0.0;
 
-    // qpd1 = qpd1 / sqrt(qpd12_sq);
-    // qpd2 = qpd2 / sqrt(qpd12_sq);
-
-    Vector3f qpd(qpd1,qpd2,0);
-
-    Vector3f delta_qp = Matrix_vector_mul(hatmap(qpd),qp);
+    // Vector3f qpd_HH_frame(1.0,0.0,0.0);
+    // Vector3f delta_qp = Matrix_vector_mul(hatmap(qpd_HH_frame),qp);
+    // HH_pitch_feedback = HH_pitch_feedback;
+    // if (HH_IMU_pitch_feedback > 0) {
+    //     HH_IMU_pitch_feedback = 0.98*HH_IMU_pitch_feedback;
+    // }
+    // HH_IMU_pitch_feedback = HH_IMU_pitch_feedback + 7.2;
+    // Debugging for IMU pitch angle and human handle pitch angle
+    // hal.console->printf("%6.2f,%6.2f,%6.2f\n",HH_pitch_feedback, HH_IMU_pitch_feedback ,HH_pitch_feedback + HH_IMU_pitch_feedback);
 
     // hal.console->printf("%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f\n",qp[0],qpd[0],qp[1],qpd[1],qp[2],qpd[2]);
-    // hal.console->printf("%5.2f,%5.2f,%5.2f\n",qp[0],qp[1],qp[2]);
-    // hal.console->printf("%5.2f,%5.2f,%5.2f,   ",qp[0],qp[1],qp[2]);
+    // hal.console->printf("%5.2f,%5.2f,%5.2f\n",delta_qp[0],delta_qp[1],delta_qp[2]);
+    // hal.console->printf("%5.2f,%5.2f,%5.2f \n",qp[0],qp[1],qp[2]);
     // hal.console->printf("%5.2f,%5.2f,%5.2f,   ",qpd[0],qpd[1],qpd[2]);
-    hal.console->printf("%5.2f,%5.2f,%5.2f,   ",delta_qp[0],delta_qp[1],delta_qp[2]);
+    // hal.console->printf("%5.2f,%5.2f,%5.2f,   ",delta_qp[0],delta_qp[1],delta_qp[2]);
     // hal.console->printf("%5.2f,%5.2f,   ",HH_pitch_feedback,HH_yaw_feedback);
     // hal.console->printf("%5.2f,%5.2f,%5.2f\n",HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback);
+
     Vector3f qp_dot = (qp - qp_prev);
 
     qp3_dot_fil10 = qp3_dot_fil9;
@@ -556,8 +620,20 @@ void Copter::get_IROS_data(){
     qp2_dot_fil2 = qp2_dot_fil1;
     qp2_dot_fil1 = qp_dot[1];
 
+    qp1_dot_fil10 = qp1_dot_fil9;
+    qp1_dot_fil9 = qp1_dot_fil8;
+    qp1_dot_fil8 = qp1_dot_fil7;    
+    qp1_dot_fil7 = qp1_dot_fil6;
+    qp1_dot_fil6 = qp1_dot_fil5;
+    qp1_dot_fil5 = qp1_dot_fil4;
+    qp1_dot_fil4 = qp1_dot_fil3;
+    qp1_dot_fil3 = qp1_dot_fil2;
+    qp1_dot_fil2 = qp1_dot_fil1;
+    qp1_dot_fil1 = qp_dot[0];
+
     qp3_dot_fil_final = (qp3_dot_fil1 + qp3_dot_fil2 + qp3_dot_fil3 + qp3_dot_fil4 + qp3_dot_fil5 + qp3_dot_fil6 + qp3_dot_fil7 + qp3_dot_fil8 + qp3_dot_fil9 + qp3_dot_fil10)/10.0;
     qp2_dot_fil_final = (qp2_dot_fil1 + qp2_dot_fil2 + qp2_dot_fil3 + qp2_dot_fil4 + qp2_dot_fil5 + qp2_dot_fil6 + qp2_dot_fil7 + qp2_dot_fil8 + qp2_dot_fil9 + qp2_dot_fil10)/10.0;
+    qp1_dot_fil_final = (qp1_dot_fil1 + qp1_dot_fil2 + qp1_dot_fil3 + qp1_dot_fil4 + qp1_dot_fil5 + qp1_dot_fil6 + qp1_dot_fil7 + qp1_dot_fil8 + qp1_dot_fil9 + qp1_dot_fil10)/10.0;
     // hal.console->printf("%10.5f,%10.5f,%10.5f,%10.5f\n",qp[2],100*qp3_dot_fil_final,qp[1],100*qp2_dot_fil_final);
     // hal.console->printf("%10.5f,%10.5f\n",qp[2],100*qp3_dot_fil_final);
 
@@ -674,7 +750,7 @@ void Copter::log_IROS_data(){
     qc1      : qc[0],
     qc2      : qc[1],
     qc3      : qc[2],
-    On_Off   : HH_on_off_feedback,
+    OO       : HH_on_off_feedback,
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -690,6 +766,30 @@ void Copter::log_IROS_raw_data(){
     HH_E_th  : HH_pitch_feedback,
     HH_E_ps  : HH_yaw_feedback,
     On_Off   : HH_on_off_feedback,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Copter::log_IROS_HH_acc(){
+
+    struct log_iros_HH_acc_ pkt = {
+    LOG_PACKET_HEADER_INIT(LOG_IROS_HH_ACC_MSG),
+    time_us  : AP_HAL::micros64(),
+    Axx      : Ax,
+    Ayy      : Ay,
+    Azz      : Az,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Copter::log_IROS_ATT_Track(){
+
+    struct log_iros_att_track_ pkt = {
+    LOG_PACKET_HEADER_INIT(LOG_IROS_ATT_TRACK_MSG),
+    time_us  : AP_HAL::micros64(),
+    qp1d      : qpd[0],
+    qp2d      : qpd[1],
+    qp3d      : qpd[2],
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -771,11 +871,17 @@ void Copter::getHumanIMUdata()
             }
         }
 
+        // hal.console->printf("%s\n",human_handle_IMU_data);
+
         char HH_IMU_roll_char[]     = "500000";
         char HH_IMU_pitch_char[]    = "500000";
         char HH_IMU_yaw_char[]      = "500000";
 
-        for (int i = 0; i < 20; i++)
+        char HH_AX_char[]      = "500000";
+        char HH_AY_char[]      = "500000";
+        char HH_AZ_char[]      = "500000";
+
+        for (int i = 0; i < 41; i++)
         {
             if (i < 6)  
             {
@@ -786,6 +892,15 @@ void Copter::getHumanIMUdata()
             } else if (i >=14 && i < 20)
             {
                 HH_IMU_yaw_char[i-14]       = human_handle_IMU_data[i];
+            } else if (i >=21 && i < 27)
+            {
+                HH_AX_char[i-21]       = human_handle_IMU_data[i];
+            } else if (i >=28 && i < 34)
+            {
+                HH_AY_char[i-28]       = human_handle_IMU_data[i];
+            } else if (i >=35 && i < 41)
+            {
+                HH_AZ_char[i-35]       = human_handle_IMU_data[i];
             }
         }
 
@@ -793,9 +908,18 @@ void Copter::getHumanIMUdata()
         int HH_IMU_pitch_int = atoi(HH_IMU_pitch_char);
         int HH_IMU_yaw_int   = atoi(HH_IMU_yaw_char);
 
+        int HH_AX_int        = atoi(HH_AX_char);
+        int HH_AY_int        = atoi(HH_AY_char);
+        int HH_AZ_int        = atoi(HH_AZ_char);
+
         HH_IMU_roll_feedback  = (float)((HH_IMU_roll_int - 500000.0) / 100.0);
         HH_IMU_pitch_feedback = (float)((HH_IMU_pitch_int - 500000.0) / 100.0);
         HH_IMU_yaw_feedback   = 180.0 + (float)((HH_IMU_yaw_int - 500000.0) / 100.0);
+        Ax = (float) ((HH_AX_int - 500000.0) /100.0);
+        Ay = (float) ((HH_AY_int - 500000.0) /100.0);
+        Az = (float) ((HH_AZ_int - 500000.0) /100.0);
+
+        // hal.console->printf("%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f\n",HH_IMU_roll_feedback,HH_IMU_pitch_feedback,HH_IMU_yaw_feedback,Ax,Ay,Az);
 
         float max_lim = 90;
 
@@ -869,10 +993,13 @@ void Copter::getEncoderData()
         int encoder_roll_int      = atoi(roll_char);
         int encoder_pitch_int     = atoi(pitch_char);
 
-        encoder_roll_feedback  = (float)((encoder_roll_int  - 50000.0) / 100.0);
-        encoder_pitch_feedback = (float)((encoder_pitch_int - 50000.0) / 100.0);
+        encoder_roll_feedback  =  (float)((encoder_roll_int  - 50000.0) / 100.0);
+        encoder_pitch_feedback =  (float)((encoder_pitch_int - 50000.0) / 100.0);
 
         encoder_pitch_feedback = encoder_pitch_feedback + 28.13;
+        encoder_roll_feedback  = encoder_roll_feedback  + 62.93;
+
+        // hal.console->printf("%5.2f,%5.2f\n",encoder_roll_feedback,encoder_pitch_feedback);
 
         if (encoder_roll_feedback > 65.0){
             encoder_roll_feedback = 65.0;
@@ -912,8 +1039,6 @@ void Copter::Log_Write_position()
         theta_p  : encoder_pitch_feedback,
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
-    // hal.console->printf("From log write position \n");
-
 }
 
 void Copter::Log_Write_velocity()
@@ -945,23 +1070,6 @@ void Copter::log_attitude_tracking()
         theta_h  : H_pitch,
         psi_h    : H_yaw,
         psi_h_dot: H_yaw_rate,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}
-
-void Copter::log_thurst_moment()
-{
-    struct log_th_Moment pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_TH_MOM_MSG),
-        time_us  : AP_HAL::micros64(),
-        PWM1     : PWM1,
-        PWM2     : PWM2,
-        PWM3     : PWM3,
-        PWM4     : PWM4,
-        F        : F,
-        M1       : Mb1,
-        M2       : Mb2,
-        M3       : Mb3,
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }

@@ -86,6 +86,11 @@ extern float HH_on_off_feedback;
 
 extern float human_handle_yaw_modified;
 
+extern Vector3f qpd;
+extern float Ax;
+extern float Ay;
+extern float Az;
+
 // extern float MG;
 // extern float KP_gain;
 // extern float KD_gain;

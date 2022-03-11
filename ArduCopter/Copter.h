@@ -930,6 +930,8 @@ private:
     void get_IROS_data();
     void log_IROS_raw_data();
     void log_IROS_data();
+    void log_IROS_HH_acc();
+    void log_IROS_ATT_Track();
     Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
     Matrix3f hatmap(Vector3f v);

@@ -722,7 +722,7 @@ struct PACKED log_iros_data {
     float qc1;
     float qc2;
     float qc3;
-    float On_Off;
+    float OO;
 };
 
 struct PACKED log_iros_raw_data_ {
@@ -736,6 +736,21 @@ struct PACKED log_iros_raw_data_ {
     float On_Off;
 };
 
+struct PACKED log_iros_HH_acc_ {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float Axx;
+    float Ayy;
+    float Azz;
+};
+
+struct PACKED log_iros_att_track_ {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float qp1d;
+    float qp2d;
+    float qp3d;
+};
 
 struct PACKED log_att_trac {
     LOG_PACKET_HEADER;
@@ -752,14 +767,14 @@ struct PACKED log_att_trac {
 struct PACKED log_th_Moment {
     LOG_PACKET_HEADER;
     uint64_t time_us;
-    uint16_t PWM1;
-    uint16_t PWM2;
-    uint16_t PWM3;
-    uint16_t PWM4;
-    float F;
-    float M1;
-    float M2;
-    float M3;
+    float PP1;
+    float PP2;
+    float PP3;
+    float PP4;
+    float FFF;
+    float Mbb1;
+    float Mbb2;
+    float Mbb3;
 };
 
 // FMT messages define all message formats other than FMT
@@ -1400,11 +1415,15 @@ LOG_STRUCTURE_FROM_VISUALODOM \
     { LOG_ATT_TRA_MSG, sizeof(log_att_trac), \
       "LATT", "Qfffffff", "TimeUS,ph,th,psi,ph_h,th_h,ps_h,ps_h_dot", "sddddddk", "F-------", true }, \
     { LOG_TH_MOM_MSG, sizeof(log_th_Moment), \
-      "LTMO", "QQQQQffff", "TimeUS,P1,P2,P3,P4,F,M1,M2,M3", "s--------", "F--------", true }, \
+      "LTMO", "Qffffffff", "TimeUS,P1,P2,P3,P4,F,M1,M2,M3", "smmmmmmmm", "F--------", true }, \
     { LOG_IROS_MSG, sizeof(log_iros_data), \
-      "LIR1", "Qfffffff", "TimeUS,qp1,qp2,qp3,qc1,qc2,qc3,On_Off", "s-------", "F-------", true }, \
+      "LIR1", "Qfffffff", "TimeUS,qp1,qp2,qp3,qc1,qc2,qc3,OO", "s-------", "F-------", true }, \
     { LOG_IROS_RAW_MSG, sizeof(log_iros_raw_data_), \
       "LIR2", "Qffffff", "TimeUS,HH_ph,HH_th,HH_ps,HH_E_th,HH_E_ps,On_Off", "s------", "F------", true }, \
+    { LOG_IROS_HH_ACC_MSG, sizeof(log_iros_HH_acc_), \
+      "LIR3", "Qfff", "TimeUS,Ax,Ay,Az", "s---", "F---", true }, \
+    { LOG_IROS_ATT_TRACK_MSG, sizeof(log_iros_att_track_), \
+      "LIR4", "Qfff", "TimeUS,qp1d,qp2d,qp3d", "s---", "F---", true }, \
 LOG_STRUCTURE_FROM_AIS \
 
 // message types 0 to 63 reserved for vehicle specific use
@@ -1489,6 +1508,8 @@ enum LogMessages : uint8_t {
     LOG_TH_MOM_MSG,
     LOG_IROS_MSG,
     LOG_IROS_RAW_MSG,
+    LOG_IROS_HH_ACC_MSG,
+    LOG_IROS_ATT_TRACK_MSG,
     _LOG_LAST_MSG_
 };
 

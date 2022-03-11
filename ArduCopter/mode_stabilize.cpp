@@ -102,11 +102,6 @@ float z_des_dot  = 0.0;
 
 float yaw_initially = 0.0;
 
-uint16_t PWM1 = 1000;
-uint16_t PWM2 = 1000;
-uint16_t PWM3 = 1000;
-uint16_t PWM4 = 1000;
-
 uint16_t PWM1_last_sysID = 1000;
 uint16_t PWM2_last_sysID = 1000;
 uint16_t PWM3_last_sysID = 1000;
@@ -131,11 +126,6 @@ int flag_th_sys_ID = 0.0;
 int flag_ps_sys_ID = 0.0;
 
 int arm_disarm_flag = 0;
-
-float F         = 0.0;
-float Mb1       = 0.0;
-float Mb2       = 0.0;
-float Mb3       = 0.0;
 
 float landing_timer = 0.0;
 int landing_timer_flag = 0;
@@ -202,10 +192,15 @@ int des_traj_sinusoidal_flag = 0;
 
 // To filter the human data
 int fil_iter = 20;
-float fil_H_roll_array[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-float fil_H_pitch_array[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+float fil_H_roll_array[]    = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+float fil_H_pitch_array[]   = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-float human_handle_yaw_modified = 0.0;
+float yaw_offsetted_IROS    = 0.0;
+float yaw_offset_human      = 0.0;
+
+int IROS_auto_z_flag = 0;
+float IROS_auto_z_timer = 0.0;
+float IROS_auto_z_time_flag = 0.0;
 
 void ModeStabilize::run()
 {
@@ -222,9 +217,6 @@ void ModeStabilize::run()
         hal.rcout->enable_ch(1);
         hal.rcout->enable_ch(2);
         hal.rcout->enable_ch(3);
-
-        // hal.serial(2)->begin(115200);
-
         code_starting_flag = 1;
 
     }else{
@@ -245,9 +237,9 @@ void ModeStabilize::run()
         }else{
             arm_disarm_flag = 0;
         }
-    
+
     ///////////// Data logging portenta  /////////////
-        data_logging_portenta();
+        // data_logging_portenta();
     ///////////// Checking batter voltage  /////////////
         battery_check();
     ///////////// Taking pilot inputs  /////////////
@@ -323,9 +315,9 @@ void ModeStabilize::run()
 
 }
 
-void ModeStabilize::data_logging_portenta(){
-    // hal.serial(2)->printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n",arm_disarm_flag,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw);
-}
+// void ModeStabilize::data_logging_portenta(){
+//     // hal.serial(2)->printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n",arm_disarm_flag,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw);
+// }
 
 void ModeStabilize::battery_check(){
     battvolt=copter.battery_volt();
@@ -337,7 +329,7 @@ void ModeStabilize::attitude_altitude_controller(){
 
         //// Initializing the states of the quadcopters
         quad_z_ini =  inertial_nav.get_position().z / 100.0;
-        
+
         // if (copter.rangefinder_alt_ok()){
             // float abcd = copter.rangefinder_state.alt_cm_filt.get();
             // hal.console->printf("Altitude from TFMini -> %f\n",abcd);
@@ -346,9 +338,15 @@ void ModeStabilize::attitude_altitude_controller(){
         //////// For checkig attitude performance
         des_traj_sinusoidal_flag = 0;
 
+        ///// For auto altitude mode
+        IROS_auto_z_flag = 0;
+        IROS_auto_z_time_flag = (AP_HAL::millis()/1000.0);
+
         // yaw_initially = (360.0-(ahrs.yaw_sensor)/ 100.0)*3.141/180.0;     // rad;
         yaw_initially = 0.0;
         H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
+
+        yaw_offsetted_IROS = (360.0-(ahrs.yaw_sensor) / 100.0) - HH_IMU_yaw_feedback;
 
         float quad_x_ini_inertial =  inertial_nav.get_position().x / 100.0;
         float quad_y_ini_inertial =  inertial_nav.get_position().y / 100.0;
@@ -356,7 +354,7 @@ void ModeStabilize::attitude_altitude_controller(){
         quad_x_ini =  cosf(yaw_initially)*quad_x_ini_inertial + sinf(yaw_initially)*quad_y_ini_inertial;
         quad_y_ini = -sinf(yaw_initially)*quad_x_ini_inertial + cosf(yaw_initially)*quad_y_ini_inertial;
 
-        //// Initial the gains
+        //// Initial the PWMs
         PWM1 = 1000;
         PWM2 = 1000;
         PWM3 = 1000;
@@ -367,7 +365,7 @@ void ModeStabilize::attitude_altitude_controller(){
             if (copter.motors->armed()){
                 // custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
                 // custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
-                
+
                 // hal.console->printf("M1->%f,M2->%f,M3->%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
 
                 ///////////////////////// Code for IROS 2022 /////////////////////////
@@ -395,110 +393,165 @@ void ModeStabilize::attitude_altitude_controller(){
                 // custom_geometric_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
 
                 ///////////////////////// Code for sending sinusoidal commands /////////////////////////
+
+                ///////////////////////// Code for IROS 2022 /////////////////////////
+
+                    IROS_controller_code();
+                ///////////////////////// Code for IROS 2022 /////////////////////////
+
+
             }
         }
 }
 
 void ModeStabilize::IROS_controller_code(){
 
-    ///////// Gathering the states of the system /////////
-    Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
-    Matrix3f R(eulerAnglesToRotationMatrix(rpy));
-    Vector3f e_3_neg(0,0,-1);
+    IROS_auto_z_timer = (AP_HAL::millis()/1000.0) - IROS_auto_z_time_flag;
 
-    human_handle_yaw_modified = (HH_IMU_yaw_feedback);
+    // if (IROS_auto_z_timer < 5.0) {
 
-    Vector3f qpd(cosf(human_handle_yaw_modified*PI/180),sinf(human_handle_yaw_modified*PI/180),0);
-    // Vector3f qpd(1.0,0.0,0.0);
-    Vector3f qcd(0.0,0.0,-1.0);
+    //     z_des = IROS_auto_z_timer*0.1;
+    //     float e_z   = z_des - quad_z;
+    //     float Kp_z        = 2.0;    // 2.0 (best)
+    //     float Kd_z        = 2.0;    // 1.0 (best)
 
-    Vector3f delta_qp = -Matrix_vector_mul(hatmap(qpd),qp);
-    // Vector3f delta_qc = Matrix_vector_mul(hatmap(qcd),qc);
-    // Vector3f delta_omega_p = Omega_p;
-    // Vector3f delta_omega_c = Omega_c;
+    //     F     =  11.0 + Kp_z * (e_z) + Kd_z * (0.0 - quad_z_dot);
 
-    // hal.console->printf("(%6.2f, %6.2f, %6.2f), (%6.2f,%6.2f,%6.2f)\n",delta_qp[0],delta_qp[1],delta_qp[2],delta_omega_p[0],delta_omega_p[1],delta_omega_p[2]);
-    // hal.console->printf("%10.3f, %10.3f, %10.3f\n",delta_qp[0],delta_qp[1],delta_qp[2]);
+    //     if (F > 14.0){
+    //         F = 14.0;
+    //     }
 
-    float Kqp3 = 24.0;
-    float Kqp3_dot = 20.0;
+    //     if (F < 0.0){
+    //         F =  0.0;
+    //     }    
 
-    float delta_u3 = 14.0 + Kqp3 * (delta_qp[1]) + Kqp3_dot * (qp3_dot_fil_final);
-    F = delta_u3;
+    //     float dt_yaw = 1.0/100.0;
+    //     H_yaw = wrap_360(H_yaw + H_yaw_rate*dt_yaw);
+    //     des_psi       = H_yaw;
+    //     des_phi       = 0.0;
+    //     des_theta     = 0.0;
+    //     rpy.x = imu_roll*PI/180.0;
+    //     rpy.y = imu_pitch*PI/180.0;
+    //     rpy.z = imu_yaw*PI/180.0;
+    //     Omega.x = 0.0;
+    //     Omega.y = 0.0;
+    //     Omega.z = 0.0;
+    //     R = eulerAnglesToRotationMatrix(rpy);
 
-    // hal.console->printf("(%10.3f, %10.3f, %10.3f)\n",Kqp3 * (delta_qp[1]),Komegap3 * delta_omega_p[1],F);
+    //     hal.console->printf("Time-> %6.2f, z_des -> %6.2f, z -> %6.2f \n", IROS_auto_z_timer, z_des, quad_z);
 
-    // F = 10.0;
-    if (F > 20.0){
-        F = 20.0;
-    }
+    // }else
+    // {
+        // hal.console->printf("Time-> %6.2f, z_des -> %6.2f, z -> %6.2f \n", IROS_auto_z_timer, z_des, quad_z);
 
-    if (F < 0.0){
-        F =  0.0;
-    }
+        ///////// Gathering the states of the system /////////
+        Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
+        Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+        Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
+        Vector3f e_3_neg(0,0,-1);
 
-    ///////////////////// Planning for yaw controller ///////////////////// 
-    // hal.console->printf("(%10.3f, %10.3f)\n",imu_yaw,HH_yaw_feedback);
-    ///////////////////// Planning for yaw controller /////////////////////
+        qpd[0] = cosf(HH_IMU_yaw_feedback*PI/180);
+        qpd[1] = sinf(HH_IMU_yaw_feedback*PI/180);
+        qpd[2] = 0.0;
 
-    ///////////////////// Planning for roll and pitch controller ///////////////////// 
+        Vector3f qcd(0.0,0.0,-1.0);
 
-    float Kp_pitch_IROS  = 10.0;
-    float Kd_pitch_IROS  = 24.0;
-    float des_pitch_IROS = Kp_pitch_IROS * qc[0] + Kd_pitch_IROS * qc1_dot_fil_final;
+        Vector3f qpd_HH_frame(1.0,0.0,0.0);
+        // Vector3f delta_qp = Matrix_vector_mul(hatmap(qpd_HH_frame),qp);
 
-    float Kp_roll_IROS_cable  = 11.0;
-    float Kd_roll_IROS_cable  = 80.0;
-    float des_roll_IROS_cable = -(Kp_roll_IROS_cable * qc[1] + Kd_roll_IROS_cable * qc2_dot_fil_final);
+        // Vector3f delta_qp = -Matrix_vector_mul(hatmap(qpd),qp);
+        // Vector3f delta_qc = Matrix_vector_mul(hatmap(qcd),qc);
+        // Vector3f delta_omega_p = Omega_p;
+        // Vector3f delta_omega_c = Omega_c;
 
-    float Kp_roll_IROS_payload  = 20.0;
-    float Kd_roll_IROS_payload  = 70.0;
+        // hal.console->printf("(%6.2f, %6.2f, %6.2f), (%6.2f,%6.2f,%6.2f)\n",delta_qp[0],delta_qp[1],delta_qp[2],delta_omega_p[0],delta_omega_p[1],delta_omega_p[2]);
+        // hal.console->printf("%10.3f, %10.3f, %10.3f\n",delta_qp[0],delta_qp[1],delta_qp[2]);
 
-    float des_roll_IROS_payload = Kp_roll_IROS_payload * delta_qp[2] + Kd_roll_IROS_payload * qp3_dot_fil_final;
+        float Kqp3      = 9.5;             // 19.0, 16.5,16.5
+        float Kqp3_dot  = 60.0;             // 35.0, 15.0,20.0
 
-    float des_roll_IROS = des_roll_IROS_cable + des_roll_IROS_payload;
+        // constant_
 
-    ///////////////////// Planning for roll and pitch controller ///////////////////// 
+        float delta_u3 = 14.0 + Kqp3 * (-qp[2]) + Kqp3_dot * (-qp3_dot_fil_final);
+        F = delta_u3;
 
-    ///////////////////// geometric attitude controller /////////////////////
+        // hal.console->printf("%5.3f, %5.3f\n",-delta_qp[1],-qp3_dot_fil_final*10);
 
-    // Requied states for the attitude controller //
-    float des_phi       = des_roll_IROS;
-    float des_theta     = des_pitch_IROS;
-    float des_psi       = H_yaw;
-    // float des_psi       = human_handle_yaw_modified;
+        // F = 10.0;
+        if (F > 20.0){
+            F = 20.0;
+        }
+
+        if (F < 0.0){
+            F =  0.0;
+        }
+
+        ///////////////////// Planning for yaw controller ///////////////////// 
+        // hal.console->printf("(%10.3f, %10.3f)\n",imu_yaw,HH_yaw_feedback);
+        ///////////////////// Planning for yaw controller /////////////////////
+
+        ///////////////////// Planning for roll and pitch controller ///////////////////// 
+
+        float Kp_pitch_IROS  = 10.0;
+        float Kd_pitch_IROS  = 24.0;
+        float des_pitch_IROS = Kp_pitch_IROS * qc[0] + Kd_pitch_IROS * qc1_dot_fil_final;
+
+        float Kp_roll_IROS_cable  = 15.0;
+        float Kd_roll_IROS_cable  = 80.0;
+        float des_roll_IROS_cable = -(Kp_roll_IROS_cable * qc[1] + Kd_roll_IROS_cable * qc2_dot_fil_final);
+        // des_roll_IROS_cable = 0.0;
+        float Kp_roll_IROS_payload  = 35.0; // 20.0
+        float Kd_roll_IROS_payload  = 70.0;
+
+        float des_roll_IROS_payload = Kp_roll_IROS_payload * (qp[1]) + Kd_roll_IROS_payload * (qp2_dot_fil_final);
+        // des_roll_IROS_payload = 0.0;
+        float des_roll_IROS = des_roll_IROS_cable + des_roll_IROS_payload;
+
+        // hal.console->printf("%5.2f,%5.2f,%5.2f,%5.2f\n",qp[0],qp[1],qp[2],delta_u3);
+
+        ///////////////////// Planning for roll and pitch controller ///////////////////// 
+
+        ///////////////////// geometric attitude controller /////////////////////
+
+        // Requied states for the attitude controller //
+
+        float des_phi       = des_roll_IROS;
+        float des_theta     = des_pitch_IROS;
+        float human_handle_yaw_modified_yaw_control = HH_IMU_yaw_feedback + yaw_offsetted_IROS;
+        float dt_yaw = 1.0/100.0;
+        H_yaw_rate  = -(double)(channel_yaw->get_control_in()) / 100.0;
+        yaw_offset_human  = yaw_offset_human + H_yaw_rate*dt_yaw;
+        float des_psi       = wrap_360(human_handle_yaw_modified_yaw_control + yaw_offset_human);
+
+        // rpy.x = imu_roll*PI/180.0;
+        // rpy.y = imu_pitch*PI/180.0;
+        // rpy.z = imu_yaw*PI/180.0;
+        
+        // R = eulerAnglesToRotationMatrix(rpy);
+
+        // hal.console->printf("%5.2f,%5.2f,%5.2f,%5.2f\n",imu_yaw,HH_IMU_yaw_feedback,yaw_offsetted_IROS,des_psi);
+
+        float des_phi_offset    = 2.0;
+        float des_theta_offset  = 0.0;
+
+        des_phi     = des_phi + des_phi_offset;
+        des_theta   = des_theta + des_theta_offset;
+
+    // }
     float des_phi_dot   = 0.0;
     float des_theta_dot = 0.0;
     float des_psi_dot   = 0.0;
-
-    Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
-
-    float des_phi_offset    = 0.0;
-    float des_theta_offset  = 5.0;
-
-    des_phi     = des_phi + des_phi_offset;
-    des_theta   = des_theta + des_theta_offset;
 
     Vector3f rpy_d(des_phi*PI/180.0,des_theta*PI/180.0,des_psi*PI/180.0);
     Vector3f Omegad(des_phi_dot*PI/180.0,des_theta_dot*PI/180.0,des_psi_dot*PI/180.0);
 
     Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
 
-    // float yaw_offsetted = PI/2.0;
-    float yaw_offsetted = 0.0;
-
-    Matrix3f R_z_offset (
-               cosf(yaw_offsetted*PI/180.0),    -sinf(yaw_offsetted*PI/180.0),      0,
-               sinf(yaw_offsetted*PI/180.0),     cosf(yaw_offsetted*PI/180.0),      0,
-               0,               0,                  1);
-
-    Matrix3f Rd_offsetted(R_z_offset*Rd);
-
     float c2 = 2.0;
     // float c1 = 1.0;
 
-    Vector3f e_R_val        = e_R(R,Rd_offsetted);
-    Vector3f e_Omega_val    = e_Omega(R,Rd_offsetted,Omega,Omegad);
+    Vector3f e_R_val        = e_R(R,Rd);
+    Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
     Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
     Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
     e_I_val_old             = e_I_val;
@@ -575,8 +628,11 @@ void ModeStabilize::IROS_controller_code(){
         PWM2 = 1000;
         PWM3 = 1000;
         PWM4 = 1000;
+        // PWM1 = 1170;
+        // PWM2 = 1170;
+        // PWM3 = 1170;
+        // PWM4 = 1170;
     // }
-    
 
 }
 
@@ -967,14 +1023,14 @@ void ModeStabilize::quad_states(){
 
     quad_z =  (inertial_nav.get_position().z / 100.0) - quad_z_ini;
 
-    if (quad_x < -9.9){quad_x = -9.9;}
-    if (quad_x > 9.9){quad_x = 9.9;}
+    // if (quad_x < -9.9){quad_x = -9.9;}
+    // if (quad_x > 9.9){quad_x = 9.9;}
 
-    if (quad_y < -9.9){quad_y = -9.9;}
-    if (quad_y > 9.9){quad_y = 9.9;}
+    // if (quad_y < -9.9){quad_y = -9.9;}
+    // if (quad_y > 9.9){quad_y = 9.9;}
 
-    if (quad_z < 0){quad_z = 0;}
-    if (quad_z > 5){quad_z = 5;}
+    // if (quad_z < 0){quad_z = 0;}
+    // if (quad_z > 5){quad_z = 5;}
 
     // linear velocity in inertial frame of reference
     float quad_x_dot_inertial =  inertial_nav.get_velocity().x /100.0;
@@ -1163,7 +1219,7 @@ int ModeStabilize::Inverse_thrust_function(float Force){
     if (battvolt >= 11.5 ){PWM = 1000 * (0.9206 + (sqrtf(12.8953 + 30.3264*Force)/(15.1632)));
     }else{PWM = 1000 * (0.6021 + (sqrtf(33.2341 + 19.418*Force)/(9.5740)));}
     if (PWM > 2000){PWM = 2000;}
-    if (PWM < 1000){PWM = 1000;}
+    if (PWM < 1200){PWM = 1200;}
 
     return PWM;
 }
