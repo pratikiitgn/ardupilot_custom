@@ -202,6 +202,9 @@ int IROS_auto_z_flag = 0;
 float IROS_auto_z_timer = 0.0;
 float IROS_auto_z_time_flag = 0.0;
 
+float constant_mg_IROS_offset = 0.0;
+float constant_mg_IROS = 0.0;
+
 void ModeStabilize::run()
 {
         // hal.serial(2)->printf("%1d,%6.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%6.2f,%6.2f,%7.2f,%7.2f,%7.2f,%4d,%4d,%4d,%4d_",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw,H_yaw_rate,H_throttle,PWM1,PWM2,PWM3,PWM4);
@@ -347,6 +350,7 @@ void ModeStabilize::attitude_altitude_controller(){
         H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
 
         yaw_offsetted_IROS = (360.0-(ahrs.yaw_sensor) / 100.0) - HH_IMU_yaw_feedback;
+        yaw_offset_human   = 0.0;
 
         float quad_x_ini_inertial =  inertial_nav.get_position().x / 100.0;
         float quad_y_ini_inertial =  inertial_nav.get_position().y / 100.0;
@@ -467,12 +471,31 @@ void ModeStabilize::IROS_controller_code(){
         // hal.console->printf("(%6.2f, %6.2f, %6.2f), (%6.2f,%6.2f,%6.2f)\n",delta_qp[0],delta_qp[1],delta_qp[2],delta_omega_p[0],delta_omega_p[1],delta_omega_p[2]);
         // hal.console->printf("%10.3f, %10.3f, %10.3f\n",delta_qp[0],delta_qp[1],delta_qp[2]);
 
-        float Kqp3      = 9.5;             // 19.0, 16.5,16.5
-        float Kqp3_dot  = 60.0;             // 35.0, 15.0,20.0
+        float Kqp3      = 8.5;             // 9.5
+        float Kqp3_dot  = 60.0;             // 60.0
 
-        // constant_
+        float dt_mg = 1.0/2500.0;
+        float H_pitch_mg  = (double)(channel_pitch->get_control_in()/100.0);
 
-        float delta_u3 = 14.0 + Kqp3 * (-qp[2]) + Kqp3_dot * (-qp3_dot_fil_final);
+        if (H_pitch_mg < 5.0 && H_pitch_mg > -5.0){
+            H_pitch_mg = 0.0;
+        }
+
+        constant_mg_IROS_offset = constant_mg_IROS_offset + (H_pitch_mg * dt_mg);
+
+        if (constant_mg_IROS_offset > 4.0){
+            constant_mg_IROS_offset = 4.0;
+        }
+
+        if (constant_mg_IROS_offset < -4.0){
+            constant_mg_IROS_offset = -4.0;
+        }
+
+        constant_mg_IROS = 15.5 + constant_mg_IROS_offset;
+
+        hal.console->printf("%5.2f,%5.2f\n",13.4, constant_mg_IROS);
+
+        float delta_u3 = constant_mg_IROS + Kqp3 * (-qp[2]) + Kqp3_dot * (-qp3_dot_fil_final);
         F = delta_u3;
 
         // hal.console->printf("%5.3f, %5.3f\n",-delta_qp[1],-qp3_dot_fil_final*10);
@@ -492,12 +515,12 @@ void ModeStabilize::IROS_controller_code(){
 
         ///////////////////// Planning for roll and pitch controller ///////////////////// 
 
-        float Kp_pitch_IROS  = 10.0;
+        float Kp_pitch_IROS  = 8.0;
         float Kd_pitch_IROS  = 24.0;
         float des_pitch_IROS = Kp_pitch_IROS * qc[0] + Kd_pitch_IROS * qc1_dot_fil_final;
 
-        float Kp_roll_IROS_cable  = 15.0;
-        float Kd_roll_IROS_cable  = 80.0;
+        float Kp_roll_IROS_cable  = 18.0;
+        float Kd_roll_IROS_cable  = 70.0;
         float des_roll_IROS_cable = -(Kp_roll_IROS_cable * qc[1] + Kd_roll_IROS_cable * qc2_dot_fil_final);
         // des_roll_IROS_cable = 0.0;
         float Kp_roll_IROS_payload  = 35.0; // 20.0
@@ -520,8 +543,15 @@ void ModeStabilize::IROS_controller_code(){
         float human_handle_yaw_modified_yaw_control = HH_IMU_yaw_feedback + yaw_offsetted_IROS;
         float dt_yaw = 1.0/100.0;
         H_yaw_rate  = -(double)(channel_yaw->get_control_in()) / 100.0;
+
+        if (H_yaw_rate < 5.0 && H_yaw_rate > -5.0){
+            H_yaw_rate = 0.0;
+        }
+
         yaw_offset_human  = yaw_offset_human + H_yaw_rate*dt_yaw;
         float des_psi       = wrap_360(human_handle_yaw_modified_yaw_control + yaw_offset_human);
+
+        // hal.console->printf("%5.2f,%5.2f\n",des_psi,imu_yaw);
 
         // rpy.x = imu_roll*PI/180.0;
         // rpy.y = imu_pitch*PI/180.0;
@@ -531,8 +561,8 @@ void ModeStabilize::IROS_controller_code(){
 
         // hal.console->printf("%5.2f,%5.2f,%5.2f,%5.2f\n",imu_yaw,HH_IMU_yaw_feedback,yaw_offsetted_IROS,des_psi);
 
-        float des_phi_offset    = 2.0;
-        float des_theta_offset  = 0.0;
+        float des_phi_offset    = 0.0;
+        float des_theta_offset  = 2.0;
 
         des_phi     = des_phi + des_phi_offset;
         des_theta   = des_theta + des_theta_offset;
@@ -567,7 +597,7 @@ void ModeStabilize::IROS_controller_code(){
     KR2         = 1.3;  // 1.0  (TB good)
     KOmega2     = 24; // 13.5 (TB good)
     KI2         = 0.01;  // 0.1  (TB good)
-    KR3         = 6.0;  // 1.0  (TB good)
+    KR3         = 4.0;  // 1.0  (TB good)
     KOmega3     = 10.0; // 13.5 (TB good)
     KI3         = 0.00;  // 0.1  (TB good)
 
@@ -623,7 +653,7 @@ void ModeStabilize::IROS_controller_code(){
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    // if (HH_on_off_feedback < 1){
+    if (HH_on_off_feedback < 1){
         PWM1 = 1000;
         PWM2 = 1000;
         PWM3 = 1000;
@@ -632,7 +662,7 @@ void ModeStabilize::IROS_controller_code(){
         // PWM2 = 1170;
         // PWM3 = 1170;
         // PWM4 = 1170;
-    // }
+    }
 
 }
 

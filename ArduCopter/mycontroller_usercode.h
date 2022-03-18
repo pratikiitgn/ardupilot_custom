@@ -91,6 +91,8 @@ extern float Ax;
 extern float Ay;
 extern float Az;
 
+extern float constant_mg_IROS;
+
 // extern float MG;
 // extern float KP_gain;
 // extern float KD_gain;

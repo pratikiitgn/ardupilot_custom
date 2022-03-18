@@ -750,7 +750,7 @@ void Copter::log_IROS_data(){
     qc1      : qc[0],
     qc2      : qc[1],
     qc3      : qc[2],
-    OO       : HH_on_off_feedback,
+    OO       : constant_mg_IROS,
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
