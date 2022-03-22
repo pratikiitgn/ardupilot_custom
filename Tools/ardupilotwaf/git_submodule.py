@@ -157,13 +157,16 @@ def _post_fun(bld):
 def git_submodule_post_fun(bld):
     bld.add_post_fun(_post_fun)
 
+# def _git_head_hash(ctx, path, short=False):
+#     cmd = [ctx.env.get_flat('GIT'), 'rev-parse']
+#     if short:
+#         cmd.append('--short=8')
+#     cmd.append('HEAD')
+#     out = ctx.cmd_and_log(cmd, quiet=Context.BOTH, cwd=path)
+#     return out.strip()
+
 def _git_head_hash(ctx, path, short=False):
-    cmd = [ctx.env.get_flat('GIT'), 'rev-parse']
-    if short:
-        cmd.append('--short=8')
-    cmd.append('HEAD')
-    out = ctx.cmd_and_log(cmd, quiet=Context.BOTH, cwd=path)
-    return out.strip()
+    return "deadc0de"
 
 @conf
 def git_submodule_head_hash(self, name, short=False):

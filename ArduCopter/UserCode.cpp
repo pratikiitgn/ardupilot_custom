@@ -45,7 +45,7 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    hal.serial(2)->begin(115200);
+    // hal.serial(2)->begin(115200);
 
 }
 #endif
@@ -60,44 +60,9 @@ void Copter::userhook_FastLoop()
     log_sys_ID_ph_func();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
-    
-    
     imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
     imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
     imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
- 
-
-    // hal.console->printf("From usercode \n");
-    // getEncoderData();
-    // hal.console->printf("ph_p %f, th_p - %f\n",encoder_roll_feedback,encoder_pitch_feedback); 
-
-    // char H_roll_[5]    = "";
-    // char H_pitch_[5]   = "";
-    // char imu_roll_[5]  = "";
-    // char imu_pitch_[5] = "";
-
-    // int imu_roll_         = imu_roll*100;
-    // int H_roll_           = H_roll*100;
-    // int H_pitch_        = H_pitch*100;
-    // int imu_roll_dot_       = imu_roll_dot*100;
-    // int imu_pitch_      = imu_pitch*100;
-
-// if (H_roll_ > 4500){
-//     H_roll_ = 4500;
-// }
-
-// if (H_roll_ < -4500){
-//     H_roll_ = -4500;
-// }
-
-// if (imu_roll_ > 4500){
-//     imu_roll_ = 4500;
-// }
-
-// if (imu_roll_ < -4500){
-//     imu_roll_ = -4500;
-// }
-
 
     // hal.serial(2)->printf("%f",quad_x);
     // hal.serial(2)->printf(",");
@@ -121,8 +86,8 @@ void Copter::userhook_FastLoop()
     // hal.serial(2)->printf("%f,%f,%f,%f",F,Mb1,Mb2,Mb3);
     // hal.serial(2)->printf("\n");
 
-    hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
-    hal.console->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+    // hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+    // hal.console->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
 }
 #endif
 

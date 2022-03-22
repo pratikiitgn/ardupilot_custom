@@ -165,16 +165,14 @@ void ModeStabilize::run()
             arm_disarm_flag = 0;
         }
     
+    ///////////// getting pilot inputs  /////////////
+        pilot_input();
+
     ///////////// getting states  /////////////
         quad_states();
 
-    ///////////// For system iedntification  /////////////
-        // system_identification_main();
-
-
     ///////////// For attitude controller controller  /////////////
         attitude_altitude_controller();
-        // custom_pwm_code();
 
     }
 
@@ -189,49 +187,49 @@ void ModeStabilize::run()
 
 
 
-// convert pilot input to lean angles
-    float target_roll, target_pitch;
-    get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max); // from mode.cpp file angle in centi-degree
+// // convert pilot input to lean angles
+//     float target_roll, target_pitch;
+//     get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max); // from mode.cpp file angle in centi-degree
 
-    // get pilot's desired yaw rate
-    // float target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->norm_input_dz()); // from mode.cpp file angle in centi-degree per sec
+//     // get pilot's desired yaw rate
+//     // float target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->norm_input_dz()); // from mode.cpp file angle in centi-degree per sec
 
-    if (!motors->armed()) {
-        // Motors should be Stopped
-        motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
-    } else if (copter.ap.throttle_zero) {
-        // Attempting to Land
-        motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::GROUND_IDLE);
-    } else {
-        motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
-    }
+//     if (!motors->armed()) {
+//         // Motors should be Stopped
+//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
+//     } else if (copter.ap.throttle_zero) {
+//         // Attempting to Land
+//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::GROUND_IDLE);
+//     } else {
+//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
+//     }
 
-    switch (motors->get_spool_state()) {
-    case AP_Motors::SpoolState::SHUT_DOWN:
-        // Motors Stopped
-        attitude_control->reset_yaw_target_and_rate();
-        attitude_control->reset_rate_controller_I_terms();
-        break;
+//     switch (motors->get_spool_state()) {
+//     case AP_Motors::SpoolState::SHUT_DOWN:
+//         // Motors Stopped
+//         attitude_control->reset_yaw_target_and_rate();
+//         attitude_control->reset_rate_controller_I_terms();
+//         break;
 
-    case AP_Motors::SpoolState::GROUND_IDLE:
-        // Landed
-        attitude_control->reset_yaw_target_and_rate();
-        attitude_control->reset_rate_controller_I_terms_smoothly();
-        break;
+//     case AP_Motors::SpoolState::GROUND_IDLE:
+//         // Landed
+//         attitude_control->reset_yaw_target_and_rate();
+//         attitude_control->reset_rate_controller_I_terms_smoothly();
+//         break;
 
-    case AP_Motors::SpoolState::THROTTLE_UNLIMITED:
-        // clear landing flag above zero throttle
-        if (!motors->limit.throttle_lower) {
-            set_land_complete(false);
-            // copter.motors->rc_write(1, 2000);
-        }
-        break;
+//     case AP_Motors::SpoolState::THROTTLE_UNLIMITED:
+//         // clear landing flag above zero throttle
+//         if (!motors->limit.throttle_lower) {
+//             set_land_complete(false);
+//             // copter.motors->rc_write(1, 2000);
+//         }
+//         break;
 
-    case AP_Motors::SpoolState::SPOOLING_UP:
-    case AP_Motors::SpoolState::SPOOLING_DOWN:
-        // do nothing
-        break;
-    }
+//     case AP_Motors::SpoolState::SPOOLING_UP:
+//     case AP_Motors::SpoolState::SPOOLING_DOWN:
+//         // do nothing
+//         break;
+//     }
 
 }
 
@@ -239,107 +237,17 @@ void ModeStabilize::attitude_altitude_controller(){
     if (RC_Channels::get_radio_in(CH_6) < 1200){
 
             motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
-            
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
                 custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
-                custom_pwm_code();
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
-                
             }
         }
 }
 
-
-void ModeStabilize::system_identification_x_axis(){
-    Pf  = (double)channel_throttle->get_control_in() + 1100;
-
-    if (t_ph_sys_ID > 5.0 && t_ph_sys_ID < 6.0){
-        Pm1 = 50;
-        PWM1 = Pf + Pm1;
-        PWM2 = Pf - Pm1;
-        PWM3 = Pf + Pm1;
-        PWM4 = Pf - Pm1;
-    }else{
-        PWM1 = Pf;
-        PWM2 = Pf;
-        PWM3 = Pf;
-        PWM4 = Pf;
-    }
-}
-
-void ModeStabilize::system_identification_y_axis(){
-    Pf  = (double)channel_throttle->get_control_in() + 1100;
-
-    if (t_ph_sys_ID > 5.0 && t_ph_sys_ID < 6.0){
-        Pm2 = 50;
-        PWM1 = Pf - Pm2;
-        PWM2 = Pf - Pm2;
-        PWM3 = Pf + Pm2;
-        PWM4 = Pf + Pm2;
-    }else{
-        PWM1 = Pf;
-        PWM2 = Pf;
-        PWM3 = Pf;
-        PWM4 = Pf;
-    }
-}
-
-
-void ModeStabilize::custom_pwm_code(){
-
-    // if (RC_Channels::get_radio_in(CH_6) > 1600){
-
-        copter.init_rc_out();
-        SRV_Channels::cork();
-        hal.rcout->write(0,PWM1);
-        hal.rcout->write(1,PWM2);
-        hal.rcout->write(2,PWM3);
-        hal.rcout->write(3,PWM4);
-        SRV_Channels::push();
-
-        // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
-}
-
-void ModeStabilize::system_identification_main(){
-    if (RC_Channels::get_radio_in(CH_6) < 1200){
-            // copter.motors->armed(false);
-            motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
-            Pf = 1100;
-            PWM1 = Pf;
-            PWM2 = Pf;
-            PWM3 = Pf;
-            PWM4 = Pf;
-            t_ph_sys_ID = 0.0;
-            flag_ph_sys_ID = 0;
-        }
-        else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
-            if (copter.motors->armed()){
-                Pf  = (double)channel_throttle->get_control_in() + 1100;
-                PWM1 = Pf;
-                PWM2 = Pf;
-                PWM3 = Pf;
-                PWM4 = Pf;
-                t_ph_sys_ID = 0.0;
-                flag_ph_sys_ID = 0;
-                custom_pwm_code();
-            }
-        }else if (RC_Channels::get_radio_in(CH_6) > 1600){
-            if(copter.motors->armed()){
-                if ( flag_ph_sys_ID == 0){
-                t_start_ph_sys_ID = AP_HAL::millis();
-                flag_ph_sys_ID = 1;
-            }
-                t_ph_sys_ID = (AP_HAL::millis() - t_start_ph_sys_ID)/1000.0;
-                // system_identification_x_axis();
-                system_identification_y_axis();
-                custom_pwm_code();
-            }
-        }
-}
 
 void ModeStabilize::quad_states(){
     // Position in inertial reference frame
@@ -368,72 +276,6 @@ void ModeStabilize::quad_states(){
     imu_roll_dot    =  (ahrs.get_gyro().x);             // degrees/second
     imu_pitch_dot   =  -(ahrs.get_gyro().y);             // degrees/second    
     imu_yaw_dot     = -(ahrs.get_gyro().z);             // degrees/second
-
-}
-
-void ModeStabilize::custom_PID_controller_sysID(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
-    
-    float FM_devided_FF ;
-    if (battvolt >= 11.5 ){
-         FM_devided_FF = 0.24;
-    }else{
-         FM_devided_FF = 0.31;
-    }
-
-    float arm_length = 0.161;
-
-    float Kp_phi      = 0.012;   // 0.012 (best) 
-    float Kp_theta    = 0.015;   // 0.015 (best) 
-    float Kp_psi      = 0.1;     // 0.1 (best)
-
-    float Kd_phi      = 0.2;     // 0.4 (best) // 0.25 (lab 1) // 2.0 (out 1) 1.6 (testbed)
-    float Kd_theta    = 0.15;    // 0.4 (best) // 0.5 (lab 1) // // 3.0 (out 1) 2.5 (testbed)
-    float Kd_psi      = 0.2;     // // 6.0 (testbed)
-
-    float e_phi       = des_phi   - imu_roll;
-    float e_theta     = des_theta - imu_pitch;
-
-    Mb1 = Kp_phi    * saturation_for_roll_pitch_angle_error(e_phi)    + Kd_phi    * (des_phi_dot - imu_roll_dot);
-
-    Mb2 = Kp_theta  * saturation_for_roll_pitch_angle_error(e_theta)  + Kd_theta  * (des_theta_dot - imu_pitch_dot);
-
-    ////// Yaw controller customized //////
-    float e_psi     = des_psi   - imu_yaw;
-
-    if (e_psi > 0.0){
-
-        if ( e_psi > 180.0 ){
-            e_psi = -(360.0 - e_psi);
-        }
-
-    }else if ( e_psi < 0.0 ) {
-        if ( -e_psi < 180.0 ){
-            e_psi = e_psi;
-        }else{
-            e_psi = 360.0 + e_psi;
-        }
-    }
-
-    Mb3           = -(Kp_psi  * saturation_for_yaw_angle_error(e_psi)  + Kd_psi  * (des_psi_dot - imu_yaw_dot)) ;    
-    Mb3 = 0.0;
-    ////// Yaw controller customized //////
-
-
-
-    float function_F1 =  Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
-    float function_F2 = -Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F3 =  Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F4 = -Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
-
-    PWM1 = Inverse_thrust_function(function_F1) + Pf;
-    PWM2 = Inverse_thrust_function(function_F2) + Pf;
-    PWM3 = Inverse_thrust_function(function_F3) + Pf;
-    PWM4 = Inverse_thrust_function(function_F4) + Pf;
-
-    // PWM1 = Inverse_thrust_function(function_F1);
-    // PWM2 = Inverse_thrust_function(function_F2);
-    // PWM3 = Inverse_thrust_function(function_F3);
-    // PWM4 = Inverse_thrust_function(function_F4);
 
 }
 
@@ -492,7 +334,6 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
     float e_psi_sum     = e_psi + e_psi_prev;
     Mb3           = -(Kp_psi  * saturation_for_yaw_angle_error(e_psi)  + Kd_psi  * (des_psi_dot - imu_yaw_dot)) + Ki_psi * sat_I_gain_psi(e_psi_sum);;    
     e_psi_prev          = e_psi;
-    // Mb3 = 0.0;
     ////// Yaw controller customized //////
 
 ///////////////////// Altitude controller /////////////////////
@@ -521,6 +362,11 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
+    PWM1 = 1000;
+    PWM2 = 1000;
+    PWM3 = 1000;
+    PWM4 = 1000;
+
 }
 
 void ModeStabilize::pilot_input(){
@@ -528,6 +374,8 @@ void ModeStabilize::pilot_input(){
     H_roll      = (double)(channel_roll->get_control_in())/100.0;
     H_roll_dot  = (H_roll - H_roll_prev)/400.0;
     H_roll_prev = H_roll;
+
+    hal.console->printf("H Roll %5.3f\n",H_roll);
 
     H_pitch     = (double)(channel_pitch->get_control_in())/100.0;
     H_pitch_dot = (H_pitch - H_pitch_prev)/400.0;
@@ -611,7 +459,6 @@ int ModeStabilize::Inverse_thrust_function(float Force){
 
     return PWM;
 }
-
 
 float ModeStabilize::saturation_for_yaw_angle_error(float error){
 
