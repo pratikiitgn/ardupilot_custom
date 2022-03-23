@@ -69,6 +69,11 @@
 #include <AP_ADSB/AP_ADSB.h>                // ADS-B RF based collision avoidance module library
 #include <AP_Proximity/AP_Proximity.h>      // ArduPilot proximity sensor library
 
+extern uint16_t PWM1;
+extern uint16_t PWM2;
+extern uint16_t PWM3;
+extern uint16_t PWM4;
+
 // Configuration
 #include "defines.h"
 #include "config.h"

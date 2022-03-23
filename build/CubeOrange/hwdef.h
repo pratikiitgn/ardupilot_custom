@@ -364,7 +364,7 @@
 #define STM32_UART_USART6_TX_DMA_CHAN  STM32_DMAMUX1_USART6_TX
 
 // Mask of DMA streams which are shared
-#define SHARED_DMA_MASK ((1U<<STM32_DMA_STREAM_ID(2,3))|(1U<<STM32_DMA_STREAM_ID(2,7)))
+#define SHARED_DMA_MASK ((1U<<STM32_DMA_STREAM_ID(2,7))|(1U<<STM32_DMA_STREAM_ID(2,3)))
 
 
 // generated UART DMA configuration lines

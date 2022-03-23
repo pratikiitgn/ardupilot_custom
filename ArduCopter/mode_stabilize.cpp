@@ -58,33 +58,6 @@ float longitude = 0.0;
 int pwm__thrust_measurement = 1000;
 int flag_thrust_measurement = 0;
 
-float fil_z     = 0.0;
-float fil_z_1   = 0.0;
-float fil_z_2   = 0.0;
-float fil_z_3   = 0.0;
-float fil_z_4   = 0.0;
-float fil_z_5   = 0.0;
-float fil_z_6   = 0.0;
-float fil_z_7   = 0.0;
-float fil_z_8   = 0.0;
-float fil_z_9   = 0.0;
-float fil_z_10  = 0.0;
-float fil_z_11  = 0.0;
-
-float fil_ph    = 0.0;
-float fil_ph_1  = 0.0;
-float fil_ph_2  = 0.0;
-float fil_ph_3  = 0.0;
-float fil_ph_4  = 0.0;
-float fil_ph_5  = 0.0;
-
-float fil_th    = 0.0;
-float fil_th_1  = 0.0;
-float fil_th_2  = 0.0;
-float fil_th_3  = 0.0;
-float fil_th_4  = 0.0;
-float fil_th_5  = 0.0;
-
 float e_phi_prev    = 0.0;
 float e_theta_prev  = 0.0;
 float e_psi_prev    = 0.0;
@@ -108,28 +81,11 @@ uint16_t PWM2 = 1000;
 uint16_t PWM3 = 1000;
 uint16_t PWM4 = 1000;
 
-uint16_t PWM1_last_sysID = 1000;
-uint16_t PWM2_last_sysID = 1000;
-uint16_t PWM3_last_sysID = 1000;
-uint16_t PWM4_last_sysID = 1000;
-
 uint16_t Pf  = 0;
 uint16_t Pm1 = 0;
 uint16_t Pm2 = 0;
 uint16_t Pm3 = 0;
 uint16_t Pm4 = 0;
-
-float t_ph_sys_ID = 0.0;
-float t_th_sys_ID = 0.0;
-float t_ps_sys_ID = 0.0;
-
-float t_start_ph_sys_ID = 0.0;
-float t_start_th_sys_ID = 0.0;
-float t_start_ps_sys_ID = 0.0;
-
-int flag_ph_sys_ID = 0.0;
-int flag_th_sys_ID = 0.0;
-int flag_ps_sys_ID = 0.0;
 
 int arm_disarm_flag = 0;
 
@@ -140,7 +96,6 @@ float Mb3       = 0.0;
 
 void ModeStabilize::run()
 {
-        // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
 
     if (code_starting_flag == 0){
 
@@ -151,8 +106,6 @@ void ModeStabilize::run()
         hal.rcout->enable_ch(1);
         hal.rcout->enable_ch(2);
         hal.rcout->enable_ch(3);
-
-        // hal.serial(2)->begin(115200);
 
         code_starting_flag = 1;
 
@@ -176,74 +129,29 @@ void ModeStabilize::run()
 
     }
 
-        // hal.console->printf("Hello captain from general");
-
-
-
-///////////// OLD CODE  /////////////
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////
-
-
-
-// // convert pilot input to lean angles
-//     float target_roll, target_pitch;
-//     get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max); // from mode.cpp file angle in centi-degree
-
-//     // get pilot's desired yaw rate
-//     // float target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->norm_input_dz()); // from mode.cpp file angle in centi-degree per sec
-
-//     if (!motors->armed()) {
-//         // Motors should be Stopped
-//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
-//     } else if (copter.ap.throttle_zero) {
-//         // Attempting to Land
-//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::GROUND_IDLE);
-//     } else {
-//         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
-//     }
-
-//     switch (motors->get_spool_state()) {
-//     case AP_Motors::SpoolState::SHUT_DOWN:
-//         // Motors Stopped
-//         attitude_control->reset_yaw_target_and_rate();
-//         attitude_control->reset_rate_controller_I_terms();
-//         break;
-
-//     case AP_Motors::SpoolState::GROUND_IDLE:
-//         // Landed
-//         attitude_control->reset_yaw_target_and_rate();
-//         attitude_control->reset_rate_controller_I_terms_smoothly();
-//         break;
-
-//     case AP_Motors::SpoolState::THROTTLE_UNLIMITED:
-//         // clear landing flag above zero throttle
-//         if (!motors->limit.throttle_lower) {
-//             set_land_complete(false);
-//             // copter.motors->rc_write(1, 2000);
-//         }
-//         break;
-
-//     case AP_Motors::SpoolState::SPOOLING_UP:
-//     case AP_Motors::SpoolState::SPOOLING_DOWN:
-//         // do nothing
-//         break;
-//     }
-
 }
 
 void ModeStabilize::attitude_altitude_controller(){
     if (RC_Channels::get_radio_in(CH_6) < 1200){
 
             motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
+
+            PWM1 = 1000;
+            PWM2 = 1000;
+            PWM3 = 1000;
+            PWM4 = 1000;
+
+            // initialize the states
+            H_yaw = 360.0 - (ahrs.yaw_sensor) / 100.0;
+
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
-                custom_PID_controller(H_roll, H_pitch, H_yaw, H_roll_dot ,H_pitch_dot, 0.0, z_des ,0.0);
+                custom_PID_controller(H_roll, H_pitch, H_yaw, 0.0 ,0.0, 0.0, z_des ,0.0);
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
+
             }
         }
 }
@@ -269,13 +177,14 @@ void ModeStabilize::quad_states(){
     quad_x_dot =  (cosf(yaw_initially)*quad_x + sinf(yaw_initially)*quad_y);
     quad_y_dot = (-sinf(yaw_initially)*quad_x + cosf(yaw_initially)*quad_y);
 
-
     imu_roll        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
     imu_pitch       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
     imu_yaw         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
     imu_roll_dot    =  (ahrs.get_gyro().x);             // degrees/second
     imu_pitch_dot   =  -(ahrs.get_gyro().y);             // degrees/second    
     imu_yaw_dot     = -(ahrs.get_gyro().z);             // degrees/second
+
+    // hal.console->printf("roll %5.3f, pitch %5.3f, yaw %5.3f \n",imu_roll, imu_pitch, imu_yaw);
 
 }
 
@@ -290,13 +199,13 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
          FM_devided_FF = 0.31;
     }
 
-    float Kp_phi      = 0.012;   // 0.012 (best) 
-    float Kp_theta    = 0.015;   // 0.015 (best) 
+    float Kp_phi      = 0.025;   // 0.012 (best) 
+    float Kp_theta    = 0.025;   // 0.015 (best) 
     float Kp_psi      = 0.1;     // 0.1 (best)
 
-    float Kd_phi      = 0.2;     // 0.4 (best) // 0.25 (lab 1) // 2.0 (out 1) 1.6 (testbed)
-    float Kd_theta    = 0.15;    // 0.4 (best) // 0.5 (lab 1) // // 3.0 (out 1) 2.5 (testbed)
-    float Kd_psi      = 0.2;     // // 6.0 (testbed)
+    float Kd_phi      = 0.35;     // 0.2;
+    float Kd_theta    = 0.35;    // 0.15; 
+    float Kd_psi      = 0.25;     // 0.2
 
     float Ki_phi      = 0.00;    // 0.0005 (lab 1)
     float Ki_theta    = 0.00;    // 0.0005 (lab 1)
@@ -306,22 +215,24 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
     float e_theta     = des_theta - imu_pitch;
 
     float e_phi_sum   = e_phi + e_phi_prev;
-    Mb1 = Kp_phi    * saturation_for_roll_pitch_angle_error(e_phi)    + Kd_phi    * (des_phi_dot - imu_roll_dot) + Ki_phi * sat_I_gain_ph_th(e_phi_sum);
+    Mb1 = Kp_phi * saturation_for_roll_pitch_angle_error(e_phi)  \
+        + Kd_phi * (des_phi_dot - imu_roll_dot) \
+        + Ki_phi * sat_I_gain_ph_th(e_phi_sum);
     e_phi_prev = e_phi;
 
     float e_theta_sum   = e_theta + e_theta_prev;
-    Mb2 = Kp_theta  * saturation_for_roll_pitch_angle_error(e_theta)  + Kd_theta  * (des_theta_dot - imu_pitch_dot) + Ki_theta * sat_I_gain_ph_th(e_theta_sum);
+    Mb2 = Kp_theta  * saturation_for_roll_pitch_angle_error(e_theta) \
+        + Kd_theta  * (des_theta_dot - imu_pitch_dot) \
+        + Ki_theta * sat_I_gain_ph_th(e_theta_sum);
     e_theta_prev = e_theta;
 
     ////// Yaw controller customized //////
     float e_psi     = des_psi   - imu_yaw;
 
     if (e_psi > 0.0){
-
         if ( e_psi > 180.0 ){
             e_psi = -(360.0 - e_psi);
         }
-
     }else if ( e_psi < 0.0 ) {
         if ( -e_psi < 180.0 ){
             e_psi = e_psi;
@@ -329,25 +240,33 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
             e_psi = 360.0 + e_psi;
         }
     }
-
-    // hal.console->printf("Yaw__ %f H_yaw ->  %f e_psi %f \n",imu_yaw,H_yaw, e_psi);
     float e_psi_sum     = e_psi + e_psi_prev;
     Mb3           = -(Kp_psi  * saturation_for_yaw_angle_error(e_psi)  + Kd_psi  * (des_psi_dot - imu_yaw_dot)) + Ki_psi * sat_I_gain_psi(e_psi_sum);;    
     e_psi_prev          = e_psi;
     ////// Yaw controller customized //////
 
 ///////////////////// Altitude controller /////////////////////
-
     float e_z   = z_des - quad_z;
 
-    float Kp_z        = 4.0;    // 2.0 (best)
-    float Kd_z        = 1.0;    // 1.0 (best)
+    hal.console->printf("Zd-> %5.2f, z-> %5.2f\n",z_des,quad_z);
+
+    if (e_z > 5.0){
+        e_z = 5.0;
+    }
+    if (e_z < -5.0){
+        e_z = -5.0;
+    }
+
+    float Kp_z        = 10.0;    // 2.0 (best)
+    float Kd_z        = 5.0;    // 1.0 (best)
     F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
-    
+    // F     =  mass * GRAVITY_MSS ;
+    // F     
+
     if (F > 20.0){
         F = 20.0;
     }
-    
+
     if (F < 0.0){
         F =  0.0;
     }
@@ -362,10 +281,10 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    PWM1 = 1000;
-    PWM2 = 1000;
-    PWM3 = 1000;
-    PWM4 = 1000;
+    // PWM1 = 1000;
+    // PWM2 = 1000;
+    // PWM3 = 1000;
+    // PWM4 = 1000;
 
 }
 
@@ -375,24 +294,26 @@ void ModeStabilize::pilot_input(){
     H_roll_dot  = (H_roll - H_roll_prev)/400.0;
     H_roll_prev = H_roll;
 
-    hal.console->printf("H Roll %5.3f\n",H_roll);
-
     H_pitch     = (double)(channel_pitch->get_control_in())/100.0;
     H_pitch_dot = (H_pitch - H_pitch_prev)/400.0;
     H_pitch_prev= H_pitch;
 
-    H_yaw_rate  = -(double)(channel_yaw->get_control_in()) / 100.0;
-    H_throttle  =  (double)channel_throttle->get_control_in()-500.0;
-
-    float dt_yaw = 1.0/100.0;
-    H_yaw = wrap_360(H_yaw + H_yaw_rate*dt_yaw);
-
-    if (H_throttle > -20 && H_throttle < 20){
-        H_throttle = 0.0;
+    if (copter.motors->armed()){
+        H_yaw_rate  = -(double)(channel_yaw->get_control_in()) / 100.0;
+        float dt_yaw = 1.0/100.0;
+        H_yaw = wrap_360(H_yaw + H_yaw_rate*dt_yaw);
+        // hal.console->printf("H Roll %5.3f, H Roll %5.3f, H Roll %5.3f \n",H_roll, H_pitch, H_yaw);
     }
 
-    float dt_z = 1.0/15000.0;
-    z_des       =  z_des + H_throttle * dt_z;
+    H_throttle  =  (double)channel_throttle->get_control_in()-500.0;
+
+    if (H_throttle < 0){
+        z_des = 0.0;
+    }
+
+    if (H_throttle > 0){
+        z_des = H_throttle/100.0;;
+    }
 
     if (z_des > 5.0){
         z_des = 5.0;
@@ -400,6 +321,13 @@ void ModeStabilize::pilot_input(){
     if (z_des < 0.0){
         z_des = 0.0;
     }
+
+    // if (H_throttle > -20 && H_throttle < 20){
+    //     H_throttle = 0.0;
+    // }
+
+    // float dt_z = 1.0/15000.0;
+    // z_des       =  z_des + H_throttle * dt_z;
 
 }
 
@@ -473,4 +401,3 @@ float ModeStabilize::saturation_for_yaw_angle_error(float error){
     }
     return error;
 }
-
