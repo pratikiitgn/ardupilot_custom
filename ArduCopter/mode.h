@@ -304,6 +304,7 @@ public:
     void motor_pwm(uint8_t);
     void custom_PD_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
     void custom_PID_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    void custom_position_controller(float x_des, float y_des, float z_des, float x_des_dot, float y_des_dot, float z_des_dot, float des_psi, float des_psi_dot);
     int Inverse_thrust_function(float Force);
     void custom_pwm_code();
     float saturation_for_yaw_angle_error(float error);
@@ -1435,6 +1436,7 @@ public:
     void system_identification_y_axis();
     void quad_states();
     void custom_PID_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    void custom_position_controller(float x_des, float y_des, float z_des, float x_des_dot, float y_des_dot, float z_des_dot, float des_psi, float des_psi_dot);
     void custom_PID_controller_sysID(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
     void pilot_input();
     float saturation_for_roll_pitch_angle_error(float error);
