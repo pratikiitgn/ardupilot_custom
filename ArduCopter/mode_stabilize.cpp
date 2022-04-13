@@ -19,6 +19,8 @@ int code_starting_flag = 0;
 int yaw_flag_start  = 0;
 
 float current_time  = 0.0;
+float IITGN_text_start_time = 0.0;
+float IITGN_text_start_time_flag = 0.0;
 float H_roll        = 0.0;
 float H_pitch       = 0.0;
 float H_yaw_rate    = 0.0;
@@ -90,10 +92,18 @@ uint16_t Pm4 = 0;
 
 int arm_disarm_flag = 0;
 
-float F         = 0.0;
+float Force         = 0.0;
 float Mb1       = 0.0;
 float Mb2       = 0.0;
 float Mb3       = 0.0;
+
+float t1_IITGN_traj = 0.0;
+float t2_IITGN_traj = 0.0;
+
+float sty_IITGN_traj = 0.0;
+float stz_IITGN_traj = 0.0;
+float eny_IITGN_traj = 0.0;
+float enz_IITGN_traj = 0.0;
 
 void ModeStabilize::run()
 {
@@ -164,9 +174,164 @@ void ModeStabilize::attitude_altitude_controller(){
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
+                IITGN_text_start_time_flag = AP_HAL::millis()/1000.0;
+                IITGN_text_traj_planning();
                 custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, H_yaw, 0.0);
             }
         }
+}
+
+void ModeStabilize::IITGN_text_traj_planning(){
+
+Vector3f Z(0,0,0);
+Vector3f A(0,0,2);
+Vector3f B(0,0,5);
+Vector3f C(0,1,5);
+Vector3f D(0,1,2);
+Vector3f E(0,2.5,2);
+Vector3f FF(0,2.5,5);
+Vector3f G(0,1.5,5);
+Vector3f H(0,3.5,5);
+Vector3f I(0,6,4.5);
+Vector3f J(0,6,5);
+Vector3f K(0,4,5);
+Vector3f L(0,4,2);
+Vector3f M(0,6,2);
+Vector3f N(0,6,3.5);
+Vector3f O(0,5,3.5);
+Vector3f P(0,7,2);
+Vector3f Q(0,7,5);
+Vector3f R(0,9,2);
+Vector3f S(0,9,5);
+Vector3f Y(0,9,0);
+
+float Pos_array[21][3] = {{0,0,0},
+                         {0,0,2},
+                         {0,0,5},
+                         {0,1,5},
+                         {0,1,2},
+                         {0,2.5,2},
+                         {0,2.5,5},
+                         {0,1.5,5},
+                         {0,3.5,5},
+                         {0,6,4.5},
+                         {0,6,5},
+                         {0,4,5},
+                         {0,4,2},
+                         {0,6,2},
+                         {0,6,3.5},
+                         {0,5,3.5},
+                         {0,7,2},
+                         {0,7,5},
+                         {0,9,2},
+                         {0,9,5},
+                         {0,9,0}};
+
+float V_max = 0.5;
+
+float  tZ = 0;
+float  tA = tZ + (norm_2(A , Z)/V_max);
+float  tB = tA + (norm_2(B , A)/V_max);
+float  tC = tB + (norm_2(C , B)/V_max);
+float  tD = tC + (norm_2(D , C)/V_max);
+float  tE = tD + (norm_2(E , D)/V_max);
+float  tF = tE + (norm_2(FF , E)/V_max);
+float  tG = tF + (norm_2(G , FF)/V_max);
+float  tH = tG + (norm_2(H , G)/V_max);
+float  tI = tH + (norm_2(I , H)/V_max);
+float  tJ = tI + (norm_2(J , I)/V_max);
+float  tK = tJ + (norm_2(K , J)/V_max);
+float  tL = tK + (norm_2(L , K)/V_max);
+float  tM = tL + (norm_2(M , L)/V_max);
+float  tN = tM + (norm_2(N , M)/V_max);
+float  tO = tN + (norm_2(O , N)/V_max);
+float  tP = tO + (norm_2(P , O)/V_max);
+float  tQ = tP + (norm_2(Q , P)/V_max);
+float  tR = tQ + (norm_2(R , Q)/V_max);
+float  tS = tR + (norm_2(S , R)/V_max);
+float  tY = tS + (norm_2(Y , S)/V_max);
+
+float t_array[21][1] = {{tZ},
+                        {tA},
+                        {tB},
+                        {tC},
+                        {tD},
+                        {tE},
+                        {tF},
+                        {tG},
+                        {tH},
+                        {tI},
+                        {tJ},
+                        {tK},
+                        {tL},
+                        {tM},
+                        {tN},
+                        {tO},
+                        {tP},
+                        {tQ},
+                        {tR},
+                        {tS},
+                        {tY}};
+
+// for 
+// end
+
+IITGN_text_start_time = AP_HAL::millis()/1000.0 - IITGN_text_start_time_flag;
+float tt = IITGN_text_start_time;
+
+for (int i = 0; i < 21; i++) {
+
+     if (IITGN_text_start_time >= t_array[i][0]){
+        t1_IITGN_traj = t_array[i][0];
+        t2_IITGN_traj = t_array[i][0];
+        sty_IITGN_traj = Pos_array[i][1];
+        stz_IITGN_traj = Pos_array[i][1];
+        eny_IITGN_traj = Pos_array[i+1][2];
+        enz_IITGN_traj = Pos_array[i+1][2];
+     }
+}
+
+float ay =  min_acc_first_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
+float by = min_acc_second_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
+float cy =  min_acc_third_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
+float dy = min_acc_fourth_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
+
+float az =  min_acc_first_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) stz_IITGN_traj, (float) enz_IITGN_traj);
+float bz = min_acc_second_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) stz_IITGN_traj, (float) enz_IITGN_traj);
+float cz =  min_acc_third_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) stz_IITGN_traj, (float) enz_IITGN_traj);
+float dz = min_acc_fourth_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) stz_IITGN_traj, (float) enz_IITGN_traj);
+
+x_des = 0.0;
+y_des = ay*tt*tt*tt + by*tt*tt + cy*tt + dy;
+z_des = az*tt*tt*tt + bz*tt*tt + cz*tt + dz;
+
+}
+
+float ModeStabilize::min_acc_first_coefficient(float t1, float t2, float st, float en){
+    float a = (2*(en - st)) /  ((t1 - t2)*(t1 - t2)*(t1 - t2));
+    return a;
+}
+
+float ModeStabilize::min_acc_second_coefficient(float t1, float t2, float st, float en){
+    float b = -(3*(t1 + t2)*(en - st)) /  ((t1 - t2)*(t1 - t2)*(t1 - t2));
+    return b;
+}
+
+float ModeStabilize::min_acc_third_coefficient(float t1, float t2, float st, float en){
+    float c = (6*t1*t2*(en - st)) /  ((t1 - t2)*(t1 - t2)*(t1 - t2));
+    return c;
+}
+
+float ModeStabilize::min_acc_fourth_coefficient(float t1, float t2, float st, float en){
+    float d = (en*t1*t1*t1 - 3*en*t1*t1*t2 + 3*st*t1*t2*t2 - st*t2*t2*t2) /  ((t1 - t2)*(t1 - t2)*(t1 - t2));
+    return d;
+}
+
+float ModeStabilize::norm_2(Vector3f A, Vector3f B){
+
+    float norm__  = (A[0] - B[0]) * (A[0] - B[0]) + (A[1] - B[1]) * (A[1] - B[1]) + (A[2] - B[2]) * (A[2] - B[2]);
+    return norm__;
+
 }
 
 void ModeStabilize::quad_states(){
@@ -277,22 +442,22 @@ void ModeStabilize::custom_PID_controller(float des_phi, float des_theta, float 
 
     float Kp_z        = 10.0;    // 2.0 (best)
     float Kd_z        = 5.0;    // 1.0 (best)
-    F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
-    // F     =  mass * GRAVITY_MSS ;
-    // F     
+    Force     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+    // Force     =  mass * GRAVITY_MSS ;
+    // Force     
 
-    if (F > 20.0){
-        F = 20.0;
+    if (Force > 20.0){
+        Force = 20.0;
     }
 
-    if (F < 0.0){
-        F =  0.0;
+    if (Force < 0.0){
+        Force =  0.0;
     }
 
-    float function_F1 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
-    float function_F2 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+    float function_F1 = Force/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+    float function_F2 = Force/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F3 = Force/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F4 = Force/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
 
     PWM1 = Inverse_thrust_function(function_F1);
     PWM2 = Inverse_thrust_function(function_F2);
@@ -400,21 +565,21 @@ void ModeStabilize::custom_position_controller(float x_des_func, float y_des_fun
 
     float Kp_z        = 10.0;    // 2.0 (best)
     float Kd_z        = 5.0;    // 1.0 (best)
-    F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (e_z_dot);
-    // F     =  mass * GRAVITY_MSS ;
+    Force     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (e_z_dot);
+    // Force     =  mass * GRAVITY_MSS ;
 
-    if (F > 20.0){
-        F = 20.0;
+    if (Force > 20.0){
+        Force = 20.0;
     }
 
-    if (F < 0.0){
-        F =  0.0;
+    if (Force < 0.0){
+        Force =  0.0;
     }
 
-    float function_F1 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
-    float function_F2 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+    float function_F1 = Force/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+    float function_F2 = Force/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F3 = Force/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+    float function_F4 = Force/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
 
     PWM1 = Inverse_thrust_function(function_F1);
     PWM2 = Inverse_thrust_function(function_F2);
@@ -516,13 +681,13 @@ float ModeStabilize::sat_I_gain_psi(float sum){
     return sum;
 }
 
-int ModeStabilize::Inverse_thrust_function(float Force){
+int ModeStabilize::Inverse_thrust_function(float Force_){
     int PWM = 1200;
 
 /////////////////////////// From the quadcopter motors  ///////////////////////////
 
-    if (battvolt >= 11.5 ){PWM = 1000 * (0.9206 + (sqrtf(12.8953 + 30.3264*Force)/(15.1632)));
-    }else{PWM = 1000 * (0.6021 + (sqrtf(33.2341 + 19.418*Force)/(9.5740)));}
+    if (battvolt >= 11.5 ){PWM = 1000 * (0.9206 + (sqrtf(12.8953 + 30.3264*Force_)/(15.1632)));
+    }else{PWM = 1000 * (0.6021 + (sqrtf(33.2341 + 19.418*Force_)/(9.5740)));}
     if (PWM > 2000){PWM = 2000;}
     if (PWM < 1000){PWM = 1000;}
 
