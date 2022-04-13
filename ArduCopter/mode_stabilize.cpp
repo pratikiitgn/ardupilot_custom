@@ -11,7 +11,7 @@
 
 #define ESC_HZ 490
 #ifndef PI
-  #define PI               3.14159265358979f
+  #define PI  3.14159265358979f
 #endif
 
 int code_starting_flag = 0;
@@ -24,7 +24,6 @@ float H_pitch       = 0.0;
 float H_yaw_rate    = 0.0;
 float H_throttle    = 0.0;
 float H_yaw         = 0.0;
-
 
 float H_roll_dot    = 0.0;
 float H_pitch_dot   = 0.0;
@@ -126,9 +125,80 @@ void ModeStabilize::run()
         quad_states();
 
     ///////////// For attitude controller controller  /////////////
-        attitude_altitude_controller();
+        // attitude_altitude_controller();
+
+        if (RC_Channels::get_radio_in(CH_5) > 1200){
+            if(copter.motors->armed()){
+                motor_characteristic();
+            }
+        }else{
+            tstart  = AP_HAL::millis();
+            PWM1 = 1000;
+            PWM2 = 1000;
+            PWM3 = 1000;
+            PWM4 = 1000;
+        }
 
     }
+
+}
+
+void ModeStabilize::motor_characteristic(){
+
+    time_thrust_mea = (AP_HAL::millis() - tstart)/1000.0;
+
+    if (time_thrust_mea < 5.0){
+        pwm__thrust_measurement = 1000;
+    }else if (time_thrust_mea > 5.0 && time_thrust_mea < 7.0){
+        pwm__thrust_measurement = 1050;
+    }else if (time_thrust_mea > 7.0 && time_thrust_mea < 9.0){
+        pwm__thrust_measurement = 1100;
+    }else if (time_thrust_mea > 9.0 && time_thrust_mea < 11.0){
+        pwm__thrust_measurement = 1150;
+    }else if (time_thrust_mea > 11.0 && time_thrust_mea < 13.0){
+        pwm__thrust_measurement = 1200;
+    }else if (time_thrust_mea > 13.0 && time_thrust_mea < 15.0){
+        pwm__thrust_measurement = 1250;
+    }else if (time_thrust_mea > 15.0 && time_thrust_mea < 17.0){
+        pwm__thrust_measurement = 1300;
+    }else if (time_thrust_mea > 17.0 && time_thrust_mea < 19.0){
+        pwm__thrust_measurement = 1350;
+    }else if (time_thrust_mea > 19.0 && time_thrust_mea < 21.0){
+        pwm__thrust_measurement = 1400;
+    }else if (time_thrust_mea > 21.0 && time_thrust_mea < 23.0){
+        pwm__thrust_measurement = 1450;
+    }else if (time_thrust_mea > 23.0 && time_thrust_mea < 25.0){
+        pwm__thrust_measurement = 1500;
+    }else if (time_thrust_mea > 25.0 && time_thrust_mea < 27.0){
+        pwm__thrust_measurement = 1550;
+    }else if (time_thrust_mea > 27.0 && time_thrust_mea < 29.0){
+        pwm__thrust_measurement = 1600;
+    }else if (time_thrust_mea > 29.0 && time_thrust_mea < 31.0){
+        pwm__thrust_measurement = 1650;
+    }else if (time_thrust_mea > 31.0 && time_thrust_mea < 33.0){
+        pwm__thrust_measurement = 1700;
+    }else if (time_thrust_mea > 33.0 && time_thrust_mea < 35.0){
+        pwm__thrust_measurement = 1750;
+    }else if (time_thrust_mea > 35.0 && time_thrust_mea < 37.0){
+        pwm__thrust_measurement = 1800;
+    }else if (time_thrust_mea > 37.0 && time_thrust_mea < 39.0){
+        pwm__thrust_measurement = 1850;
+    }else if (time_thrust_mea > 39.0 && time_thrust_mea < 41.0){
+        pwm__thrust_measurement = 1900;
+    }else if (time_thrust_mea > 41.0 && time_thrust_mea < 43.0){
+        pwm__thrust_measurement = 1950;
+    }else if (time_thrust_mea > 43.0 && time_thrust_mea < 45.0){
+        pwm__thrust_measurement = 2000;
+    }else if (time_thrust_mea > 45.0){
+        pwm__thrust_measurement = 1000;
+    }
+
+    PWM1 = pwm__thrust_measurement;
+    PWM2 = 1100;
+    PWM3 = 1100;
+    PWM4 = 1100;
+
+    // hal.console->printf("t-> %5.3f, PWM-> %d\n",time_thrust_mea,pwm__thrust_measurement);
 
 }
 
@@ -154,17 +224,20 @@ void ModeStabilize::attitude_altitude_controller(){
             // quad_y_ini = (-sinf(yaw_initially)*quad_x + cosf(yaw_initially)*quad_y);
             // quad_z_ini = quad_z;
 
+
         }
         else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
             if (copter.motors->armed()){
-                custom_PID_controller(H_roll, H_pitch, H_yaw, 0.0 ,0.0, 0.0, z_des ,0.0);
+                // custom_PID_controller(H_roll, H_pitch, H_yaw, 0.0 ,0.0, 0.0, z_des ,0.0);
                 
-                quad_x_ini =   inertial_nav.get_position().x / 100.0;
-                quad_y_ini =  -inertial_nav.get_position().y / 100.0;
+                // quad_x_ini =   inertial_nav.get_position().x / 100.0;
+                // quad_y_ini =  -inertial_nav.get_position().y / 100.0;
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
-                custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, H_yaw, 0.0);
+                // custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, H_yaw, 0.0);
+            // if (copter.motors->armed()){
+            // }
             }
         }
 }

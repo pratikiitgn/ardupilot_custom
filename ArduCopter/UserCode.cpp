@@ -22,6 +22,7 @@ float encoder_pitch_dot_feedback    = 0.0;
 float imu_roll_log      = 0.0;
 float imu_pitch_log     = 0.0;
 float imu_yaw_log       = 0.0;
+float load_cell_float   = 0.0;
 
 // const AP_HAL::HAL& hal = AP_HAL::get_HAL();
 
@@ -45,7 +46,7 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    // hal.serial(2)->begin(115200);
+    hal.serial(4)->begin(115200);
 
 }
 #endif
@@ -54,10 +55,17 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
     // put your 100Hz code here
-    Log_Write_position();
-    Log_Write_velocity();
-    log_attitude_tracking();
-    log_sys_ID_ph_func();
+    // To log the data
+    // Log_Write_position();
+    // Log_Write_velocity();
+    // log_attitude_tracking();
+    // log_sys_ID_ph_func();
+
+    log_load_cell_PWM_data();
+
+    // To read data from the load cell
+    Load_cell_data_reading();
+    hal.console->printf("%5.3f\n", load_cell_float);
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
@@ -95,12 +103,7 @@ void Copter::userhook_FastLoop()
 void Copter::userhook_50Hz()
 {
     // put your 50Hz code here
-
-
-
-
-
-
+    // hal.console->printf("%5.1f\n",load_cell_float);
 
 
 }
@@ -196,6 +199,17 @@ void Copter::log_attitude_tracking()
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
+void Copter::log_load_cell_PWM_data()
+{
+    struct log_load_cell pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_LOAD_C_MSG),
+        time_us  : AP_HAL::micros64(),
+        PWM     : PWM1,
+        F       : load_cell_float,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
 void Copter::log_sys_ID_ph_func()
 {
     struct log_sys_ID_ph pkt = {
@@ -213,6 +227,65 @@ void Copter::log_sys_ID_ph_func()
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
+void Copter::Load_cell_data_reading()
+{
+
+    bool receiving_data = false;
+    int index = 0;
+    char startChar = ',';
+    char endChar = '/';
+    bool new_data = false;
+
+    char load_cell[] = "0000";
+    while (hal.serial(4)->available()>0 && new_data == false)
+        {
+            char temp = hal.serial(4)->read();
+            if (receiving_data == true)
+            {
+                if (temp != endChar)
+                {   
+                    load_cell[index] = temp;
+                    index++;
+                }
+                else
+                {
+                    load_cell[index] = '\0';
+                    receiving_data = false;
+                    new_data = false;
+                    index = 0;
+                }
+            }
+            else if (temp == startChar)
+            {
+                receiving_data = true;
+                index = 0; 
+            }
+        }
+        // hal.console->printf("%s\n",load_cell);
+
+        char load_cell_charr[] = "5000";
+
+        for (int i = 0; i < 5; i++)
+        {      
+                load_cell_charr[i]   = load_cell[i];
+            } 
+
+        int load_cell_int      = atoi(load_cell_charr);
+
+        load_cell_float  = (float)(load_cell_int - 5000) ;
+
+        // if (load_cell_float > 1023.0){
+        //     load_cell_float = 1023.0;
+        // }
+
+        // if (load_cell_float < 0.0){
+        //     load_cell_float = 0.0;
+        // }
+
+        // hal.uartE->printf("%0.3f,", encoder_roll_feedback);
+        // hal.uartE->printf("%0.3f\n", encoder_pitch_feedback);
+
+}
 
 void Copter::getEncoderData()
 {

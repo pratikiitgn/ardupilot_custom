@@ -922,7 +922,9 @@ private:
     void log_attitude_tracking();
     void log_sys_ID_ph_func();
     void getEncoderData();
-
+    void Load_cell_data_reading();
+    void log_load_cell_PWM_data();
+    
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;
     bool get_wp_bearing_deg(float &bearing) const override;

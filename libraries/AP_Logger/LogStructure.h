@@ -738,6 +738,15 @@ struct PACKED log_sys_ID_ph {
     float psi;
 };
 
+struct  PACKED log_load_cell
+{
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  uint16_t PWM;
+  float F;
+};
+
+
 // FMT messages define all message formats other than FMT
 // UNIT messages define units which can be referenced by FMTU messages
 // FMTU messages associate types (e.g. centimeters/second/second) to FMT message fields
@@ -1377,6 +1386,8 @@ LOG_STRUCTURE_FROM_VISUALODOM \
       "LATT", "Qfffffff", "TimeUS,ph,th,psi,ph_h,th_h,ps_h,ps_h_dot", "sddddddk", "F-------", true }, \
     { LOG_SID_PH_MSG, sizeof(log_sys_ID_ph), \
       "SIDP", "QHHHHHfff", "TimeUS,P1,P2,P3,P4,Pf,ph,th,ps", "s-----ddd", "F--------", true }, \
+    { LOG_LOAD_C_MSG, sizeof(log_load_cell), \
+      "LCDG", "QHf","TimeUS,PWM,F", "s--","F--"   },\
 LOG_STRUCTURE_FROM_AIS \
 
 // message types 0 to 63 reserved for vehicle specific use
@@ -1459,6 +1470,7 @@ enum LogMessages : uint8_t {
     LOG_VELO_MSG,
     LOG_ATT_TRA_MSG,
     LOG_SID_PH_MSG,
+    LOG_LOAD_C_MSG,
     _LOG_LAST_MSG_
 };
 
