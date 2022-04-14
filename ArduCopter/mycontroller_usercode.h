@@ -19,6 +19,12 @@ extern float quad_x;
 extern float quad_y;
 extern float quad_z;
 
+extern float x_des;
+extern float y_des;
+extern float z_des;
+
+extern float light_on_off;
+
 extern float quad_x_dot;
 extern float quad_y_dot;
 extern float quad_z_dot;
@@ -45,4 +51,3 @@ extern float F;
 extern float Mb1;
 extern float Mb2;
 extern float Mb3;
-

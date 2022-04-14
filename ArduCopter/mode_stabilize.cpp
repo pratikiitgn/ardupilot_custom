@@ -8,6 +8,7 @@
 #include "mycontroller_usercode.h"
 #include <AP_Logger/LogStructure.h>
 #include <AP_Logger/AP_Logger.h>  
+// #include "AP_Math.h"
 
 #define ESC_HZ 490
 #ifndef PI
@@ -105,6 +106,8 @@ float stz_IITGN_traj = 0.0;
 float eny_IITGN_traj = 0.0;
 float enz_IITGN_traj = 0.0;
 
+float light_on_off = 0.0;
+
 void ModeStabilize::run()
 {
 
@@ -171,10 +174,11 @@ void ModeStabilize::attitude_altitude_controller(){
                 
                 quad_x_ini =   inertial_nav.get_position().x / 100.0;
                 quad_y_ini =  -inertial_nav.get_position().y / 100.0;
+                IITGN_text_start_time_flag = AP_HAL::millis()/1000.0;
+
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
-                IITGN_text_start_time_flag = AP_HAL::millis()/1000.0;
                 IITGN_text_traj_planning();
                 custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, H_yaw, 0.0);
             }
@@ -227,6 +231,29 @@ float Pos_array[21][3] = {{0,0,0},
                          {0,9,5},
                          {0,9,0}};
 
+float light[21][1] = {{0},
+             {1},
+             {0},
+             {1},
+             {0},
+             {1},
+             {1},
+             {1},
+             {0},
+             {1},
+             {1},
+             {1},
+             {1},
+             {1},
+             {1},
+             {0},
+             {1},
+             {1},
+             {1},
+             {0},
+             {0}};
+
+
 float V_max = 0.5;
 
 float  tZ = 0;
@@ -251,6 +278,8 @@ float  tR = tQ + (norm_2(R , Q)/V_max);
 float  tS = tR + (norm_2(S , R)/V_max);
 float  tY = tS + (norm_2(Y , S)/V_max);
 
+// hal.console->printf("%2.2f,%2.2f,%2.2f,%2.2f,%2.2f,%2.2f\n", tO,tP,tQ,tR,tS,tY);
+
 float t_array[21][1] = {{tZ},
                         {tA},
                         {tB},
@@ -273,8 +302,7 @@ float t_array[21][1] = {{tZ},
                         {tS},
                         {tY}};
 
-// for 
-// end
+// hal.console->printf("%3.2f,%3.2f,%3.2f,%3.2f,%3.2f,%3.2f\n", t_array[6][0],t_array[7][0],t_array[8][0],t_array[9][0],t_array[10][0],t_array[11][0]);
 
 IITGN_text_start_time = AP_HAL::millis()/1000.0 - IITGN_text_start_time_flag;
 float tt = IITGN_text_start_time;
@@ -282,14 +310,18 @@ float tt = IITGN_text_start_time;
 for (int i = 0; i < 21; i++) {
 
      if (IITGN_text_start_time >= t_array[i][0]){
-        t1_IITGN_traj = t_array[i][0];
-        t2_IITGN_traj = t_array[i][0];
+        t1_IITGN_traj  = t_array[i][0];
+        t2_IITGN_traj  = t_array[i+1][0];
         sty_IITGN_traj = Pos_array[i][1];
-        stz_IITGN_traj = Pos_array[i][1];
-        eny_IITGN_traj = Pos_array[i+1][2];
+        stz_IITGN_traj = Pos_array[i][2];
+        eny_IITGN_traj = Pos_array[i+1][1];
         enz_IITGN_traj = Pos_array[i+1][2];
+        light_on_off   = light[i][0];
+        // hal.console->printf("%5.3f\n",t_array[i][0]);
      }
 }
+
+// hal.console->printf("%5.3f, %5.3f\n",t1_IITGN_traj,t2_IITGN_traj);
 
 float ay =  min_acc_first_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
 float by = min_acc_second_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_traj, (float) sty_IITGN_traj, (float) eny_IITGN_traj);
@@ -304,6 +336,14 @@ float dz = min_acc_fourth_coefficient((float) t1_IITGN_traj, (float) t2_IITGN_tr
 x_des = 0.0;
 y_des = ay*tt*tt*tt + by*tt*tt + cy*tt + dy;
 z_des = az*tt*tt*tt + bz*tt*tt + cz*tt + dz;
+
+if (IITGN_text_start_time > 92.3101){
+    x_des = 0.0;
+    y_des = 9.0;
+    z_des = 0.0;
+}
+
+hal.console->printf("t - %5.3f, xd - %5.3f, yd - %5.3f, zd - %5.3f \n",tt, x_des, y_des, z_des );
 
 }
 
@@ -330,6 +370,7 @@ float ModeStabilize::min_acc_fourth_coefficient(float t1, float t2, float st, fl
 float ModeStabilize::norm_2(Vector3f A, Vector3f B){
 
     float norm__  = (A[0] - B[0]) * (A[0] - B[0]) + (A[1] - B[1]) * (A[1] - B[1]) + (A[2] - B[2]) * (A[2] - B[2]);
+    norm__ = sqrtf(norm__ );
     return norm__;
 
 }
@@ -591,7 +632,7 @@ void ModeStabilize::custom_position_controller(float x_des_func, float y_des_fun
     // PWM3 = 1000;
     // PWM4 = 1000;
 
-    hal.console->printf("%5.3f, %5.3f\n",quad_x, quad_x_dot);
+    // hal.console->printf("%5.3f, %5.3f\n",quad_x, quad_x_dot);
 
 }
 

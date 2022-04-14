@@ -45,7 +45,8 @@ void Copter::userhook_init()
     // put your initialisation code here
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
-    // hal.serial(2)->begin(115200);
+    hal.serial(1)->begin(115200);
+    hal.serial(2)->begin(115200);
 
 }
 #endif
@@ -54,17 +55,23 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
     // put your 100Hz code here
-    Log_Write_position();
-    Log_Write_velocity();
-    log_attitude_tracking();
-    log_sys_ID_ph_func();
+    // Log_Write_position();
+    // Log_Write_velocity();
+    // log_attitude_tracking();
+    // log_sys_ID_ph_func();
+
+    log_DS_quad_Trans_pos();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
     imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
     imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
 
-    // hal.serial(2)->printf("%f",quad_x);
+    int LED_status = light_on_off;
+
+    hal.serial(1)->printf("%d\n",LED_status);
+    hal.serial(2)->printf("%d\n",LED_status);
+
     // hal.serial(2)->printf(",");
     // hal.serial(2)->printf("%f",quad_y);
     // hal.serial(2)->printf(",");
@@ -143,6 +150,23 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
     // put your aux switch #3 handler here (CHx_OPT = 49)
 }
 #endif
+
+void Copter::log_DS_quad_Trans_pos(){
+
+        struct log_DS_POS pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_DS_POS_MSG),
+        time_us  : AP_HAL::micros64(),
+        X     : quad_x,
+        Y     : quad_y,
+        Z     : quad_z,
+        X_des : x_des,
+        Y_des : y_des,
+        Z_des : z_des,
+        light : light_on_off,
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+
+}
 
 void Copter::Log_Write_position()
 {

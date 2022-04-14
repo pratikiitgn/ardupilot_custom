@@ -921,6 +921,7 @@ private:
     void Log_Write_velocity();
     void log_attitude_tracking();
     void log_sys_ID_ph_func();
+    void log_DS_quad_Trans_pos();
     void getEncoderData();
 
     // vehicle specific waypoint info helpers
