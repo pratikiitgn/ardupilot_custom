@@ -185,8 +185,7 @@ void ModeStabilize::attitude_altitude_controller(){
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
-                // IITGN_text_traj_planning();
-                    custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, yaw_des_position, 0.0);
+                    // custom_position_controller(x_des, y_des, z_des, x_des_dot, y_des_dot, z_des_dot, yaw_des_position, 0.0);
 
             }
         }
@@ -471,7 +470,7 @@ void ModeStabilize::pilot_input(){
         // hal.console->printf("H Roll %5.3f, H Roll %5.3f, H Roll %5.3f \n",H_roll, H_pitch, H_yaw);
     }
 
-    H_throttle  =  (double)channel_throttle->get_control_in()-500.0;
+    H_throttle  =  (double)channel_throttle->get_control_in() - 500.0;
 
     // if (H_throttle < 0){
     //     z_des = 0.0;
@@ -488,7 +487,7 @@ void ModeStabilize::pilot_input(){
     float dt_z = 1.0/18000.0;
     z_des       =  z_des + H_throttle * dt_z;
 
-     if (z_des > 5.0){
+    if (z_des > 5.0){
         z_des = 5.0;
     }
     if (z_des < 0.0){
