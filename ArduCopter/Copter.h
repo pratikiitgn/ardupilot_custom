@@ -923,6 +923,7 @@ private:
     void log_sys_ID_ph_func();
     void log_DS_quad_Trans_pos();
     void getEncoderData();
+    void Human_Joystick_data_Analysis();
 
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;

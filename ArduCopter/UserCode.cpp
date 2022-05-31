@@ -23,6 +23,15 @@ float imu_roll_log      = 0.0;
 float imu_pitch_log     = 0.0;
 float imu_yaw_log       = 0.0;
 
+////////////////
+float H_roll_channel = 0.0;
+float H_roll_channel_two_point_avg = 0.0;
+float H_roll_channel_three_point_avg = 0.0;
+float H_roll_channel_dot = 0.0;
+float H_roll_channel_prev = 0.0;
+float H_roll_channel_prev_2 = 0.0;
+
+
 // const AP_HAL::HAL& hal = AP_HAL::get_HAL();
 
 /*
@@ -57,20 +66,20 @@ void Copter::userhook_FastLoop()
     // put your 100Hz code here
     // Log_Write_position();
     // Log_Write_velocity();
-    // log_attitude_tracking();
+    log_attitude_tracking();
     // log_sys_ID_ph_func();
 
-    log_DS_quad_Trans_pos();
+    // log_DS_quad_Trans_pos();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
     imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
     imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
 
-    int LED_status = light_on_off;
+    // int LED_status = light_on_off;
 
-    hal.serial(1)->printf("%d\n",LED_status);
-    hal.serial(2)->printf("%d\n",LED_status);
+    // hal.serial(1)->printf("%d\n",LED_status);
+    // hal.serial(2)->printf("%d\n",LED_status);
 
     // hal.serial(2)->printf(",");
     // hal.serial(2)->printf("%f",quad_y);
@@ -95,6 +104,10 @@ void Copter::userhook_FastLoop()
 
     // hal.serial(2)->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
     // hal.console->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+
+    //////// To debug the human inputs
+    Human_Joystick_data_Analysis();
+
 }
 #endif
 
@@ -102,13 +115,8 @@ void Copter::userhook_FastLoop()
 void Copter::userhook_50Hz()
 {
     // put your 50Hz code here
-
-
-
-
-
-
-
+    // //////// To debug the human inputs
+    // Human_Joystick_data_Analysis();
 
 }
 #endif
@@ -166,6 +174,26 @@ void Copter::log_DS_quad_Trans_pos(){
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 
+}
+
+void Copter::Human_Joystick_data_Analysis()
+{
+    float dt = 0.01;
+    H_roll_channel     = (double)(channel_pitch->get_control_in())/100.0;
+
+    // First time derivative
+    H_roll_channel_dot = (H_roll_channel - H_roll_channel_prev)/dt;
+
+    // Two point average
+    H_roll_channel_two_point_avg = (H_roll_channel + H_roll_channel_prev)/2;
+
+    // Three point average
+    H_roll_channel_three_point_avg = (H_roll_channel + H_roll_channel_prev+H_roll_channel_prev_2)/3;
+
+    hal.console->printf("%5.3f,%5.3f,%5.3f\n",H_roll_channel,H_roll_channel_two_point_avg,H_roll_channel_three_point_avg);
+
+    H_roll_channel_prev = H_roll_channel;
+    H_roll_channel_prev_2 = H_roll_channel_prev;
 }
 
 void Copter::Log_Write_position()
