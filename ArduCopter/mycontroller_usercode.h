@@ -51,3 +51,5 @@ extern float F;
 extern float Mb1;
 extern float Mb2;
 extern float Mb3;
+
+extern float H_pitch_channel_SG_fil;

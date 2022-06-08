@@ -24,12 +24,21 @@ float imu_pitch_log     = 0.0;
 float imu_yaw_log       = 0.0;
 
 ////////////////
-float H_roll_channel = 0.0;
-float H_roll_channel_two_point_avg = 0.0;
-float H_roll_channel_three_point_avg = 0.0;
-float H_roll_channel_dot = 0.0;
-float H_roll_channel_prev = 0.0;
-float H_roll_channel_prev_2 = 0.0;
+float H_pitch_channel = 0.0;
+float H_pitch_channel_prev_1 = 0.0;
+float H_pitch_channel_prev_2 = 0.0;
+float H_pitch_channel_prev_3 = 0.0;
+float H_pitch_channel_prev_4 = 0.0;
+float H_pitch_channel_prev_5 = 0.0;
+float H_pitch_channel_prev_6 = 0.0;
+float H_pitch_channel_prev_7 = 0.0;
+float H_pitch_channel_prev_8 = 0.0;
+
+float H_pitch_channel_two_point_avg     = 0.0;
+float H_pitch_channel_three_point_avg   = 0.0;
+float H_pitch_channel_SG_fil            = 0.0;
+
+float H_pitch_channel_dot = 0.0;
 
 
 // const AP_HAL::HAL& hal = AP_HAL::get_HAL();
@@ -179,21 +188,33 @@ void Copter::log_DS_quad_Trans_pos(){
 void Copter::Human_Joystick_data_Analysis()
 {
     float dt = 0.01;
-    H_roll_channel     = (double)(channel_pitch->get_control_in())/100.0;
+    H_pitch_channel     = (double)(channel_pitch->get_control_in())/100.0;
 
     // First time derivative
-    H_roll_channel_dot = (H_roll_channel - H_roll_channel_prev)/dt;
+    H_pitch_channel_dot = (H_pitch_channel - H_pitch_channel_prev_1)/dt;
 
     // Two point average
-    H_roll_channel_two_point_avg = (H_roll_channel + H_roll_channel_prev)/2;
+    H_pitch_channel_two_point_avg = (H_pitch_channel + H_pitch_channel_prev_1)/2;
 
     // Three point average
-    H_roll_channel_three_point_avg = (H_roll_channel + H_roll_channel_prev+H_roll_channel_prev_2)/3;
+    H_pitch_channel_three_point_avg = (H_pitch_channel + H_pitch_channel_prev_1+H_pitch_channel_prev_2)/3;
 
-    hal.console->printf("%5.3f,%5.3f,%5.3f\n",H_roll_channel,H_roll_channel_two_point_avg,H_roll_channel_three_point_avg);
+    // SG filter
+    second_order_9_pt_SG_filter(H_pitch_channel_prev_8,H_pitch_channel_prev_7,H_pitch_channel_prev_6,H_pitch_channel_prev_5,H_pitch_channel_prev_4,H_pitch_channel_prev_3,H_pitch_channel_prev_2,H_pitch_channel_prev_1,H_pitch_channel);
 
-    H_roll_channel_prev = H_roll_channel;
-    H_roll_channel_prev_2 = H_roll_channel_prev;
+    // To print the data over UART
+    // hal.console->printf("%5.3f,%5.3f,%5.3f\n",H_pitch_channel,H_pitch_channel_two_point_avg,H_pitch_channel_SG_fil);
+
+    // Saving to previous data
+    H_pitch_channel_prev_1 = H_pitch_channel;
+    H_pitch_channel_prev_2 = H_pitch_channel_prev_1;
+    H_pitch_channel_prev_3 = H_pitch_channel_prev_2;
+    H_pitch_channel_prev_4 = H_pitch_channel_prev_3;
+    H_pitch_channel_prev_5 = H_pitch_channel_prev_4;
+    H_pitch_channel_prev_6 = H_pitch_channel_prev_5;
+    H_pitch_channel_prev_7 = H_pitch_channel_prev_6;
+    H_pitch_channel_prev_8 = H_pitch_channel_prev_7;
+
 }
 
 void Copter::Log_Write_position()

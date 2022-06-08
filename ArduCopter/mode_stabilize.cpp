@@ -132,7 +132,7 @@ void ModeStabilize::run()
         }else{
             arm_disarm_flag = 0;
         }
-    
+
     ///////////// getting pilot inputs  /////////////
         pilot_input();
 
@@ -460,6 +460,8 @@ void ModeStabilize::pilot_input(){
     H_roll_prev = H_roll;
 
     H_pitch     = (double)(channel_pitch->get_control_in())/100.0;
+    hal.console->printf("%5.3f,%5.3f\n",H_pitch,H_pitch_channel_SG_fil);
+
     H_pitch_dot = (H_pitch - H_pitch_prev)/400.0;
     H_pitch_prev= H_pitch;
 
@@ -566,4 +568,19 @@ float ModeStabilize::saturation_for_yaw_angle_error(float error){
         error = error;
     }
     return error;
+}
+
+void ModeStabilize:: second_order_9_pt_SG_filter(float data_4, float data_3, float data_2, float data_1, float data_0, float data1, float data2, float data3, float data4){
+
+float D_4 = -0.0909090909;
+float D_3 = 0.0606060606;
+float D_2 = 0.16883116883;
+float D_1 = 0.23376623376;
+float D_0 = 0.25541125541;
+float D1  = 0.23376623376;
+float D2  = 0.16883116883;
+float D3  = 0.0606060606;
+float D4  = -0.0909090909;
+
+    H_pitch_channel_SG_fil = D_4*data_4 + D_3*data_3 + D_2*data_2 + D_1*data_1 + D_0 * data_0 + D1*data1 + D2*data2 + D3*data3 + D4*data4;
 }
