@@ -199,9 +199,6 @@ void Copter::Human_Joystick_data_Analysis()
     // Three point average
     H_pitch_channel_three_point_avg = (H_pitch_channel + H_pitch_channel_prev_1+H_pitch_channel_prev_2)/3;
 
-    // SG filter
-    second_order_9_pt_SG_filter(H_pitch_channel_prev_8,H_pitch_channel_prev_7,H_pitch_channel_prev_6,H_pitch_channel_prev_5,H_pitch_channel_prev_4,H_pitch_channel_prev_3,H_pitch_channel_prev_2,H_pitch_channel_prev_1,H_pitch_channel);
-
     // To print the data over UART
     // hal.console->printf("%5.3f,%5.3f,%5.3f\n",H_pitch_channel,H_pitch_channel_two_point_avg,H_pitch_channel_SG_fil);
 

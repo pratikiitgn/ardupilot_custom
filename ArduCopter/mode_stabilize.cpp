@@ -21,8 +21,6 @@ int code_starting_flag = 0;
 int yaw_flag_start  = 0;
 
 float current_time  = 0.0;
-float IITGN_text_start_time = 0.0;
-float IITGN_text_start_time_flag = 0.0;
 float H_roll        = 0.0;
 float H_pitch       = 0.0;
 float H_yaw_rate    = 0.0;
@@ -99,14 +97,6 @@ float Mb1       = 0.0;
 float Mb2       = 0.0;
 float Mb3       = 0.0;
 
-float t1_IITGN_traj = 0.0;
-float t2_IITGN_traj = 0.0;
-
-float sty_IITGN_traj = 0.0;
-float stz_IITGN_traj = 0.0;
-float eny_IITGN_traj = 0.0;
-float enz_IITGN_traj = 0.0;
-
 float light_on_off = 0.0;
 
 void ModeStabilize::run()
@@ -173,7 +163,6 @@ void ModeStabilize::attitude_altitude_controller(){
             if (copter.motors->armed()){
                 custom_PID_controller(H_roll, H_pitch, H_yaw, 0.0 ,0.0, 0.0, z_des ,0.0);
 
-                // IITGN_text_start_time_flag = AP_HAL::millis()/1000.0;
                 x_des       = quad_x;
                 y_des       = quad_y;
                 z_des       = quad_z;
@@ -181,7 +170,7 @@ void ModeStabilize::attitude_altitude_controller(){
                 y_des_dot   = 0.0;
                 z_des_dot   = 0.0;
                 yaw_des_position       = imu_yaw;
-                
+
             }
         }else if (RC_Channels::get_radio_in(CH_6) > 1600){
             if(copter.motors->armed()){
@@ -568,19 +557,4 @@ float ModeStabilize::saturation_for_yaw_angle_error(float error){
         error = error;
     }
     return error;
-}
-
-void ModeStabilize:: second_order_9_pt_SG_filter(float data_4, float data_3, float data_2, float data_1, float data_0, float data1, float data2, float data3, float data4){
-
-float D_4 = -0.0909090909;
-float D_3 = 0.0606060606;
-float D_2 = 0.16883116883;
-float D_1 = 0.23376623376;
-float D_0 = 0.25541125541;
-float D1  = 0.23376623376;
-float D2  = 0.16883116883;
-float D3  = 0.0606060606;
-float D4  = -0.0909090909;
-
-    H_pitch_channel_SG_fil = D_4*data_4 + D_3*data_3 + D_2*data_2 + D_1*data_1 + D_0 * data_0 + D1*data1 + D2*data2 + D3*data3 + D4*data4;
 }
