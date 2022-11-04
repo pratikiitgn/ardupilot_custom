@@ -179,106 +179,26 @@ float timer_x_des_start = 0.0;
 
 void ModeStabilize::run()
 {
-        // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
 
-    if (RC_Channels::get_radio_in(CH_6) < 1200){
+    if (code_starting_flag == 0){
 
-        hal.console->printf("From old code \n");
-        ///////////// OLD CODE  /////////////
-        //////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////
+        // To intialize the code
+        copter.init_rc_out();
+        hal.rcout->set_freq( 15, ESC_HZ); //0xFF  0x0F->b'00001111'
+        hal.rcout->enable_ch(0);
+        hal.rcout->enable_ch(1);
+        hal.rcout->enable_ch(2);
+        hal.rcout->enable_ch(3);
+        code_starting_flag = 1;
 
-        // apply simple mode transform to pilot inputs
-        update_simple_mode();
+    }else{
 
-        // convert pilot input to lean angles
-        float target_roll, target_pitch;
-        get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max);
-
-        // get pilot's desired yaw rate
-        float target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->norm_input_dz());
-
-        if (!motors->armed()) {
-            // Motors should be Stopped
-            motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);
-        } else if (copter.ap.throttle_zero
-                || (copter.air_mode == AirMode::AIRMODE_ENABLED && motors->get_spool_state() == AP_Motors::SpoolState::SHUT_DOWN)) {
-            // throttle_zero is never true in air mode, but the motors should be allowed to go through ground idle
-            // in order to facilitate the spoolup block
-
-            // Attempting to Land
-            motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::GROUND_IDLE);
-        } else {
-            motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
-        }
-
-        float pilot_desired_throttle = get_pilot_desired_throttle();
-
-        switch (motors->get_spool_state()) {
-        case AP_Motors::SpoolState::SHUT_DOWN:
-            // Motors Stopped
-            attitude_control->reset_yaw_target_and_rate();
-            attitude_control->reset_rate_controller_I_terms();
-            pilot_desired_throttle = 0.0f;
-            break;
-
-        case AP_Motors::SpoolState::GROUND_IDLE:
-            // Landed
-            attitude_control->reset_yaw_target_and_rate();
-            attitude_control->reset_rate_controller_I_terms_smoothly();
-            pilot_desired_throttle = 0.0f;
-            break;
-
-        case AP_Motors::SpoolState::THROTTLE_UNLIMITED:
-            // clear landing flag above zero throttle
-            if (!motors->limit.throttle_lower) {
-                set_land_complete(false);
-            }
-            break;
-
-        case AP_Motors::SpoolState::SPOOLING_UP:
-        case AP_Motors::SpoolState::SPOOLING_DOWN:
-            // do nothing
-            break;
-        }
-
-        // call attitude controller
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
-        // output pilot's throttle
-        attitude_control->set_throttle_out(pilot_desired_throttle, true, g.throttle_filt);
-
-        /////////////////////// update some variables for next custom code ///////////////////////
-
-        code_starting_flag = 0;
-    }
-    else
-    {
-        
-        // hal.console->printf("From custom code \n");
-
-        if (code_starting_flag == 0){
-
-                // To intialize the code
-                copter.init_rc_out();
-                hal.rcout->set_freq( 15, ESC_HZ); //0xFF  0x0F->b'00001111'
-                hal.rcout->enable_ch(0);
-                hal.rcout->enable_ch(1);
-                hal.rcout->enable_ch(2);
-                hal.rcout->enable_ch(3);
-
-                code_starting_flag = 1;
-
-                H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
-                quad_z_ini =  inertial_nav.get_position().z / 100.0;
+    ///////////// Arming checks  /////////////
+        if (copter.motors->armed()){
+            arm_disarm_flag = 1;
         }else{
-
-            ///////////// Arming checks  /////////////
-            if (copter.motors->armed()){
-                arm_disarm_flag = 1;
-            }else{
-                arm_disarm_flag = 0;
-            }
+            arm_disarm_flag = 0;
+        }
 
             ///////////// Checking batter voltage  /////////////
                 battery_check();
@@ -290,13 +210,6 @@ void ModeStabilize::run()
                 custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
 
         }
-
-            /////////// To debug the code ///////////
-            // hal.console->printf("Hello captain from general");
-            // hal.console->printf("landing_timer -> %f \n",landing_timer);
-            // hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
-
-    }
 }
 
 void ModeStabilize::battery_check(){
@@ -305,160 +218,162 @@ void ModeStabilize::battery_check(){
 
 void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
 
-    // float mass = 1.236;
+    if (RC_Channels::get_radio_in(CH_6) < 1200){
+        motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
 
-///////////////////// Altitude controller /////////////////////
+        //// Initializing the states of the quadcopters
+        quad_z_ini =  inertial_nav.get_position().z / 100.0;
+        H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
 
-    float e_z   = z_des - quad_z;
+        float quad_x_ini_inertial =  inertial_nav.get_position().x / 100.0;
+        float quad_y_ini_inertial =  inertial_nav.get_position().y / 100.0;
 
-    float Kp_z        = 2.0;    // 2.0 (best)
-    float Kd_z        = 2.0;    // 1.0 (best)
-    // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
-    // F     =  10.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
-    F     =  11.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
-    // F = 5.0;
-    // if (landing_timer > 2.0){
-    //     F = 5.0;
-    // }
+        quad_x_ini =  cosf(yaw_initially)*quad_x_ini_inertial + sinf(yaw_initially)*quad_y_ini_inertial;
+        quad_y_ini = -sinf(yaw_initially)*quad_x_ini_inertial + cosf(yaw_initially)*quad_y_ini_inertial;
 
-    // F = 10.0;
-    if (F > 20.0){
-        F = 20.0;
-    }
+            //// Initial the PWMs
+            if (copter.motors->armed()){
+                PWM1 = 1200;
+                PWM2 = 1200;
+                PWM3 = 1200;
+                PWM4 = 1200;
+            }
+        }
+        else {
+            if (copter.motors->armed()){
 
-    if (F < 0.0){
-        F =  0.0;
-    }
+            ///////////////////// Altitude controller /////////////////////
 
-///////////////////// geometric attitude controller /////////////////////
+                float e_z   = z_des - quad_z;
 
-    Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
-    Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
+                float Kp_z        = 2.0;    // 2.0 (best)
+                float Kd_z        = 2.0;    // 1.0 (best)
+                // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+                F     =  11.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
 
-    float des_phi_offset    = 0.0;
-    float des_theta_offset  = 0.0;
+                if (F > 20.0){ F = 20.0; }
+                if (F < 0.0){ F =  0.0;  }
 
-    des_phi     = des_phi + des_phi_offset;
-    des_theta   = des_theta + des_theta_offset;
+            ///////////////////// geometric attitude controller /////////////////////
 
-    Vector3f rpy_d(des_phi*PI/180.0,des_theta*PI/180.0,des_psi*PI/180.0);
-    Vector3f Omegad(des_phi_dot*PI/180.0,des_theta_dot*PI/180.0,des_psi_dot*PI/180.0);
+                Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
+                Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
 
-    Matrix3f R(eulerAnglesToRotationMatrix(rpy));
-    Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
+                float des_phi_offset    = 0.0;
+                float des_theta_offset  = 0.0;
 
-    float c2 = 2.0;
-    // float c1 = 1.0;
+                des_phi     = des_phi + des_phi_offset;
+                des_theta   = des_theta + des_theta_offset;
 
-    Vector3f e_R_val        = e_R(R,Rd);
-    Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
-    Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
-    Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
-    e_I_val_old             = e_I_val;
+                Vector3f rpy_d(des_phi*PI/180.0,des_theta*PI/180.0,des_psi*PI/180.0);
+                Vector3f Omegad(des_phi_dot*PI/180.0,des_theta_dot*PI/180.0,des_psi_dot*PI/180.0);
 
-    // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R[0][0],R[0][1],R[0][2],R[1][0],R[1][1],R[1][2],R[2][0],R[2][1],R[2][2]);
-    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
-    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
-    // hal.console->printf("%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
-    // Auto tuning Gains 
+                Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+                Matrix3f Rd(eulerAnglesToRotationMatrix(rpy_d));
 
-    // KR1         = KR1_old     + c1*e_R_val[0]*e_Omega_val[0];
-    // KR1_old     = KR1;
+                float c2 = 2.0;
+                // float c1 = 1.0;
 
-    // KOmega1     = KOmega1_old + c2*e_R_val[0]*e_Omega_val[0];
-    // KOmega1_old = KOmega1;
+                Vector3f e_R_val        = e_R(R,Rd);
+                Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
+                Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
+                Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
+                e_I_val_old             = e_I_val;
 
-    // KI1         = KI1_old     + e_I_val * (Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2) + e_Omega_val);
-    // KI1_old     = KI1;
+                // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R[0][0],R[0][1],R[0][2],R[1][0],R[1][1],R[1][2],R[2][0],R[2][1],R[2][2]);
+                // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+                // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+                // hal.console->printf("%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
+                // Auto tuning Gains 
 
-    // float KI1_lim = 5;
+                // KR1         = KR1_old     + c1*e_R_val[0]*e_Omega_val[0];
+                // KR1_old     = KR1;
 
-    // if (KI1 > KI1_lim){
-    //     KI1 = KI1_lim;
-    // }
-    // if (KI1 < KI1_lim){
-    //     KI1 = KI1_lim;
-    // }
+                // KOmega1     = KOmega1_old + c2*e_R_val[0]*e_Omega_val[0];
+                // KOmega1_old = KOmega1;
 
-/////////////////////// Manual gain tuning  ///////////////////////
+                // KI1         = KI1_old     + e_I_val * (Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2) + e_Omega_val);
+                // KI1_old     = KI1;
 
-    // KR1         =   1.3;     // 0.9
-    // KOmega1     = 15.00;     // 10.00
-    // KI1         =  0.00;     // 0.01
-    // KR2         =   1.3;     // 1.3
-    // KOmega2     =  15.0;     // 24.5
-    // KI2         =   0.0;     // 0.01
-    // KR3         =  6.00;     // 6.0
-    // KOmega3     =  10.00;     // 10.0
-    // KI3         =  0.00;     // 0.0
+                // float KI1_lim = 5;
 
-    KR1         = 0.9;  // 0.6 (TB best)  //0.4
-    KOmega1     = 21; // 10.5(TB best)  //0.5
-    KI1         = 0.01;  // 0.1 (TB best)  //0.1
-    KR2         = 1.3;  // 1.0  (TB good)
-    KOmega2     = 24; // 13.5 (TB good)
-    KI2         = 0.01;  // 0.1  (TB good)
-    KR3         = 6.0;  // 1.0  (TB good)
-    KOmega3     = 10.0; // 13.5 (TB good)
-    KI3         = 0.00;  // 0.1  (TB good)
+                // if (KI1 > KI1_lim){
+                //     KI1 = KI1_lim;
+                // }
+                // if (KI1 < KI1_lim){
+                //     KI1 = KI1_lim;
+                // }
 
-    // hal.console->printf("%f,%f,%f\n",KR1,KOmega1,KI1);
-    // hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
+            /////////////////////// Manual gain tuning  ///////////////////////
 
-    Matrix3f KR(
-                KR1,0.0,0.0,
-                0.0,KR2,0.0,
-                0.0,0.0,KR3
+                KR1         = 0.9;  // 0.6 (TB best)  //0.4
+                KOmega1     = 21; // 10.5(TB best)  //0.5
+                KI1         = 0.01;  // 0.1 (TB best)  //0.1
+                KR2         = 1.3;  // 1.0  (TB good)
+                KOmega2     = 24; // 13.5 (TB good)
+                KI2         = 0.01;  // 0.1  (TB good)
+                KR3         = 6.0;  // 1.0  (TB good)
+                KOmega3     = 10.0; // 13.5 (TB good)
+                KI3         = 0.00;  // 0.1  (TB good)
+
+                Matrix3f KR(
+                            KR1,0.0,0.0,
+                            0.0,KR2,0.0,
+                            0.0,0.0,KR3
+                            );
+                Matrix3f KOmega(
+                            KOmega1,0.0,0.0,
+                            0.0,KOmega2,0.0,
+                            0.0,0.0,KOmega3
+                            );
+                Matrix3f KI(
+                            KI1,0.0,0.0,
+                            0.0,KI2,0.0,
+                            0.0,0.0,KI3
+                            );
+                // Intertia matrix
+                Matrix3f JJ(
+                        0.0113, 0.0 , 0.0,
+                        0.0, 0.0133,0.0,
+                        0.0,0.0,0.0187
                 );
-    Matrix3f KOmega(
-                KOmega1,0.0,0.0,
-                0.0,KOmega2,0.0,
-                0.0,0.0,KOmega3
-                );
-    Matrix3f KI(
-                KI1,0.0,0.0,
-                0.0,KI2,0.0,
-                0.0,0.0,KI3
-                );
-    // Intertia matrix
-    Matrix3f JJ(
-            0.0113, 0.0 , 0.0,
-            0.0, 0.0133,0.0,
-            0.0,0.0,0.0187
-    );
 
-    Vector3f M( Matrix_vector_mul(KR,e_R_val) + Matrix_vector_mul(KOmega,e_Omega_val) + Matrix_vector_mul(KI,e_I_val_sum) + Omega % Matrix_vector_mul(JJ,Omega));
+                Vector3f M( Matrix_vector_mul(KR,e_R_val) + Matrix_vector_mul(KOmega,e_Omega_val) + Matrix_vector_mul(KI,e_I_val_sum) + Omega % Matrix_vector_mul(JJ,Omega));
 
-    Mb1 =  -M[0];
-    Mb2 =  -M[1];
-    Mb3 =  M[2];
-    Mb3 =  0.0;
+                Mb1 =  -M[0];
+                Mb2 =  -M[1];
+                Mb3 =  M[2];
+                Mb3 =  0.0;
 
-    float FM_devided_FF ;
-    if (battvolt >= 11.5 ){
-         FM_devided_FF = 0.24; //0.24
-    }else{
-         FM_devided_FF = 0.31;
-    }
+                float FM_devided_FF ;
+                if (battvolt >= 11.5 ){
+                    FM_devided_FF = 0.24; //0.24
+                }else{
+                    FM_devided_FF = 0.31;
+                }
 
-    float function_F1 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F2 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
-    float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
-    float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+                float function_F1 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+                float function_F2 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+                float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+                float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
 
-    PWM1 = Inverse_thrust_function(function_F1);
-    PWM2 = Inverse_thrust_function(function_F2);
-    PWM3 = Inverse_thrust_function(function_F3);
-    PWM4 = Inverse_thrust_function(function_F4);
+                PWM1 = Inverse_thrust_function(function_F1);
+                PWM2 = Inverse_thrust_function(function_F2);
+                PWM3 = Inverse_thrust_function(function_F3);
+                PWM4 = Inverse_thrust_function(function_F4);
 
-    PWM1 = 1200;
-    PWM2 = 1200;
-    PWM3 = 1200;
-    PWM4 = 1200;
+                PWM1 = 1200;
+                PWM2 = 1200;
+                PWM3 = 1200;
+                PWM4 = 1200;
 
-    // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
-    hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
-    // hal.console->printf("%f,%f,%f\n",H_roll,H_pitch,H_yaw);
+                // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
+                hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
+                // hal.console->printf("%f,%f,%f\n",H_roll,H_pitch,H_yaw);
+
+            }
+        }
+
 }
 
 Vector3f ModeStabilize::e_R(Matrix3f R, Matrix3f Rd){
