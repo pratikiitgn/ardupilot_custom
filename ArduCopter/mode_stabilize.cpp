@@ -237,7 +237,13 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 PWM2 = 1200;
                 PWM3 = 1200;
                 PWM4 = 1200;
+            }else{
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
             }
+
         }
         else {
             if (copter.motors->armed()){
@@ -250,6 +256,7 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 float Kd_z        = 2.0;    // 1.0 (best)
                 // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
                 F     =  11.0 + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
+                F     =  11.0;
 
                 if (F > 20.0){ F = 20.0; }
                 if (F < 0.0){ F =  0.0;  }
@@ -362,15 +369,20 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 PWM3 = Inverse_thrust_function(function_F3);
                 PWM4 = Inverse_thrust_function(function_F4);
 
-                PWM1 = 1200;
-                PWM2 = 1200;
-                PWM3 = 1200;
-                PWM4 = 1200;
+                // PWM1 = 1200;
+                // PWM2 = 1200;
+                // PWM3 = 1200;
+                // PWM4 = 1200;
 
                 // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
                 hal.console->printf("%f,%f,%f\n",Mb1,Mb2,Mb3);
                 // hal.console->printf("%f,%f,%f\n",H_roll,H_pitch,H_yaw);
 
+            }else{
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
             }
         }
 
