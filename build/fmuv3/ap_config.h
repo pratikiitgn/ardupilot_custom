@@ -14,8 +14,8 @@
 /* #undef HAVE_ENDIAN_H */
 /* #undef HAVE_BYTESWAP_H */
 /* #undef HAVE_MEMRCHR */
-#define PYTHONDIR "/usr/lib/python3/dist-packages"
-#define PYTHONARCHDIR "/usr/lib/python3/dist-packages"
+#define PYTHONDIR "/usr/lib/python3.8/site-packages"
+#define PYTHONARCHDIR "/usr/lib/python3.8/site-packages"
 #define _GNU_SOURCE 1
 
 #endif /* W_FMUV3_AP_CONFIG_H_WAF */

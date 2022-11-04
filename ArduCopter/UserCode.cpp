@@ -8,6 +8,8 @@
 #include <string.h>
 #include <math.h>
 #include <AP_GPS/AP_GPS.h>
+#define PI 3.14
+
 
 #if HAL_OS_POSIX_IO
 #include <stdio.h>
@@ -22,6 +24,12 @@ float encoder_pitch_dot_feedback    = 0.0;
 float imu_roll_log      = 0.0;
 float imu_pitch_log     = 0.0;
 float imu_yaw_log       = 0.0;
+
+Vector3f qc(0.0,0.0,0.0);
+Vector3f Omega_c(0.0,0.0,0.0);
+Vector3f qc_prev(0.0,0.0,0.0);
+
+
 
 // const AP_HAL::HAL& hal = AP_HAL::get_HAL();
 
@@ -46,6 +54,7 @@ void Copter::userhook_init()
     // this will be called once at start-up
     // setup_uart(hal.serial(4), "SERIAL1");  // telemetry 1
     hal.serial(2)->begin(115200);
+    hal.serial(4)->begin(115200);
 
 }
 #endif
@@ -65,10 +74,10 @@ void Copter::userhook_FastLoop()
     imu_roll_log        =  (ahrs.roll_sensor)  / 100.0;     // degrees 
     imu_pitch_log       = -(ahrs.pitch_sensor) / 100.0;     // degrees 
     imu_yaw_log         = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees 
- 
 
     // hal.console->printf("From usercode \n");
-    // getEncoderData();
+    getEncoderData();
+    Drone_geometric_data();
     // hal.console->printf("ph_p %f, th_p - %f\n",encoder_roll_feedback,encoder_pitch_feedback); 
 
     // char H_roll_[5]    = "";
@@ -116,7 +125,7 @@ void Copter::userhook_FastLoop()
 
     //// Data logging outdoor////
     // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
-    hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+    // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
 
     // hal.console->printf("%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",arm_disarm_flag,quad_x,quad_y,quad_z,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
 
@@ -255,9 +264,9 @@ void Copter::getEncoderData()
     bool new_data = false;
 
     char attitude[] = "50000_50000";
-    while (hal.serial(2)->available()>0 && new_data == false)
+    while (hal.serial(4)->available()>0 && new_data == false)
         {
-            char temp = hal.serial(2)->read();
+            char temp = hal.serial(4)->read();
             if (receiving_data == true)
             {
                 if (temp != endChar)
@@ -280,6 +289,7 @@ void Copter::getEncoderData()
             }
         }
         // hal.uartE->printf("%s\n",attitude);
+        // hal.console->printf("%s\n",attitude);
 
         char roll_char[]        = "11111";
         char pitch_char[]       = "11111";
@@ -317,4 +327,87 @@ void Copter::getEncoderData()
 
         // hal.uartE->printf("%0.3f,", encoder_roll_feedback);
         // hal.uartE->printf("%0.3f\n", encoder_pitch_feedback);
+
+        // hal.console->printf("phi_p -> %f, theta_p -> %f\n",encoder_roll_feedback,encoder_pitch_feedback);
+
+}
+
+void Copter::Drone_geometric_data(){
+
+    // hal.console->printf("%5.2f,%5.2f,%5.2f   ",HH_IMU_vector[0],HH_IMU_vector[1],HH_IMU_vector[2]);
+    // hal.console->printf("%5.2f,%5.2f\n",HH_IMU_pitch_feedback,HH_pitch_feedback);
+    // hal.console->printf("%f\n", cosf(PI));
+    Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,0*PI/180.0);
+    Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+    
+    // Calculate rotation about pitch axis of CAM device
+    Matrix3f CAM_R_y (
+               cosf(encoder_pitch_feedback*PI/180),    0,      sinf(encoder_pitch_feedback*PI/180),
+               0,               1,      0,
+               -sinf(encoder_pitch_feedback*PI/180),   0,      cosf(encoder_pitch_feedback*PI/180)
+               );
+
+    // Calculate rotation about roll axis of CAM device
+    Matrix3f CAM_R_x (
+               1,       0,              0,
+               0,       cosf(encoder_roll_feedback*PI/180),   -sinf(encoder_roll_feedback*PI/180),
+               0,       sinf(encoder_roll_feedback*PI/180),   cosf(encoder_roll_feedback*PI/180)
+               );
+    Vector3f e_3_neg(0,0,-1);
+
+    qc = Matrix_vector_mul(R,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
+    Vector3f qc_dot = (qc - qc_prev);
+
+    hal.console->printf("%10.5f, %10.5f, %10.5f, %10.5f \n",qc[0],qc[1],qc[2],imu_yaw_log);
+
+    // hal.console->printf("%10.5f,%10.5f\n",qc[0],100*qc1_dot_fil_final);
+    // hal.console->printf("%10.5f,%10.5f\n",qc[1],100*qc2_dot_fil_final);
+
+    Omega_c = Matrix_vector_mul(hatmap(qc),qc_dot);
+    qc_prev  = qc;
+}
+
+Vector3f Copter::Matrix_vector_mul(Matrix3f R, Vector3f v){
+    Vector3f mul_vector(
+                        R[0][0]*v[0] + R[0][1]*v[1] + R[0][2]*v[2] ,
+                        R[1][0]*v[0] + R[1][1]*v[1] + R[1][2]*v[2] ,
+                        R[2][0]*v[0] + R[2][1]*v[1] + R[2][2]*v[2]
+                        );
+    return mul_vector;
+}
+
+
+Matrix3f Copter::hatmap(Vector3f v){
+    Matrix3f R (
+               0,         -v[2],      v[1],
+               v[2],         0 ,     -v[0],
+               -v[1],      v[0],       0);
+    return R;
+}
+
+Matrix3f Copter::eulerAnglesToRotationMatrix(Vector3f rpy){
+     // Calculate rotation about x axis
+    Matrix3f R_x (
+               1,       0,              0,
+               0,       cosf(rpy[0]),   -sinf(rpy[0]),
+               0,       sinf(rpy[0]),   cosf(rpy[0])
+               );
+
+    // Calculate rotation about y axis
+    Matrix3f R_y (
+               cosf(rpy[1]),    0,      sinf(rpy[1]),
+               0,               1,      0,
+               -sinf(rpy[1]),   0,      cosf(rpy[1])
+               );
+
+    // Calculate rotation about z axis
+    Matrix3f R_z (
+               cosf(rpy[2]),    -sinf(rpy[2]),      0,
+               sinf(rpy[2]),    cosf(rpy[2]),       0,
+               0,               0,                  1);
+
+    // Combined rotation matrix
+    Matrix3f R = R_z * R_y * R_x;
+
+    return R;
 }

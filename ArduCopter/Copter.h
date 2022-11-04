@@ -917,6 +917,10 @@ private:
     void log_attitude_tracking();
     void log_sys_ID_ph_func();
     void getEncoderData();
+    void Drone_geometric_data();
+    Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
+    Matrix3f hatmap(Vector3f v);
+    Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
 
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;

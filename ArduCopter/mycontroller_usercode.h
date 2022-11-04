@@ -45,3 +45,6 @@ extern float Mb3;
 extern float x_des;
 extern float y_des;
 extern float z_des;
+
+extern Vector3f qc;
+extern Vector3f Omega_c;
