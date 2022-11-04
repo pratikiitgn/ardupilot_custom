@@ -1444,8 +1444,17 @@ public:
     float saturation_for_yaw_angle_error(float error);
     void attitude_altitude_controller();
     void battery_check();
-    void custom_PID_position_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    void custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
+    Vector3f vee_map(Matrix3f R);
+    Vector3f sat_e_I(Vector3f vec);
+    Vector3f e_Omega(Matrix3f R, Matrix3f Rd, Vector3f Omega, Vector3f Omegad);
+    Matrix3f matrix_transpose(Matrix3f R);
+    Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
+    Matrix3f hatmap(Vector3f v);
+    Vector3f e_R(Matrix3f R, Matrix3f Rd);
     
+
 protected:
 
     const char *name() const override { return "STABILIZE"; }

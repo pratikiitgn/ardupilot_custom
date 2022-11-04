@@ -87,7 +87,7 @@ void Copter::userhook_FastLoop()
 
     // int imu_roll_         = imu_roll*100;
     // int H_roll_           = H_roll*100;
-    // int H_pitch_        = H_pitch*100;
+    // int H_pitch_          = H_pitch*100;
     // int imu_roll_dot_       = imu_roll_dot*100;
     // int imu_pitch_      = imu_pitch*100;
 
@@ -337,8 +337,8 @@ void Copter::Drone_geometric_data(){
     // hal.console->printf("%5.2f,%5.2f,%5.2f   ",HH_IMU_vector[0],HH_IMU_vector[1],HH_IMU_vector[2]);
     // hal.console->printf("%5.2f,%5.2f\n",HH_IMU_pitch_feedback,HH_pitch_feedback);
     // hal.console->printf("%f\n", cosf(PI));
-    Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,0*PI/180.0);
-    Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+    Vector3f rpy_quad(imu_roll_log*PI/180.0,imu_pitch_log*PI/180.0,imu_yaw_log*PI/180.0);
+    Matrix3f R_quad(eulerAnglesToRotationMatrix(rpy_quad));
     
     // Calculate rotation about pitch axis of CAM device
     Matrix3f CAM_R_y (
@@ -355,15 +355,24 @@ void Copter::Drone_geometric_data(){
                );
     Vector3f e_3_neg(0,0,-1);
 
-    qc = Matrix_vector_mul(R,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
-    Vector3f qc_dot = (qc - qc_prev);
+    qc = Matrix_vector_mul(R_quad,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
+    // qc   = Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg));
+    Vector3f e1_earth(1,0,0);
+    Vector3f e2_earth(0,1,0);
+    Vector3f e3_earth(0,0,1);
+    Vector3f b1_quad(Matrix_vector_mul(R_quad,e1_earth));
+    Vector3f qc_dot = (qc - qc_prev)*10;
 
-    hal.console->printf("%10.5f, %10.5f, %10.5f, %10.5f \n",qc[0],qc[1],qc[2],imu_yaw_log);
+    // hal.console->printf("%10.5f, %10.5f, %10.5f, %10.5f \n",qc[0],qc[1],qc[2],imu_yaw_log);
 
-    // hal.console->printf("%10.5f,%10.5f\n",qc[0],100*qc1_dot_fil_final);
+    // hal.console->printf("%10.5f, %10.5f\n",qc[1],qc_dot[1]);
+
+    // hal.console->printf("%10.5f, %10.5f, %10.5f, %10.5f \n",b1_quad[0],b1_quad[1],b1_quad[2],imu_yaw_log);
+    // hal.console->printf("%10.5f,%10.5f,%10.5f\n",imu_roll,imu_pitch,imu_yaw);
     // hal.console->printf("%10.5f,%10.5f\n",qc[1],100*qc2_dot_fil_final);
 
     Omega_c = Matrix_vector_mul(hatmap(qc),qc_dot);
+    // hal.console->printf("%10.5f, %10.5f\n",qc[0],Omega_c[1]);
     qc_prev  = qc;
 }
 
