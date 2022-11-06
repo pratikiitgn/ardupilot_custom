@@ -1453,7 +1453,10 @@ public:
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
     Matrix3f hatmap(Vector3f v);
     Vector3f e_R(Matrix3f R, Matrix3f Rd);
-    
+    Vector3f PD_controller_payload(Vector3f xp, Vector3f xpd, Vector3f xp_dot, Vector3f xpd_dot);
+    void Human_operators_commands(float des_xp_x_vel,float des_xp_y_vel,float des_xp_z_vel,float des_yaw_system_vel);
+    float two_norm(Vector3f v);
+    Vector3f constant_vec_multiplication(float a, Vector3f b);
 
 protected:
 

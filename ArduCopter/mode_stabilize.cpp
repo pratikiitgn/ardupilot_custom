@@ -206,8 +206,26 @@ void ModeStabilize::run()
                 battery_check();
             ///////////// Taking pilot inputs  /////////////
                 pilot_input();
-            ///////////// getting states of quadcopter /////////////
+            ///////////// Getting states of quadcopter /////////////
                 quad_states();
+
+            ///////////// Human operator's commands /////////////
+                // void Human_operators_commands(float des_xp_x_vel,float des_xp_y_vel,float des_xp_z_vel,float des_yaw_system_vel);
+                // Write down this code later on
+                float des_yaw_system = H_yaw;
+            ///////////// PD_Controller for payload position tracking /////////////
+                Vector3f zero_vec(0.0,0.0,0.0);
+                Vector3f FD(PD_controller_payload(zero_vec, zero_vec, zero_vec, zero_vec));
+                hal.console->printf("FD1-> %f,FD2-> %f,FD3-> %f \n", FD[1],FD[1],FD[2]);
+
+            ///////////// Desired attitude of the cables /////////////
+                Vector3f sd(cosf(H_yaw*PI/180), sinf(H_yaw*PI/180), 0.0);
+                Vector3f FD_divided_FD_norm(constant_vec_multiplication(1/two_norm(FD), FD));
+
+                float theta_pd = 0.0; // (in degres) Desired attitude of the cable at equilibrium condition
+                Vector3f r1d(sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
+
+
             ///////////// For attitude controller controller  /////////////
                 custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
 
@@ -277,7 +295,7 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 // F     =  mass * GRAVITY_MSS + Kp_z * (e_z) + Kd_z * (des_z_dot - quad_z_dot);
                 F     =  11.0 + Kp_z * e_z + Kd_z * e_z_dot + Ki_z * e_z_sum;
                 
-                hal.console->printf("z-> %f, z_des-> %f, F-> %f\n",quad_z,z_des,F);
+                // hal.console->printf("z-> %f, z_des-> %f, F-> %f\n",quad_z,z_des,F);
 
                 // F     =  11.0;
 
@@ -416,6 +434,65 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
             }
         }
 
+}
+
+// void ModeStabilize::Human_operators_commands(){
+
+// }
+
+Vector3f ModeStabilize::constant_vec_multiplication(float a, Vector3f b){
+    Vector3f vec;
+    vec[0] = a*b[0];
+    vec[1] = a*b[1];
+    vec[2] = a*b[2];
+    return vec;
+}
+
+float ModeStabilize::two_norm(Vector3f v){
+    float norm_val = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+    return sqrtf(norm_val);
+}
+
+Vector3f ModeStabilize::PD_controller_payload(Vector3f xp, Vector3f xpd, Vector3f xp_dot, Vector3f xpd_dot){
+
+    float Kxp1 = 0.0;
+    float Kxp2 = 0.0;
+    float Kxp3 = 0.0;
+
+    float Kxp_dot_1 = 0.0;
+    float Kxp_dot_2 = 0.0;
+    float Kxp_dot_3 = 0.0;
+
+    Matrix3f Kxp(
+                Kxp1,0.0,0.0,
+                0.0,Kxp2,0.0,
+                0.0,0.0,Kxp3);
+
+    Matrix3f Kxp_dot(
+                Kxp_dot_1,0.0,0.0,
+                0.0,Kxp_dot_2,0.0,
+                0.0,0.0,Kxp_dot_3);
+
+    Vector3f e_xp(0.0,0.0,0.0);
+    e_xp = xp - xpd;
+
+    Vector3f e_xp_dot(0.0,0.0,0.0);
+    e_xp_dot = xp_dot - xpd_dot;
+
+    Vector3f xpd_dot_dot(0.0,0.0,0.0);
+
+    float mp = 0.100;
+
+    Vector3f ge3(0,0,9.81);
+
+    Vector3f FD;
+    FD = (-Matrix_vector_mul(Kxp,e_xp) - Matrix_vector_mul(Kxp_dot,e_xp_dot) + xpd_dot_dot + ge3);
+    FD[0] = mp*FD[0];
+    FD[1] = mp*FD[1];
+    FD[2] = mp*FD[2];
+
+    return FD;
+    
 }
 
 Vector3f ModeStabilize::e_R(Matrix3f R, Matrix3f Rd){
