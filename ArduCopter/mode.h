@@ -1457,7 +1457,8 @@ public:
     void Human_operators_commands(float des_xp_x_vel,float des_xp_y_vel,float des_xp_z_vel,float des_yaw_system_vel);
     float two_norm(Vector3f v);
     Vector3f constant_vec_multiplication(float a, Vector3f b);
-
+    Vector3f Two_vec_cross_product(Vector3f a, Vector3f b);
+    Vector3f Desired_cable_attitude_estimation(float des_yaw_system, float theta_pd, Vector3f FD);
 protected:
 
     const char *name() const override { return "STABILIZE"; }

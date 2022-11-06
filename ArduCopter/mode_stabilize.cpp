@@ -12,6 +12,9 @@
 
 #define ESC_HZ 490
 #define PI 3.14
+#define mp = 0.1
+#define l1 = 1.5
+#define m1 = 1.236
 
 int code_starting_flag = 0;
 
@@ -161,6 +164,11 @@ Vector3f e_I_val_old (0.0,0.0,0.0);
 // For altitude controller
 float e_z_sum = 0.0;
 
+// For cable attitude controller
+Vector3f q1d_prev(0.0,0.0,0.0);
+Vector3f q1_current(0.0,0.0,1.0);
+Vector3f q1_current_prev(0.0,0.0,1.0);
+
 float landing_timer = 0.0;
 int landing_timer_flag = 0;
 float landing_timer_start = 0.0;
@@ -216,15 +224,48 @@ void ModeStabilize::run()
             ///////////// PD_Controller for payload position tracking /////////////
                 Vector3f zero_vec(0.0,0.0,0.0);
                 Vector3f FD(PD_controller_payload(zero_vec, zero_vec, zero_vec, zero_vec));
-                hal.console->printf("FD1-> %f,FD2-> %f,FD3-> %f \n", FD[1],FD[1],FD[2]);
+                // hal.console->printf("FD1-> %f,FD2-> %f,FD3-> %f \n", FD[1],FD[1],FD[2]);
 
             ///////////// Desired attitude of the cables /////////////
-                Vector3f sd(cosf(H_yaw*PI/180), sinf(H_yaw*PI/180), 0.0);
-                Vector3f FD_divided_FD_norm(constant_vec_multiplication(1/two_norm(FD), FD));
-
                 float theta_pd = 0.0; // (in degres) Desired attitude of the cable at equilibrium condition
-                Vector3f r1d(sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
+                Vector3f q1d(Desired_cable_attitude_estimation(des_yaw_system,theta_pd, FD));
+                Vector3f q1d_dot = (q1d - q1d_prev)*10.0;
+                q1d_prev = q1d;
+                Vector3f Omegad_1 = Matrix_vector_mul(hatmap(q1d),q1d_dot);
+                // hal.console->printf("q1d-> %f,q2d-> %f,q3d-> %f \n", q1d[0],q1d[1],q1d[2]);
 
+            ///////////// Design of Perpendicular components /////////////
+                q1_current      = qc;
+                Vector3f q1_dot = (q1_current - q1_current_prev)*10.0;
+                q1_current_prev = q1_current;
+
+                Kq11    = 1.0;  //   (TB good)
+                Kq12    = 1.0;  //   (TB good)
+                Kq13    = 1.0;  //   (TB good)
+
+                Kw11    = 1.0;  //   (TB good)
+                Kw12    = 1.0;  //   (TB good)
+                Kw13    = 1.0;  //   (TB good)
+
+                Matrix3f kq1(
+                            Kq11,0.0,0.0,
+                            0.0,Kq12,0.0,
+                            0.0,0.0,Kq13
+                            );
+
+                Matrix3f kq1(
+                            Kw11,0.0,0.0,
+                            0.0,Kw12,0.0,
+                            0.0,0.0,Kw13
+                            );
+
+                e_q1        = Matrix_vector_mul(hatmap(q1d),q1_current)
+                e_omega1    = Omega_c - Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1));
+
+                Vector3f u1_perpendicular;
+                u1_perpendicular = m1*l1* 
+
+                Matrix_vector_mul(hatmap(q1_current)* Matrix_vector_mul
 
             ///////////// For attitude controller controller  /////////////
                 custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
@@ -453,6 +494,34 @@ float ModeStabilize::two_norm(Vector3f v){
     return sqrtf(norm_val);
 }
 
+Vector3f ModeStabilize::Two_vec_cross_product(Vector3f vect_A, Vector3f vect_B){
+    Vector3f cross_P;
+    cross_P[0] = vect_A[1] * vect_B[2] - vect_A[2] * vect_B[1];
+    cross_P[1] = vect_A[2] * vect_B[0] - vect_A[0] * vect_B[2];
+    cross_P[2] = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
+
+    return cross_P;
+}
+
+Vector3f ModeStabilize::Desired_cable_attitude_estimation(float des_yaw_system, float theta_pd, Vector3f FD){
+    Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
+    Vector3f FD_divided_FD_norm(constant_vec_multiplication(1/two_norm(FD), FD));
+
+    Vector3f FD_cross_sd = Two_vec_cross_product(FD,sd);
+    FD_cross_sd = constant_vec_multiplication(1/two_norm(FD_cross_sd),FD_cross_sd);
+    Vector3f FD_cross_sd_cross_FD = Two_vec_cross_product(Two_vec_cross_product(FD,sd),FD);
+    FD_cross_sd_cross_FD = constant_vec_multiplication(1/two_norm(FD_cross_sd_cross_FD),FD_cross_sd_cross_FD);
+
+    Vector3f r1d(sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
+
+    Matrix3f Q_matrix(FD_cross_sd_cross_FD[0], FD_cross_sd[0], FD_divided_FD_norm[0],
+    FD_cross_sd_cross_FD[1], FD_cross_sd[1], FD_divided_FD_norm[1],
+    FD_cross_sd_cross_FD[2], FD_cross_sd[2], FD_divided_FD_norm[2]);
+
+    Vector3f q1d(Matrix_vector_mul(Q_matrix,r1d));
+    return q1d;
+}
+
 Vector3f ModeStabilize::PD_controller_payload(Vector3f xp, Vector3f xpd, Vector3f xp_dot, Vector3f xpd_dot){
 
     float Kxp1 = 0.0;
@@ -480,8 +549,6 @@ Vector3f ModeStabilize::PD_controller_payload(Vector3f xp, Vector3f xpd, Vector3
     e_xp_dot = xp_dot - xpd_dot;
 
     Vector3f xpd_dot_dot(0.0,0.0,0.0);
-
-    float mp = 0.100;
 
     Vector3f ge3(0,0,9.81);
 

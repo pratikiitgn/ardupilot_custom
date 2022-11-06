@@ -355,13 +355,13 @@ void Copter::Drone_geometric_data(){
                );
     Vector3f e_3_neg(0,0,-1);
 
-    qc = Matrix_vector_mul(R_quad,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
+    qc = -Matrix_vector_mul(R_quad,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
     // qc   = Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg));
     Vector3f e1_earth(1,0,0);
     Vector3f e2_earth(0,1,0);
     Vector3f e3_earth(0,0,1);
     Vector3f b1_quad(Matrix_vector_mul(R_quad,e1_earth));
-    Vector3f qc_dot = (qc - qc_prev)*10;
+    Vector3f qc_dot = (qc - qc_prev)*10.0;
 
     // hal.console->printf("%10.5f, %10.5f, %10.5f, %10.5f \n",qc[0],qc[1],qc[2],imu_yaw_log);
 
