@@ -12,9 +12,9 @@
 
 #define ESC_HZ 490
 #define PI 3.14
-#define mp = 0.1
-#define l1 = 1.5
-#define m1 = 1.236
+float mp = 0.1;
+float l1 = 1.5;
+float m1 = 1.236;
 
 int code_starting_flag = 0;
 
@@ -168,6 +168,8 @@ float e_z_sum = 0.0;
 Vector3f q1d_prev(0.0,0.0,0.0);
 Vector3f q1_current(0.0,0.0,1.0);
 Vector3f q1_current_prev(0.0,0.0,1.0);
+Vector3f Omegad_1_dot(0.0,0.0,1.0);
+Vector3f Omegad_1_prev(0.0,0.0,1.0);
 
 float landing_timer = 0.0;
 int landing_timer_flag = 0;
@@ -216,7 +218,6 @@ void ModeStabilize::run()
                 pilot_input();
             ///////////// Getting states of quadcopter /////////////
                 quad_states();
-
             ///////////// Human operator's commands /////////////
                 // void Human_operators_commands(float des_xp_x_vel,float des_xp_y_vel,float des_xp_z_vel,float des_yaw_system_vel);
                 // Write down this code later on
@@ -232,6 +233,8 @@ void ModeStabilize::run()
                 Vector3f q1d_dot = (q1d - q1d_prev)*10.0;
                 q1d_prev = q1d;
                 Vector3f Omegad_1 = Matrix_vector_mul(hatmap(q1d),q1d_dot);
+                Omegad_1_dot    = (Omegad_1 - Omegad_1_prev)*10.0;
+                Omegad_1_prev   = Omegad_1;
                 // hal.console->printf("q1d-> %f,q2d-> %f,q3d-> %f \n", q1d[0],q1d[1],q1d[2]);
 
             ///////////// Design of Perpendicular components /////////////
@@ -239,13 +242,13 @@ void ModeStabilize::run()
                 Vector3f q1_dot = (q1_current - q1_current_prev)*10.0;
                 q1_current_prev = q1_current;
 
-                Kq11    = 1.0;  //   (TB good)
-                Kq12    = 1.0;  //   (TB good)
-                Kq13    = 1.0;  //   (TB good)
+                float Kq11    = 1.0;  //   (TB good)
+                float Kq12    = 1.0;  //   (TB good)
+                float Kq13    = 1.0;  //   (TB good)
 
-                Kw11    = 1.0;  //   (TB good)
-                Kw12    = 1.0;  //   (TB good)
-                Kw13    = 1.0;  //   (TB good)
+                float Kw11    = 1.0;  //   (TB good)
+                float Kw12    = 1.0;  //   (TB good)
+                float Kw13    = 1.0;  //   (TB good)
 
                 Matrix3f kq1(
                             Kq11,0.0,0.0,
@@ -253,20 +256,41 @@ void ModeStabilize::run()
                             0.0,0.0,Kq13
                             );
 
-                Matrix3f kq1(
+                Matrix3f kw1(
                             Kw11,0.0,0.0,
                             0.0,Kw12,0.0,
                             0.0,0.0,Kw13
                             );
 
-                e_q1        = Matrix_vector_mul(hatmap(q1d),q1_current)
-                e_omega1    = Omega_c - Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1));
+                Vector3f e_q1        = Matrix_vector_mul(hatmap(q1d),q1_current);
+                Vector3f e_omega1    = Omega_c - Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1));
+                
+                Vector3f fist_term   = -Matrix_vector_mul(kq1,e_q1);
+                Vector3f second_term = -Matrix_vector_mul(kw1,e_omega1);
+                Vector3f third_term  = -constant_vec_multiplication(Two_vec_dot_product(q1_current,Omegad_1),q1_dot);
+                Vector3f forth_term  = -Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1_dot));
+                Vector3f fifth_term  = constant_vec_multiplication((m1/mp),FD);
 
                 Vector3f u1_perpendicular;
-                u1_perpendicular = m1*l1* 
+                u1_perpendicular = fist_term + second_term + third_term + forth_term + fifth_term;
+                u1_perpendicular = Matrix_vector_mul(hatmap(q1_current),u1_perpendicular);
+                u1_perpendicular = constant_vec_multiplication(m1*l1,u1_perpendicular);
 
-                Matrix_vector_mul(hatmap(q1_current)* Matrix_vector_mul
+            ///////////// Quadcopter desired attitude /////////////
 
+                Vector3f b3d_quadcopter(constant_vec_multiplication(1/two_norm(u1_perpendicular), u1_perpendicular));
+                Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
+                Vector3f b2d_quadcopter;
+                b2d_quadcopter = Two_vec_cross_product(b3d_quadcopter,sd);
+                b2d_quadcopter = constant_vec_multiplication(1/two_norm(b2d_quadcopter),b2d_quadcopter);
+                Vector3f b1d_quadcopter;
+                b1d_quadcopter = Two_vec_cross_product(b2d_quadcopter,b3d_quadcopter);
+                b2d_quadcopter = constant_vec_multiplication(1/two_norm(b1d_quadcopter),b1d_quadcopter);
+
+                Matrix3f Rd_quadcopter(b1d_quadcopter[0], b2d_quadcopter[0], b3d_quadcopter[0],
+                                       b1d_quadcopter[1], b2d_quadcopter[1], b3d_quadcopter[1],
+                                       b1d_quadcopter[2], b2d_quadcopter[2], b3d_quadcopter[2]);
+                
             ///////////// For attitude controller controller  /////////////
                 custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
 
@@ -502,6 +526,12 @@ Vector3f ModeStabilize::Two_vec_cross_product(Vector3f vect_A, Vector3f vect_B){
 
     return cross_P;
 }
+
+float ModeStabilize::Two_vec_dot_product(Vector3f v1, Vector3f v2){
+
+    return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
+}
+
 
 Vector3f ModeStabilize::Desired_cable_attitude_estimation(float des_yaw_system, float theta_pd, Vector3f FD){
     Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
