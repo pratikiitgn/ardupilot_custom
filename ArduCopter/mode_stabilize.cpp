@@ -316,11 +316,11 @@ void ModeStabilize::run()
             ///////////// Final desired control force /////////////
                 Vector3f u1;
                 u1 = u1_parellel - u1_perpendicular;
-                hal.console->printf("%f,%f,%f,%f\n",u1[0],u1[1],u1[2],H_yaw);
+                // hal.console->printf("%f,%f,%f,%f\n",u1[0],u1[1],u1[2],H_yaw);
             ///////////// Quadcopter desired attitude /////////////
 
                 Vector3f b3d_quadcopter(constant_vec_multiplication(1/two_norm(u1), u1));
-                hal.console->printf("%f,%f,%f,%f\n",b3d_quadcopter[0],b3d_quadcopter[1],b3d_quadcopter[2],imu_yaw);
+                // hal.console->printf("%f,%f,%f,%f\n",b3d_quadcopter[0],b3d_quadcopter[1],b3d_quadcopter[2],imu_yaw);
                 Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
                 Vector3f b2d_quadcopter;
                 b2d_quadcopter = Two_vec_cross_product(b3d_quadcopter,sd);
@@ -338,6 +338,7 @@ void ModeStabilize::run()
                 // Rd_quadcopter = eulerAnglesToRotationMatrix(test);
 
                 Vector3f Final_RPY (RotationMatrixToEulerangles(Rd_quadcopter));
+                hal.console->printf("Phd -> %f, Thd-> %f, Psd-> %f, H_yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI,H_yaw);
                 // hal.console->printf("Roll -> %f, H_roll -> %f, Pitch -> %f, H_pitch -> %f, Yaw -> %f, H_yaw -> %f\n",Final_RPY[0]*180/PI,H_roll,Final_RPY[1]*180/PI,H_pitch,Final_RPY[2]*180/PI,H_yaw);
                 // hal.console->printf("Roll -> %f, Pitch -> %f, Yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI);
 
