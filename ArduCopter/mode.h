@@ -1460,6 +1460,8 @@ public:
     Vector3f Two_vec_cross_product(Vector3f a, Vector3f b);
     Vector3f Desired_cable_attitude_estimation(float des_yaw_system, float theta_pd, Vector3f FD);
     float Two_vec_dot_product(Vector3f v1, Vector3f v2);
+    Vector3f RotationMatrixToEulerangles(Matrix3f M);
+
 
 protected:
 

@@ -47,4 +47,9 @@ extern float y_des;
 extern float z_des;
 
 extern Vector3f qc;
+extern Vector3f qc_dot;
 extern Vector3f Omega_c;
+
+extern Vector3f e1_earth;
+extern Vector3f e2_earth;
+extern Vector3f e3_earth;
