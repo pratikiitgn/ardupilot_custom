@@ -1445,6 +1445,7 @@ public:
     void attitude_altitude_controller();
     void battery_check();
     void custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
+    void custom_geometric_controller_with_Rotation_matrix(Matrix3f Rd, Vector3f Omegad ,Vector3f u1);
     Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
     Vector3f vee_map(Matrix3f R);
     Vector3f sat_e_I(Vector3f vec);

@@ -214,7 +214,6 @@ void ModeStabilize::run()
         }else{
             arm_disarm_flag = 0;
         }
-
             ///////////// Checking batter voltage  /////////////
                 battery_check();
             ///////////// Taking pilot inputs  /////////////
@@ -225,6 +224,8 @@ void ModeStabilize::run()
                 // void Human_operators_commands(float des_xp_x_vel,float des_xp_y_vel,float des_xp_z_vel,float des_yaw_system_vel);
                 // Write down this code later on
                 float des_yaw_system = H_yaw;
+                // hal.console->printf("Des_yaw_system -> %f\n",des_yaw_system);
+
             ///////////// PD_Controller for payload position tracking /////////////
                 Vector3f zero_vec(0.0,0.0,0.0);
                 Vector3f FD(PD_controller_payload(zero_vec, zero_vec, zero_vec, zero_vec));
@@ -234,10 +235,12 @@ void ModeStabilize::run()
             ///////////// Desired attitude of the cables /////////////
                 float theta_pd      = 0.0; // (in degres) Desired attitude of the cable at equilibrium condition
                 Vector3f q1d(Desired_cable_attitude_estimation(des_yaw_system,theta_pd, FD));
-                Vector3f q1d_dot    = (q1d - q1d_prev)*10.0;
+                // Vector3f q1d_dot    = (q1d - q1d_prev)*10.0;
+                Vector3f q1d_dot    = (q1d - q1d_prev)*0.0;
                 // hal.console->printf("q1d_dot1-> %f,q1d_dot2-> %f,q1d_dot3-> %f, H_yaw-> %f\n", q1d_dot[0],q1d_dot[1],q1d_dot[2],des_yaw_system);
                 q1d_prev            =  q1d;
                 Vector3f Omegad_1   =  Matrix_vector_mul(hatmap(q1d),q1d_dot);
+                // hal.console->printf("Omegad_1_1-> %f,Omegad_1_2-> %f,Omegad_1_3-> %f, H_yaw-> %f\n", Omegad_1[0],Omegad_1[1],Omegad_1[2],des_yaw_system);
                 Omegad_1_dot        = (Omegad_1 - Omegad_1_prev)*10.0;
                 // hal.console->printf("Omegad_1_dot1-> %f,Omegad_1_dot2-> %f,Omegad_1_dot3-> %f, H_yaw-> %f\n", Omegad_1_dot[0],Omegad_1_dot[1],Omegad_1_dot[2],des_yaw_system);
                 Omegad_1_prev       =  Omegad_1;
@@ -251,13 +254,13 @@ void ModeStabilize::run()
                 // hal.console->printf("%f,%f,%f \n", q1_dot[0],q1_dot[1],q1_dot[2]);
                 q1_current_prev     =  q1_current;
 
-                float Kq11    = 1.0;  //   (TB good)
-                float Kq12    = 1.0;  //   (TB good)
-                float Kq13    = 1.0;  //   (TB good)
+                float Kq11    = 0.5;    //  0.5 (TB good)
+                float Kq12    = 0.5;    //  0.5 (TB good)
+                float Kq13    = 0.5;    //  0.5 (TB good)
 
-                float Kw11    = 0.1;  //   (TB good)
-                float Kw12    = 0.1;  //   (TB good)
-                float Kw13    = 0.1;  //   (TB good)
+                float Kw11    = 0.0;   //   0.01 (TB good)
+                float Kw12    = 0.0;   //   0.01 (TB good)
+                float Kw13    = 0.0;    //  0.01 (TB good)
 
                 Matrix3f kq1(
                             Kq11,0.0,0.0,
@@ -272,78 +275,80 @@ void ModeStabilize::run()
                             );
 
                 Vector3f e_q1        = Matrix_vector_mul(hatmap(q1d),q1_current);
-                // hal.console->printf("e_q11 -> %f, e_q12 -> %f, e_q13 -> %f\n",e_q1[0],e_q1[1],e_q1[2]);
+                // hal.console->printf("q11-> %f, q12-> %f, q13-> %f, e_q11 -> %f, e_q12 -> %f, e_q13 -> %f\n",q1_current[0],q1_current[1],q1_current[2],e_q1[0],e_q1[1],e_q1[2]);
                 Vector3f e_omega1    = Omega_c - Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1));
                 // hal.console->printf("e_omega11 -> %f, e_omega12 -> %f, e_omega13 -> %f\n",e_omega1[0],e_omega1[1],e_omega1[2]);
+                // hal.console->printf("%f,%f\n",e_q1[0],e_omega1[0]);
                 // hal.console->printf("%f,%f,%f\n",e_omega1[0],e_omega1[1],e_omega1[2]);
-                Vector3f fist_term   = -Matrix_vector_mul(kq1,e_q1);
-                Vector3f second_term = -Matrix_vector_mul(kw1,e_omega1);
+                // hal.console->printf("%f,%f,%f,%f,%f,%f\n",e_q1[0],e_q1[1],e_q1[2],e_omega1[0],e_omega1[1],e_omega1[2]);
+                Vector3f zero_term   = -Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,FD));
+                zero_term            = constant_vec_multiplication((1/mp),zero_term);
+                zero_term            = Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,zero_term));
+                zero_term            = constant_vec_multiplication(-mp,zero_term);
+                Vector3f fist_term   = Matrix_vector_mul(kq1,e_q1);
+                Vector3f second_term = Matrix_vector_mul(kw1,e_omega1);
                 // hal.console->printf("%f,%f,%f\n",second_term[0],second_term[1],second_term[2]);
-                Vector3f third_term  = -constant_vec_multiplication(Two_vec_dot_product(q1_current,Omegad_1),q1_dot);
+                Vector3f third_term  = constant_vec_multiplication(Two_vec_dot_product(q1_current,Omegad_1),q1_dot);
                 // hal.console->printf("%f,%f,%f\n",third_term[0],third_term[1],third_term[2]);
-                Vector3f forth_term  = -Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1_dot));
+                Vector3f forth_term  = Two_vec_cross_product(q1_current,Two_vec_cross_product(q1_current,Omegad_1_dot));
                 // hal.console->printf("%f,%f,%f\n",forth_term[0],forth_term[1],forth_term[2]);
-                Vector3f fifth_term  = constant_vec_multiplication((m1/mp),FD);
-                // hal.console->printf("%f,%f,%f\n",fifth_term[0],fifth_term[1],fifth_term[2]);
 
                 Vector3f u1_perpendicular;
-                u1_perpendicular = fist_term + second_term + third_term + forth_term + fifth_term;
-                // u1_perpendicular = fist_term + second_term;
-                // hal.console->printf("%f,%f,%f\n",u1_perpendicular[0],u1_perpendicular[1],u1_perpendicular[2]);
-                u1_perpendicular = Matrix_vector_mul(hatmap(q1_current),u1_perpendicular);
-                // hal.console->printf("%f,%f,%f\n",u1_perpendicular[0],u1_perpendicular[1],u1_perpendicular[2]);
-                u1_perpendicular = constant_vec_multiplication(m1*l1,u1_perpendicular);
+                // u1_perpendicular =  fist_term + second_term + third_term + forth_term ;
+                u1_perpendicular = zero_term + constant_vec_multiplication(m1*l1, Two_vec_cross_product( q1_current,(fist_term + second_term + third_term + forth_term)));
                 // hal.console->printf("%f,%f,%f\n",u1_perpendicular[0],u1_perpendicular[1],u1_perpendicular[2]);
 
             ///////////// Design of Parellel components /////////////
-                Vector3f r1d(sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
-                Vector3f r2d(-sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
+                Vector3f r1d(sinf(theta_pd*PI/180.0), 0.0, cosf(theta_pd*PI/180.0));
+                Vector3f r2d(-sinf(theta_pd*PI/180.0), 0.0, cosf(theta_pd*PI/180.0));
 
                 Vector3f mu1;
                 mu1 = constant_vec_multiplication(Two_vec_dot_product(FD,q1_current),q1_current);
-                mu1 = (constant_vec_multiplication(1/(Two_vec_dot_product(r1d,e3_earth)*(two_norm(r1d+r2d))),mu1));
+                mu1 = (constant_vec_multiplication(1.0/(Two_vec_dot_product(r1d,e3_earth)*(two_norm(r1d+r2d))),mu1));
                 // hal.console->printf("%f,%f,%f\n",mu1[0],mu1[1],mu1[2]);
 
                 Vector3f u1_parellel_second_term;
                 u1_parellel_second_term = constant_vec_multiplication(1/mp, FD) - constant_vec_multiplication(l1*two_norm(Omega_c)*two_norm(Omega_c),q1_current);
                 u1_parellel_second_term = constant_vec_multiplication(Two_vec_dot_product(q1_current,u1_parellel_second_term),q1_current);
                 u1_parellel_second_term = constant_vec_multiplication(m1,u1_parellel_second_term);
-                // hal.console->printf("%f,%f,%f\n",u1_parellel_second_term[0],u1_parellel_second_term[1],u1_parellel_second_term[2]);
+                // hal.console->printf("%f,%fs,%f\n",u1_parellel_second_term[0],u1_parellel_second_term[1],u1_parellel_second_term[2]);
 
                 Vector3f u1_parellel;
                 u1_parellel = mu1 + u1_parellel_second_term;
 
             ///////////// Final desired control force /////////////
                 Vector3f u1;
-                u1 = u1_parellel - u1_perpendicular;
+                u1 = u1_parellel + u1_perpendicular;
+                u1 = u1;
                 // hal.console->printf("%f,%f,%f,%f\n",u1[0],u1[1],u1[2],H_yaw);
             ///////////// Quadcopter desired attitude /////////////
 
-                Vector3f b3d_quadcopter(constant_vec_multiplication(1/two_norm(u1), u1));
+                Vector3f b3d_quadcopter(constant_vec_multiplication(1.0/two_norm(u1), u1));
                 // hal.console->printf("%f,%f,%f,%f\n",b3d_quadcopter[0],b3d_quadcopter[1],b3d_quadcopter[2],imu_yaw);
-                Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
+                Vector3f sd(cosf(H_yaw*PI/180.0), sinf(H_yaw*PI/180.0), 0.0);
                 Vector3f b2d_quadcopter;
                 b2d_quadcopter = Two_vec_cross_product(b3d_quadcopter,sd);
-                b2d_quadcopter = constant_vec_multiplication(1/two_norm(b2d_quadcopter),b2d_quadcopter);
                 Vector3f b1d_quadcopter;
                 b1d_quadcopter = Two_vec_cross_product(b2d_quadcopter,b3d_quadcopter);
-                b2d_quadcopter = constant_vec_multiplication(1/two_norm(b1d_quadcopter),b1d_quadcopter);
 
                 Matrix3f Rd_quadcopter(b1d_quadcopter[0], b2d_quadcopter[0], b3d_quadcopter[0],
                                        b1d_quadcopter[1], b2d_quadcopter[1], b3d_quadcopter[1],
                                        b1d_quadcopter[2], b2d_quadcopter[2], b3d_quadcopter[2]);
 
+                Vector3f Omegad_quadcopter(0.0,0.0,0.0);
+
                 // Vector3f test(PI/5,PI/5,PI/5);
                 // Vector3f test(H_roll/180*PI, H_pitch/180*PI, H_yaw/180*PI);
                 // Rd_quadcopter = eulerAnglesToRotationMatrix(test);
 
-                Vector3f Final_RPY (RotationMatrixToEulerangles(Rd_quadcopter));
-                hal.console->printf("Phd -> %f, Thd-> %f, Psd-> %f, H_yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI,H_yaw);
+                // Vector3f Final_RPY (RotationMatrixToEulerangles(Rd_quadcopter));
+                // hal.console->printf("Phd -> %f, Thd-> %f, Psd-> %f, H_yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI,H_yaw);
                 // hal.console->printf("Roll -> %f, H_roll -> %f, Pitch -> %f, H_pitch -> %f, Yaw -> %f, H_yaw -> %f\n",Final_RPY[0]*180/PI,H_roll,Final_RPY[1]*180/PI,H_pitch,Final_RPY[2]*180/PI,H_yaw);
-                // hal.console->printf("Roll -> %f, Pitch -> %f, Yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI);
+                // hal.console->printf("Roll -> %f, Pitch -> %f, Yaw -> %f, H_yaw -> %f, Quad_yaw -> %f\n",Final_RPY[0]*180/PI,Final_RPY[1]*180/PI,Final_RPY[2]*180/PI,H_yaw,imu_yaw);
 
             ///////////// For attitude controller controller  /////////////
-                custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
+                // custom_geometric_controller(H_roll,H_pitch,H_yaw,0.0,0.0,0.0,quad_z_ini,0.0);
+                custom_geometric_controller_with_Rotation_matrix(Rd_quadcopter, Omegad_quadcopter , u1);
 
         }
 }
@@ -364,6 +369,173 @@ Vector3f ModeStabilize::RotationMatrixToEulerangles(Matrix3f M){
 
     Vector3f rpy(phi,theta,psi);
     return rpy;
+}
+
+void ModeStabilize::custom_geometric_controller_with_Rotation_matrix(Matrix3f Rd, Vector3f Omegad ,Vector3f u1){
+
+    if (RC_Channels::get_radio_in(CH_6) < 1200){
+        motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::SHUT_DOWN);  // AP_Motors class.cpp libraries
+
+        //// Initializing the states of the quadcopters
+        H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
+
+            //// Initial the PWMs
+            if (copter.motors->armed()){
+                // PWM1 = 1200;
+                // PWM2 = 1200;
+                // PWM3 = 1200;
+                // PWM4 = 1200;
+
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
+
+                // hal.console->printf("Sending PWM from first code\n");
+                // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
+            }else{
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
+            }
+
+        }
+        else {
+            if (copter.motors->armed()){
+
+            ///////////////////// Altitude controller /////////////////////
+
+                F  =  two_norm(u1) + 0.5;
+
+                if (F > 20.0){ F = 20.0; }
+                if (F < 0.0){ F =  0.0;  }
+
+            ///////////////////// geometric attitude controller /////////////////////
+
+                Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,imu_yaw*PI/180.0);
+                Vector3f Omega(imu_roll_dot*PI/180.0,imu_pitch_dot*PI/180.0,imu_yaw_dot*PI/180.0);
+
+                Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+
+                float c2 = 2.0;
+                // float c1 = 1.0;
+
+                Vector3f e_R_val        = e_R(R,Rd);
+                Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
+                Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
+                Vector3f e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
+                e_I_val_old             = e_I_val;
+
+                // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",R[0][0],R[0][1],R[0][2],R[1][0],R[1][1],R[1][2],R[2][0],R[2][1],R[2][2]);
+                // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+                // hal.serial(2)->printf("%d,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n",arm_disarm_flag,quad_x,quad_y,quad_z,x_des,y_des,z_des,imu_roll,imu_pitch,imu_yaw,H_roll,H_pitch,H_yaw_rate,H_yaw,F,Mb1,Mb2,Mb3);
+                // hal.console->printf("%f,%f,%f\n",e_R_log[0],e_R_log[1],e_R_log[2]);
+                // Auto tuning Gains 
+
+                // KR1         = KR1_old     + c1*e_R_val[0]*e_Omega_val[0];
+                // KR1_old     = KR1;
+
+                // KOmega1     = KOmega1_old + c2*e_R_val[0]*e_Omega_val[0];
+                // KOmega1_old = KOmega1;
+
+                // KI1         = KI1_old     + e_I_val * (Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2) + e_Omega_val);
+                // KI1_old     = KI1;
+
+                // float KI1_lim = 5;
+
+                // if (KI1 > KI1_lim){
+                //     KI1 = KI1_lim;
+                // }
+                // if (KI1 < KI1_lim){
+                //     KI1 = KI1_lim;
+                // }
+
+            /////////////////////// Manual gain tuning  ///////////////////////
+
+                KR1         = 0.9;  // 0.6 (TB best)  //0.4
+                KOmega1     = 21;   // 10.5(TB best)  //0.5
+                KI1         = 0.0;  // 0.1 (TB best)  //0.1
+
+                KR2         = 1.3;  // 1.3  (TB good)
+                KOmega2     = 24.0; // 24 (TB good)
+                KI2         = 0.0;  // 0.1  (TB good)
+
+                KR3         = 4.5;  // 6.0  (TB good)
+                KOmega3     = 14.5; // 10.5 (TB good)
+                KI3         = 0.1;  // 0.1  (TB good)
+
+                Matrix3f KR(
+                            KR1,0.0,0.0,
+                            0.0,KR2,0.0,
+                            0.0,0.0,KR3
+                            );
+                Matrix3f KOmega(
+                            KOmega1,0.0,0.0,
+                            0.0,KOmega2,0.0,
+                            0.0,0.0,KOmega3
+                            );
+                Matrix3f KI(
+                            KI1,0.0,0.0,
+                            0.0,KI2,0.0,
+                            0.0,0.0,KI3
+                            );
+                // Intertia matrix
+                Matrix3f JJ(
+                        0.0113, 0.0 , 0.0,
+                        0.0, 0.0133,0.0,
+                        0.0,0.0,0.0187
+                );
+
+                Vector3f M( Matrix_vector_mul(KR,e_R_val) + Matrix_vector_mul(KOmega,e_Omega_val) + Matrix_vector_mul(KI,e_I_val_sum) + Omega % Matrix_vector_mul(JJ,Omega));
+                M = ( Matrix_vector_mul(KR,e_R_val));
+                // M = ( Matrix_vector_mul(KR,e_R_val) + Matrix_vector_mul(KOmega,e_Omega_val));
+
+                Mb1 =  M[0];
+                Mb2 =  M[1];
+                Mb3 =  M[2];
+                
+                hal.console->printf("%f,%f,%f,%f,%f,%f\n",Mb1,Mb2,Mb3,H_yaw,imu_yaw,F);
+
+                // Mb1 =  0.0;
+                // Mb2 =  0.0;
+                // Mb3 =  0.0;
+
+                float FM_devided_FF ;
+                if (battvolt >= 11.5 ){
+                    FM_devided_FF = 0.31; //0.24
+                }else{
+                    FM_devided_FF = 0.31;
+                }
+
+                float function_F1 = F/4.0 - Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+                float function_F2 = F/4.0 + Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) +  Mb3 / (4.0 * FM_devided_FF);
+                float function_F3 = F/4.0 + Mb1 / (4.0 * arm_length) - Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+                float function_F4 = F/4.0 - Mb1 / (4.0 * arm_length) + Mb2 / (4.0 * arm_length) -  Mb3 / (4.0 * FM_devided_FF);
+
+                PWM1 = Inverse_thrust_function(function_F1);
+                PWM2 = Inverse_thrust_function(function_F2);
+                PWM3 = Inverse_thrust_function(function_F3);
+                PWM4 = Inverse_thrust_function(function_F4);
+
+                // PWM1 = 1300;
+                // PWM2 = 1300;
+                // PWM3 = 1300;
+                // PWM4 = 1300;
+
+                // hal.console->printf("PWM1-> %d, PWM2-> %d, PWM3-> %d, PWM4-> %d  \n", PWM1, PWM2, PWM3, PWM4);
+                
+                
+                // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",H_roll,imu_roll,e_R_val[0],H_pitch,imu_pitch,e_R_val[1],H_yaw,imu_yaw,e_R_val[2]);
+                // hal.console->printf("%f,%f,%f,%f,%f,%f\n",H_roll,imu_roll,e_R_val[0],H_pitch,imu_pitch,e_R_val[1]);
+                // hal.console->printf("%f,%f,%f\n",e_R_val[0],e_R_val[1],e_R_val[2]);
+            }else{
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
+            }
+        }
 }
 
 void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot){
@@ -555,7 +727,6 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 // hal.console->printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",H_roll,imu_roll,e_R_val[0],H_pitch,imu_pitch,e_R_val[1],H_yaw,imu_yaw,e_R_val[2]);
                 // hal.console->printf("%f,%f,%f,%f,%f,%f\n",H_roll,imu_roll,e_R_val[0],H_pitch,imu_pitch,e_R_val[1]);
                 // hal.console->printf("%f,%f,%f\n",e_R_val[0],e_R_val[1],e_R_val[2]);
-
             }else{
                 PWM1 = 1000;
                 PWM2 = 1000;
@@ -563,7 +734,6 @@ void ModeStabilize::custom_geometric_controller(float des_phi, float des_theta, 
                 PWM4 = 1000;
             }
         }
-
 }
 
 // void ModeStabilize::Human_operators_commands(){
@@ -588,29 +758,26 @@ Vector3f ModeStabilize::Two_vec_cross_product(Vector3f vect_A, Vector3f vect_B){
     cross_P[0] = vect_A[1] * vect_B[2] - vect_A[2] * vect_B[1];
     cross_P[1] = vect_A[2] * vect_B[0] - vect_A[0] * vect_B[2];
     cross_P[2] = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
-
     return cross_P;
 }
 
 float ModeStabilize::Two_vec_dot_product(Vector3f v1, Vector3f v2){
-
     return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
 }
 
-
 Vector3f ModeStabilize::Desired_cable_attitude_estimation(float des_yaw_system, float theta_pd, Vector3f FD){
-    Vector3f sd(cosf(des_yaw_system*PI/180), sinf(des_yaw_system*PI/180), 0.0);
+    Vector3f sd(cosf(des_yaw_system*PI/180.0), sinf(des_yaw_system*PI/180.0), 0.0);
     // hal.console->printf("sd1-> %f,sd2-> %f,sd3-> %f, H_yaw-> %f\n", sd[0],sd[1],sd[2],des_yaw_system);
     Vector3f FD_divided_FD_norm(constant_vec_multiplication(1/two_norm(FD), FD));
     // hal.console->printf("1-> %f,2-> %f,3-> %f, H_yaw-> %f\n", FD_divided_FD_norm[0],FD_divided_FD_norm[1],FD_divided_FD_norm[2],des_yaw_system);
 
     Vector3f FD_cross_sd = Two_vec_cross_product(FD,sd);
-    FD_cross_sd = constant_vec_multiplication(1/two_norm(FD_cross_sd),FD_cross_sd);
+    FD_cross_sd = constant_vec_multiplication(1.0/two_norm(FD_cross_sd),FD_cross_sd);
     // hal.console->printf("1-> %f,2-> %f,3-> %f, H_yaw-> %f\n", FD_cross_sd[0],FD_cross_sd[1],FD_cross_sd[2],des_yaw_system);
     Vector3f FD_cross_sd_cross_FD = Two_vec_cross_product(Two_vec_cross_product(FD,sd),FD);
-    FD_cross_sd_cross_FD = constant_vec_multiplication(1/two_norm(FD_cross_sd_cross_FD),FD_cross_sd_cross_FD);
+    FD_cross_sd_cross_FD = constant_vec_multiplication(1.0/two_norm(FD_cross_sd_cross_FD),FD_cross_sd_cross_FD);
     // hal.console->printf("1-> %f,2-> %f,3-> %f, H_yaw-> %f\n", FD_cross_sd_cross_FD[0],FD_cross_sd_cross_FD[1],FD_cross_sd_cross_FD[2],des_yaw_system);
-    Vector3f r1d(sinf(theta_pd*PI/180), 0.0, cosf(theta_pd*PI/180));
+    Vector3f r1d(sinf(theta_pd*PI/180.0), 0.0, cosf(theta_pd*PI/180.0));
     // hal.console->printf("r1d1-> %f,r1d2-> %f,r1d3-> %f, H_yaw-> %f\n", r1d[0],r1d[1],r1d[2],des_yaw_system);
     Matrix3f Q_matrix(FD_cross_sd_cross_FD[0], FD_cross_sd[0], FD_divided_FD_norm[0],
     FD_cross_sd_cross_FD[1], FD_cross_sd[1], FD_divided_FD_norm[1],
@@ -658,7 +825,7 @@ Vector3f ModeStabilize::PD_controller_payload(Vector3f xp, Vector3f xpd, Vector3
     FD[2] = mp*FD[2];
 
     return FD;
-    
+
 }
 
 Vector3f ModeStabilize::e_R(Matrix3f R, Matrix3f Rd){
