@@ -1,13 +1,13 @@
-# project  configured on Fri Dec  3 17:43:09 2021 by
+# project  configured on Tue Apr 18 07:34:49 2023 by
 # waf 2.0.9 (abi 20, python 3080af0 on linux)
-# using /home/pratik/ardupilot/modules/waf/waf-light copter --upload
+# using /home/pratik/ardupilot_custom/modules/waf/waf-light configure --board fmuv3
 #
 ----------------------------------------
 Setting top to
-/home/pratik/ardupilot
+/home/pratik/ardupilot_custom
 ----------------------------------------
 Setting out to
-/home/pratik/ardupilot/build
+/home/pratik/ardupilot_custom/build
 ----------------------------------------
 Autoconfiguration
 enabled
@@ -19,11 +19,10 @@ Using toolchain
 arm-none-eabi
 ----------------------------------------
 Checking for 'g++' (C++ compiler)
-find program=['arm-none-eabi-g++', 'arm-none-eabi-c++'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='CXX' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++']
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-dM', '-E', '-']
+find program=['arm-none-eabi-g++', 'arm-none-eabi-c++'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='CXX' -> ['/usr/lib/ccache/arm-none-eabi-g++']
+['/usr/lib/ccache/arm-none-eabi-g++', '-dM', '-E', '-']
 out: #define __DBL_MIN_EXP__ (-1021)
 #define __HQ_FBIT__ 15
-#define __FLT32X_MAX_EXP__ 1024
 #define __UINT_LEAST16_MAX__ 0xffff
 #define __ARM_SIZEOF_WCHAR_T 4
 #define __ATOMIC_ACQUIRE 2
@@ -35,7 +34,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DQ_FBIT__ 63
 #define __INTMAX_C(c) c ## LL
 #define __ULFRACT_FBIT__ 32
-#define __SACCUM_EPSILON__ 0x1P-7HK
 #define __CHAR_BIT__ 8
 #define __USQ_IBIT__ 0
 #define __UINT8_MAX__ 0xff
@@ -53,23 +51,24 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __GCC_IEC_559 0
 #define __FLT32X_DECIMAL_DIG__ 17
 #define __FLT_EVAL_METHOD__ 0
+#define __TQ_IBIT__ 0
 #define __LLACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LLK
 #define __FLT64_DECIMAL_DIG__ 17
 #define __GCC_ATOMIC_CHAR32_T_LOCK_FREE 1
-#define __FRACT_FBIT__ 15
 #define __UINT_FAST64_MAX__ 0xffffffffffffffffULL
 #define __SIG_ATOMIC_TYPE__ int
-#define __UACCUM_FBIT__ 16
 #define __DBL_MIN_10_EXP__ (-307)
 #define __FINITE_MATH_ONLY__ 0
 #define __ARMEL__ 1
+#define __FLT32X_MAX_EXP__ 1024
 #define __LFRACT_IBIT__ 0
 #define __GNUC_PATCHLEVEL__ 1
 #define __FLT32_HAS_DENORM__ 1
 #define __LFRACT_MAX__ 0X7FFFFFFFP-31LR
+#define __USA_FBIT__ 16
 #define __UINT_FAST8_MAX__ 0xffffffffU
-#define __has_include(STR) __has_include__(STR)
-#define __DEC64_MAX_EXP__ 385
+#define __FLT32_MAX_10_EXP__ 38
+#define __ARM_ARCH_4T__ 1
 #define __INT8_C(c) c
 #define __INT_LEAST8_WIDTH__ 8
 #define __UINT_LEAST64_MAX__ 0xffffffffffffffffULL
@@ -83,7 +82,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __GCC_ATOMIC_BOOL_LOCK_FREE 1
 #define __UINTMAX_TYPE__ long long unsigned int
 #define __LLFRACT_EPSILON__ 0x1P-63LLR
-#define __DEC32_EPSILON__ 1E-6DF
 #define __FLT_EVAL_METHOD_TS_18661_3__ 0
 #define __CHAR_UNSIGNED__ 1
 #define __UINT32_MAX__ 0xffffffffUL
@@ -96,19 +94,17 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SCHAR_MAX__ 0x7f
 #define __WCHAR_MIN__ 0U
 #define __INT64_C(c) c ## LL
-#define __DBL_DIG__ 15
 #define __GCC_ATOMIC_POINTER_LOCK_FREE 1
 #define __LLACCUM_MIN__ (-0X1P31LLK-0X1P31LLK)
 #define __SIZEOF_INT__ 4
-#define __SIZEOF_POINTER__ 4
+#define __FLT32X_MANT_DIG__ 53
 #define __USACCUM_IBIT__ 8
 #define __USER_LABEL_PREFIX__ 
 #define __STDC_HOSTED__ 1
-#define __LDBL_HAS_INFINITY__ 1
 #define __LFRACT_MIN__ (-0.5LR-0.5LR)
 #define __HA_IBIT__ 8
+#define __DBL_DIG__ 15
 #define __FLT32_DIG__ 6
-#define __TQ_IBIT__ 0
 #define __FLT_EPSILON__ 1.1920928955078125e-7F
 #define __APCS_32__ 1
 #define __SHRT_WIDTH__ 16
@@ -116,7 +112,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __LDBL_MIN__ 2.2250738585072014e-308L
 #define __STDC_UTF_16__ 1
 #define __FRACT_MIN__ (-0.5R-0.5R)
-#define __DEC32_MAX__ 9.999999E96DF
 #define __DA_IBIT__ 32
 #define __ARM_SIZEOF_MINIMAL_ENUM 1
 #define __FLT32X_HAS_INFINITY__ 1
@@ -126,22 +121,20 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SIZEOF_LONG__ 4
 #define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
 #define __UINT16_C(c) c
-#define __PTRDIFF_WIDTH__ 32
 #define __DECIMAL_DIG__ 17
 #define __LFRACT_EPSILON__ 0x1P-31LR
 #define __FLT64_EPSILON__ 2.2204460492503131e-16F64
 #define __ULFRACT_MIN__ 0.0ULR
-#define __INTMAX_WIDTH__ 64
-#define __has_include_next(STR) __has_include_next__(STR)
 #define __LDBL_HAS_QUIET_NAN__ 1
 #define __ULACCUM_IBIT__ 32
 #define __FLT64_MANT_DIG__ 53
 #define __UACCUM_EPSILON__ 0x1P-16UK
-#define __GNUC__ 9
+#define __GNUC__ 10
 #define __ULLACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULLK
 #define __HQ_IBIT__ 0
 #define __FLT_HAS_DENORM__ 1
 #define __SIZEOF_LONG_DOUBLE__ 8
+#define __SA_IBIT__ 16
 #define __BIGGEST_ALIGNMENT__ 8
 #define __FLT64_MAX_10_EXP__ 308
 #define __GNUC_STDC_INLINE__ 1
@@ -152,23 +145,21 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_HAS_INFINITY__ 1
 #define __HAVE_SPECULATION_SAFE_VALUE 1
 #define __ACCUM_IBIT__ 16
-#define __DEC32_MIN_EXP__ (-94)
 #define __THUMB_INTERWORK__ 1
 #define __INTPTR_WIDTH__ 32
+#define __UINT_LEAST32_MAX__ 0xffffffffUL
 #define __LACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LK
 #define __FLT32X_HAS_DENORM__ 1
 #define __INT_FAST16_TYPE__ int
 #define __LDBL_HAS_DENORM__ 1
-#define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
 #define __INT_LEAST32_MAX__ 0x7fffffffL
 #define __ARM_PCS 1
-#define __DEC32_MIN__ 1E-95DF
 #define __ACCUM_MAX__ 0X7FFFFFFFP-15K
 #define __DBL_MAX_EXP__ 1024
 #define __USACCUM_EPSILON__ 0x1P-8UHK
 #define __WCHAR_WIDTH__ 32
 #define __FLT32_MAX__ 3.4028234663852886e+38F32
-#define __DEC128_EPSILON__ 1E-33DL
+#define __GCC_ATOMIC_LONG_LOCK_FREE 1
 #define __SFRACT_MAX__ 0X7FP-7HR
 #define __FRACT_IBIT__ 0
 #define __PTRDIFF_MAX__ 0x7fffffff
@@ -176,31 +167,31 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __UACCUM_IBIT__ 16
 #define __FLT32_HAS_QUIET_NAN__ 1
 #define __LONG_LONG_MAX__ 0x7fffffffffffffffLL
-#define __SIZEOF_SIZE_T__ 4
 #define __ULACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULK
 #define __SIZEOF_WINT_T__ 4
 #define __LONG_LONG_WIDTH__ 64
 #define __FLT32_MAX_EXP__ 128
-#define __SA_IBIT__ 16
 #define __ULLACCUM_MIN__ 0.0ULLK
-#define __GXX_ABI_VERSION 1013
+#define __GXX_ABI_VERSION 1014
 #define __UTA_FBIT__ 64
-#define __SOFTFP__ 1
 #define __FLT_MIN_EXP__ (-125)
-#define __USFRACT_MAX__ 0XFFP-8UHR
 #define __UFRACT_IBIT__ 0
+#define __INT16_MAX__ 0x7fff
 #define __INT_FAST64_TYPE__ long long int
 #define __FLT64_DENORM_MIN__ 4.9406564584124654e-324F64
 #define __DBL_MIN__ ((double)2.2250738585072014e-308L)
+#define __SIZEOF_POINTER__ 4
+#define __SIZE_TYPE__ unsigned int
+#define __DBL_HAS_QUIET_NAN__ 1
 #define __FLT32X_EPSILON__ 2.2204460492503131e-16F32x
 #define __FLT64_MIN_EXP__ (-1021)
 #define __LACCUM_MIN__ (-0X1P31LK-0X1P31LK)
+#define __FRACT_FBIT__ 15
 #define __ULLACCUM_FBIT__ 32
 #define __GXX_TYPEINFO_EQUALITY_INLINE 0
 #define __FLT64_MIN_10_EXP__ (-307)
 #define __ULLFRACT_EPSILON__ 0x1P-64ULLR
 #define __USES_INITFINI__ 1
-#define __DEC128_MIN__ 1E-6143DL
 #define __REGISTER_PREFIX__ 
 #define __UINT16_MAX__ 0xffff
 #define __DBL_HAS_DENORM__ 1
@@ -209,39 +200,40 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT32_MIN__ 1.1754943508222875e-38F32
 #define __UINT8_TYPE__ unsigned char
 #define __UHA_FBIT__ 8
+#define __FLT_DIG__ 6
 #define __NO_INLINE__ 1
 #define __SFRACT_MIN__ (-0.5HR-0.5HR)
 #define __UTQ_FBIT__ 128
+#define __DEC_EVAL_METHOD__ 2
 #define __FLT_MANT_DIG__ 24
 #define __LDBL_DECIMAL_DIG__ 17
-#define __VERSION__ "9.3.1 20200408 (release)"
+#define __VERSION__ "10.2.1 20201103 (release)"
 #define __UINT64_C(c) c ## ULL
 #define __ULLFRACT_FBIT__ 64
+#define __SOFTFP__ 1
 #define __FRACT_EPSILON__ 0x1P-15R
 #define __ULACCUM_MIN__ 0.0ULK
 #define __UDA_FBIT__ 32
 #define __LLACCUM_EPSILON__ 0x1P-31LLK
 #define __GCC_ATOMIC_INT_LOCK_FREE 1
-#define __FLT32_MANT_DIG__ 24
 #define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __USFRACT_MIN__ 0.0UHR
+#define __FLT32_MANT_DIG__ 24
 #define __UQQ_IBIT__ 0
+#define __USFRACT_MAX__ 0XFFP-8UHR
 #define __SCHAR_WIDTH__ 8
 #define __INT32_C(c) c ## L
-#define __DEC64_EPSILON__ 1E-15DD
 #define __ORDER_PDP_ENDIAN__ 3412
-#define __DEC128_MIN_EXP__ (-6142)
 #define __UHQ_FBIT__ 16
 #define __LLACCUM_FBIT__ 31
-#define __FLT32_MAX_10_EXP__ 38
 #define __INT_FAST32_TYPE__ int
 #define __UINT_LEAST16_TYPE__ short unsigned int
-#define __INT16_MAX__ 0x7fff
-#define __SIZE_TYPE__ unsigned int
 #define __UINT64_MAX__ 0xffffffffffffffffULL
 #define __UDQ_FBIT__ 64
 #define __INT8_TYPE__ signed char
 #define __ELF__ 1
+#define __GCC_ASM_FLAG_OUTPUTS__ 1
+#define __SACCUM_EPSILON__ 0x1P-7HK
 #define __ULFRACT_EPSILON__ 0x1P-32ULR
 #define __LLFRACT_FBIT__ 63
 #define __FLT_RADIX__ 2
@@ -249,47 +241,41 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __LDBL_EPSILON__ 2.2204460492503131e-16L
 #define __UINTMAX_C(c) c ## ULL
 #define __SACCUM_MAX__ 0X7FFFP-7HK
+#define __FLT32X_MIN__ 2.2250738585072014e-308F32x
 #define __SIG_ATOMIC_MAX__ 0x7fffffff
+#define __UACCUM_FBIT__ 16
 #define __GCC_ATOMIC_WCHAR_T_LOCK_FREE 1
 #define __VFP_FP__ 1
 #define __SIZEOF_PTRDIFF_T__ 4
-#define __FLT32X_MANT_DIG__ 53
 #define __LACCUM_EPSILON__ 0x1P-31LK
+#define __LDBL_DIG__ 15
 #define __FLT32X_MIN_EXP__ (-1021)
-#define __DEC32_SUBNORMAL_MIN__ 0.000001E-95DF
 #define __INT_FAST16_MAX__ 0x7fffffff
 #define __FLT64_DIG__ 15
 #define __UINT_FAST32_MAX__ 0xffffffffU
 #define __UINT_LEAST64_TYPE__ long long unsigned int
-#define __USACCUM_MAX__ 0XFFFFP-8UHK
 #define __SFRACT_EPSILON__ 0x1P-7HR
 #define __FLT_HAS_QUIET_NAN__ 1
 #define __FLT_MAX_10_EXP__ 38
 #define __LONG_MAX__ 0x7fffffffL
-#define __DEC128_SUBNORMAL_MIN__ 0.000000000000000000000000000000001E-6143DL
+#define __SIZEOF_SIZE_T__ 4
 #define __FLT_HAS_INFINITY__ 1
-#define __USA_FBIT__ 16
 #define __UINT_FAST16_TYPE__ unsigned int
-#define __DEC64_MAX__ 9.999999999999999E384DD
 #define __ARM_32BIT_STATE 1
 #define __INT_FAST32_WIDTH__ 32
 #define __CHAR16_TYPE__ short unsigned int
 #define __PRAGMA_REDEFINE_EXTNAME 1
 #define __SIZE_WIDTH__ 32
 #define __INT_LEAST16_MAX__ 0x7fff
-#define __DEC64_MANT_DIG__ 16
 #define __INT64_MAX__ 0x7fffffffffffffffLL
-#define __UINT_LEAST32_MAX__ 0xffffffffUL
 #define __SACCUM_FBIT__ 7
 #define __FLT32_DENORM_MIN__ 1.4012984643248171e-45F32
-#define __GCC_ATOMIC_LONG_LOCK_FREE 1
 #define __SIG_ATOMIC_WIDTH__ 32
 #define __INT_LEAST64_TYPE__ long long int
 #define __INT16_TYPE__ short int
 #define __INT_LEAST8_TYPE__ signed char
 #define __STDC_VERSION__ 201710L
 #define __SQ_FBIT__ 31
-#define __DEC32_MAX_EXP__ 97
 #define __ARM_ARCH_ISA_THUMB 1
 #define __INT_FAST8_MAX__ 0x7fffffff
 #define __ARM_ARCH 4
@@ -299,25 +285,25 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT64_HAS_QUIET_NAN__ 1
 #define __FLT32_MIN_10_EXP__ (-37)
 #define __FLT32X_DIG__ 15
+#define __PTRDIFF_WIDTH__ 32
 #define __LDBL_MANT_DIG__ 53
 #define __SFRACT_FBIT__ 7
 #define __SACCUM_MIN__ (-0X1P7HK-0X1P7HK)
-#define __DBL_HAS_QUIET_NAN__ 1
 #define __FLT64_HAS_INFINITY__ 1
 #define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
 #define __INTPTR_TYPE__ int
 #define __UINT16_TYPE__ short unsigned int
 #define __WCHAR_TYPE__ unsigned int
 #define __SIZEOF_FLOAT__ 4
+#define __TQ_FBIT__ 127
 #define __USQ_FBIT__ 32
 #define __UINTPTR_MAX__ 0xffffffffU
 #define __INT_FAST64_WIDTH__ 64
-#define __DEC64_MIN_EXP__ (-382)
 #define __ULLACCUM_IBIT__ 32
 #define __FLT32_DECIMAL_DIG__ 9
 #define __INT_FAST64_MAX__ 0x7fffffffffffffffLL
 #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
-#define __FLT_DIG__ 6
+#define __FLT_NORM_MAX__ 3.4028234663852886e+38F
 #define __FLT32_HAS_INFINITY__ 1
 #define __UINT_FAST64_TYPE__ long long unsigned int
 #define __INT_MAX__ 0x7fffffff
@@ -330,17 +316,18 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_MANT_DIG__ 53
 #define __INT_LEAST64_MAX__ 0x7fffffffffffffffLL
 #define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 1
-#define __DEC64_MIN__ 1E-383DD
 #define __WINT_TYPE__ unsigned int
 #define __UINT_LEAST32_TYPE__ long unsigned int
 #define __SIZEOF_SHORT__ 2
 #define __ULLFRACT_IBIT__ 0
+#define __FLT32_NORM_MAX__ 3.4028234663852886e+38F32
 #define __LDBL_MIN_EXP__ (-1021)
 #define __arm__ 1
 #define __FLT64_MAX__ 1.7976931348623157e+308F64
 #define __UDA_IBIT__ 32
 #define __WINT_WIDTH__ 32
 #define __INT_LEAST8_MAX__ 0x7f
+#define __INT_LEAST64_WIDTH__ 64
 #define __FLT32X_MAX_10_EXP__ 308
 #define __LFRACT_FBIT__ 31
 #define __LDBL_MAX_10_EXP__ 308
@@ -352,9 +339,12 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SIZEOF_WCHAR_T__ 4
 #define __UINT64_TYPE__ long long unsigned int
 #define __LLFRACT_MAX__ 0X7FFFFFFFFFFFFFFFP-63LLR
-#define __TQ_FBIT__ 127
+#define __FLT64_NORM_MAX__ 1.7976931348623157e+308F64
+#define __INTMAX_MAX__ 0x7fffffffffffffffLL
 #define __INT_FAST8_TYPE__ int
 #define __ULLACCUM_EPSILON__ 0x1P-32ULLK
+#define __USACCUM_MAX__ 0XFFFFP-8UHK
+#define __LDBL_HAS_INFINITY__ 1
 #define __UHQ_IBIT__ 0
 #define __ARM_FEATURE_COPROC 1
 #define __LLACCUM_IBIT__ 32
@@ -363,20 +353,21 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_DECIMAL_DIG__ 17
 #define __STDC_UTF_32__ 1
 #define __INT_FAST8_WIDTH__ 32
-#define __DEC_EVAL_METHOD__ 2
 #define __FLT32X_MAX__ 1.7976931348623157e+308F32x
 #define __TA_FBIT__ 63
+#define __DBL_NORM_MAX__ ((double)1.7976931348623157e+308L)
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __UDQ_IBIT__ 0
+#define __INTMAX_WIDTH__ 64
 #define __ORDER_BIG_ENDIAN__ 4321
 #define __ACCUM_EPSILON__ 0x1P-15K
 #define __UINT32_C(c) c ## UL
-#define __INTMAX_MAX__ 0x7fffffffffffffffLL
-#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __FLT_DENORM_MIN__ 1.4012984643248171e-45F
 #define __LLFRACT_IBIT__ 0
 #define __INT8_MAX__ 0x7f
 #define __LONG_WIDTH__ 32
 #define __UINT_FAST32_TYPE__ unsigned int
+#define __FLT32X_NORM_MAX__ 1.7976931348623157e+308F32x
 #define __CHAR32_TYPE__ long unsigned int
 #define __FLT_MAX__ 3.4028234663852886e+38F
 #define __USACCUM_FBIT__ 8
@@ -387,20 +378,17 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT64_MIN__ 2.2250738585072014e-308F64
 #define __INT_LEAST32_WIDTH__ 32
 #define __INTMAX_TYPE__ long long int
-#define __DEC128_MAX_EXP__ 6145
 #define __FLT32X_HAS_QUIET_NAN__ 1
 #define __ATOMIC_CONSUME 1
-#define __GNUC_MINOR__ 3
+#define __GNUC_MINOR__ 2
 #define __INT_FAST16_WIDTH__ 32
 #define __UINTMAX_MAX__ 0xffffffffffffffffULL
-#define __DEC32_MANT_DIG__ 7
 #define __FLT32X_DENORM_MIN__ 4.9406564584124654e-324F32x
 #define __HA_FBIT__ 7
 #define __DBL_MAX_10_EXP__ 308
 #define __LDBL_DENORM_MIN__ 4.9406564584124654e-324L
 #define __INT16_C(c) c
 #define __STDC__ 1
-#define __ARM_ARCH_4T__ 1
 #define __PTRDIFF_TYPE__ int
 #define __LLFRACT_MIN__ (-0.5LLR-0.5LLR)
 #define __ATOMIC_SEQ_CST 5
@@ -409,20 +397,16 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT32X_MIN_10_EXP__ (-307)
 #define __UINTPTR_TYPE__ unsigned int
 #define __USA_IBIT__ 16
-#define __DEC64_SUBNORMAL_MIN__ 0.000000000000001E-383DD
 #define __ARM_EABI__ 1
-#define __DEC128_MANT_DIG__ 34
 #define __LDBL_MIN_10_EXP__ (-307)
 #define __SIZEOF_LONG_LONG__ 8
 #define __ULACCUM_EPSILON__ 0x1P-32ULK
 #define __SACCUM_IBIT__ 8
 #define __GCC_ATOMIC_LLONG_LOCK_FREE 1
-#define __FLT32X_MIN__ 2.2250738585072014e-308F32x
-#define __LDBL_DIG__ 15
 #define __FLT_DECIMAL_DIG__ 9
 #define __UINT_FAST16_MAX__ 0xffffffffU
+#define __LDBL_NORM_MAX__ 1.7976931348623157e+308L
 #define __GCC_ATOMIC_SHORT_LOCK_FREE 1
-#define __INT_LEAST64_WIDTH__ 64
 #define __ULLFRACT_MAX__ 0XFFFFFFFFFFFFFFFFP-64ULLR
 #define __UINT_FAST8_TYPE__ unsigned int
 #define __USFRACT_EPSILON__ 0x1P-8UHR
@@ -431,15 +415,14 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __ATOMIC_ACQ_REL 4
 #define __ATOMIC_RELEASE 3
 
-find program=['ar'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='AR' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-ar']
-/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++
+find program=['ar'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='AR' -> ['/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-ar']
+/usr/lib/ccache/arm-none-eabi-g++
 ----------------------------------------
 Checking for 'gcc' (C compiler)
-find program=['arm-none-eabi-gcc', 'arm-none-eabi-cc'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='CC' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc']
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc', '-dM', '-E', '-']
+find program=['arm-none-eabi-gcc', 'arm-none-eabi-cc'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='CC' -> ['/usr/lib/ccache/arm-none-eabi-gcc']
+['/usr/lib/ccache/arm-none-eabi-gcc', '-dM', '-E', '-']
 out: #define __DBL_MIN_EXP__ (-1021)
 #define __HQ_FBIT__ 15
-#define __FLT32X_MAX_EXP__ 1024
 #define __UINT_LEAST16_MAX__ 0xffff
 #define __ARM_SIZEOF_WCHAR_T 4
 #define __ATOMIC_ACQUIRE 2
@@ -451,7 +434,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DQ_FBIT__ 63
 #define __INTMAX_C(c) c ## LL
 #define __ULFRACT_FBIT__ 32
-#define __SACCUM_EPSILON__ 0x1P-7HK
 #define __CHAR_BIT__ 8
 #define __USQ_IBIT__ 0
 #define __UINT8_MAX__ 0xff
@@ -469,23 +451,24 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __GCC_IEC_559 0
 #define __FLT32X_DECIMAL_DIG__ 17
 #define __FLT_EVAL_METHOD__ 0
+#define __TQ_IBIT__ 0
 #define __LLACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LLK
 #define __FLT64_DECIMAL_DIG__ 17
 #define __GCC_ATOMIC_CHAR32_T_LOCK_FREE 1
-#define __FRACT_FBIT__ 15
 #define __UINT_FAST64_MAX__ 0xffffffffffffffffULL
 #define __SIG_ATOMIC_TYPE__ int
-#define __UACCUM_FBIT__ 16
 #define __DBL_MIN_10_EXP__ (-307)
 #define __FINITE_MATH_ONLY__ 0
 #define __ARMEL__ 1
+#define __FLT32X_MAX_EXP__ 1024
 #define __LFRACT_IBIT__ 0
 #define __GNUC_PATCHLEVEL__ 1
 #define __FLT32_HAS_DENORM__ 1
 #define __LFRACT_MAX__ 0X7FFFFFFFP-31LR
+#define __USA_FBIT__ 16
 #define __UINT_FAST8_MAX__ 0xffffffffU
-#define __has_include(STR) __has_include__(STR)
-#define __DEC64_MAX_EXP__ 385
+#define __FLT32_MAX_10_EXP__ 38
+#define __ARM_ARCH_4T__ 1
 #define __INT8_C(c) c
 #define __INT_LEAST8_WIDTH__ 8
 #define __UINT_LEAST64_MAX__ 0xffffffffffffffffULL
@@ -499,7 +482,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __GCC_ATOMIC_BOOL_LOCK_FREE 1
 #define __UINTMAX_TYPE__ long long unsigned int
 #define __LLFRACT_EPSILON__ 0x1P-63LLR
-#define __DEC32_EPSILON__ 1E-6DF
 #define __FLT_EVAL_METHOD_TS_18661_3__ 0
 #define __CHAR_UNSIGNED__ 1
 #define __UINT32_MAX__ 0xffffffffUL
@@ -512,19 +494,17 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SCHAR_MAX__ 0x7f
 #define __WCHAR_MIN__ 0U
 #define __INT64_C(c) c ## LL
-#define __DBL_DIG__ 15
 #define __GCC_ATOMIC_POINTER_LOCK_FREE 1
 #define __LLACCUM_MIN__ (-0X1P31LLK-0X1P31LLK)
 #define __SIZEOF_INT__ 4
-#define __SIZEOF_POINTER__ 4
+#define __FLT32X_MANT_DIG__ 53
 #define __USACCUM_IBIT__ 8
 #define __USER_LABEL_PREFIX__ 
 #define __STDC_HOSTED__ 1
-#define __LDBL_HAS_INFINITY__ 1
 #define __LFRACT_MIN__ (-0.5LR-0.5LR)
 #define __HA_IBIT__ 8
+#define __DBL_DIG__ 15
 #define __FLT32_DIG__ 6
-#define __TQ_IBIT__ 0
 #define __FLT_EPSILON__ 1.1920928955078125e-7F
 #define __APCS_32__ 1
 #define __SHRT_WIDTH__ 16
@@ -532,7 +512,6 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __LDBL_MIN__ 2.2250738585072014e-308L
 #define __STDC_UTF_16__ 1
 #define __FRACT_MIN__ (-0.5R-0.5R)
-#define __DEC32_MAX__ 9.999999E96DF
 #define __DA_IBIT__ 32
 #define __ARM_SIZEOF_MINIMAL_ENUM 1
 #define __FLT32X_HAS_INFINITY__ 1
@@ -542,22 +521,20 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SIZEOF_LONG__ 4
 #define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
 #define __UINT16_C(c) c
-#define __PTRDIFF_WIDTH__ 32
 #define __DECIMAL_DIG__ 17
 #define __LFRACT_EPSILON__ 0x1P-31LR
 #define __FLT64_EPSILON__ 2.2204460492503131e-16F64
 #define __ULFRACT_MIN__ 0.0ULR
-#define __INTMAX_WIDTH__ 64
-#define __has_include_next(STR) __has_include_next__(STR)
 #define __LDBL_HAS_QUIET_NAN__ 1
 #define __ULACCUM_IBIT__ 32
 #define __FLT64_MANT_DIG__ 53
 #define __UACCUM_EPSILON__ 0x1P-16UK
-#define __GNUC__ 9
+#define __GNUC__ 10
 #define __ULLACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULLK
 #define __HQ_IBIT__ 0
 #define __FLT_HAS_DENORM__ 1
 #define __SIZEOF_LONG_DOUBLE__ 8
+#define __SA_IBIT__ 16
 #define __BIGGEST_ALIGNMENT__ 8
 #define __FLT64_MAX_10_EXP__ 308
 #define __GNUC_STDC_INLINE__ 1
@@ -568,23 +545,21 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_HAS_INFINITY__ 1
 #define __HAVE_SPECULATION_SAFE_VALUE 1
 #define __ACCUM_IBIT__ 16
-#define __DEC32_MIN_EXP__ (-94)
 #define __THUMB_INTERWORK__ 1
 #define __INTPTR_WIDTH__ 32
+#define __UINT_LEAST32_MAX__ 0xffffffffUL
 #define __LACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LK
 #define __FLT32X_HAS_DENORM__ 1
 #define __INT_FAST16_TYPE__ int
 #define __LDBL_HAS_DENORM__ 1
-#define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
 #define __INT_LEAST32_MAX__ 0x7fffffffL
 #define __ARM_PCS 1
-#define __DEC32_MIN__ 1E-95DF
 #define __ACCUM_MAX__ 0X7FFFFFFFP-15K
 #define __DBL_MAX_EXP__ 1024
 #define __USACCUM_EPSILON__ 0x1P-8UHK
 #define __WCHAR_WIDTH__ 32
 #define __FLT32_MAX__ 3.4028234663852886e+38F32
-#define __DEC128_EPSILON__ 1E-33DL
+#define __GCC_ATOMIC_LONG_LOCK_FREE 1
 #define __SFRACT_MAX__ 0X7FP-7HR
 #define __FRACT_IBIT__ 0
 #define __PTRDIFF_MAX__ 0x7fffffff
@@ -592,31 +567,31 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __UACCUM_IBIT__ 16
 #define __FLT32_HAS_QUIET_NAN__ 1
 #define __LONG_LONG_MAX__ 0x7fffffffffffffffLL
-#define __SIZEOF_SIZE_T__ 4
 #define __ULACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULK
 #define __SIZEOF_WINT_T__ 4
 #define __LONG_LONG_WIDTH__ 64
 #define __FLT32_MAX_EXP__ 128
-#define __SA_IBIT__ 16
 #define __ULLACCUM_MIN__ 0.0ULLK
-#define __GXX_ABI_VERSION 1013
+#define __GXX_ABI_VERSION 1014
 #define __UTA_FBIT__ 64
-#define __SOFTFP__ 1
 #define __FLT_MIN_EXP__ (-125)
-#define __USFRACT_MAX__ 0XFFP-8UHR
 #define __UFRACT_IBIT__ 0
+#define __INT16_MAX__ 0x7fff
 #define __INT_FAST64_TYPE__ long long int
 #define __FLT64_DENORM_MIN__ 4.9406564584124654e-324F64
 #define __DBL_MIN__ ((double)2.2250738585072014e-308L)
+#define __SIZEOF_POINTER__ 4
+#define __SIZE_TYPE__ unsigned int
+#define __DBL_HAS_QUIET_NAN__ 1
 #define __FLT32X_EPSILON__ 2.2204460492503131e-16F32x
 #define __FLT64_MIN_EXP__ (-1021)
 #define __LACCUM_MIN__ (-0X1P31LK-0X1P31LK)
+#define __FRACT_FBIT__ 15
 #define __ULLACCUM_FBIT__ 32
 #define __GXX_TYPEINFO_EQUALITY_INLINE 0
 #define __FLT64_MIN_10_EXP__ (-307)
 #define __ULLFRACT_EPSILON__ 0x1P-64ULLR
 #define __USES_INITFINI__ 1
-#define __DEC128_MIN__ 1E-6143DL
 #define __REGISTER_PREFIX__ 
 #define __UINT16_MAX__ 0xffff
 #define __DBL_HAS_DENORM__ 1
@@ -625,39 +600,40 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT32_MIN__ 1.1754943508222875e-38F32
 #define __UINT8_TYPE__ unsigned char
 #define __UHA_FBIT__ 8
+#define __FLT_DIG__ 6
 #define __NO_INLINE__ 1
 #define __SFRACT_MIN__ (-0.5HR-0.5HR)
 #define __UTQ_FBIT__ 128
+#define __DEC_EVAL_METHOD__ 2
 #define __FLT_MANT_DIG__ 24
 #define __LDBL_DECIMAL_DIG__ 17
-#define __VERSION__ "9.3.1 20200408 (release)"
+#define __VERSION__ "10.2.1 20201103 (release)"
 #define __UINT64_C(c) c ## ULL
 #define __ULLFRACT_FBIT__ 64
+#define __SOFTFP__ 1
 #define __FRACT_EPSILON__ 0x1P-15R
 #define __ULACCUM_MIN__ 0.0ULK
 #define __UDA_FBIT__ 32
 #define __LLACCUM_EPSILON__ 0x1P-31LLK
 #define __GCC_ATOMIC_INT_LOCK_FREE 1
-#define __FLT32_MANT_DIG__ 24
 #define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __USFRACT_MIN__ 0.0UHR
+#define __FLT32_MANT_DIG__ 24
 #define __UQQ_IBIT__ 0
+#define __USFRACT_MAX__ 0XFFP-8UHR
 #define __SCHAR_WIDTH__ 8
 #define __INT32_C(c) c ## L
-#define __DEC64_EPSILON__ 1E-15DD
 #define __ORDER_PDP_ENDIAN__ 3412
-#define __DEC128_MIN_EXP__ (-6142)
 #define __UHQ_FBIT__ 16
 #define __LLACCUM_FBIT__ 31
-#define __FLT32_MAX_10_EXP__ 38
 #define __INT_FAST32_TYPE__ int
 #define __UINT_LEAST16_TYPE__ short unsigned int
-#define __INT16_MAX__ 0x7fff
-#define __SIZE_TYPE__ unsigned int
 #define __UINT64_MAX__ 0xffffffffffffffffULL
 #define __UDQ_FBIT__ 64
 #define __INT8_TYPE__ signed char
 #define __ELF__ 1
+#define __GCC_ASM_FLAG_OUTPUTS__ 1
+#define __SACCUM_EPSILON__ 0x1P-7HK
 #define __ULFRACT_EPSILON__ 0x1P-32ULR
 #define __LLFRACT_FBIT__ 63
 #define __FLT_RADIX__ 2
@@ -665,47 +641,41 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __LDBL_EPSILON__ 2.2204460492503131e-16L
 #define __UINTMAX_C(c) c ## ULL
 #define __SACCUM_MAX__ 0X7FFFP-7HK
+#define __FLT32X_MIN__ 2.2250738585072014e-308F32x
 #define __SIG_ATOMIC_MAX__ 0x7fffffff
+#define __UACCUM_FBIT__ 16
 #define __GCC_ATOMIC_WCHAR_T_LOCK_FREE 1
 #define __VFP_FP__ 1
 #define __SIZEOF_PTRDIFF_T__ 4
-#define __FLT32X_MANT_DIG__ 53
 #define __LACCUM_EPSILON__ 0x1P-31LK
+#define __LDBL_DIG__ 15
 #define __FLT32X_MIN_EXP__ (-1021)
-#define __DEC32_SUBNORMAL_MIN__ 0.000001E-95DF
 #define __INT_FAST16_MAX__ 0x7fffffff
 #define __FLT64_DIG__ 15
 #define __UINT_FAST32_MAX__ 0xffffffffU
 #define __UINT_LEAST64_TYPE__ long long unsigned int
-#define __USACCUM_MAX__ 0XFFFFP-8UHK
 #define __SFRACT_EPSILON__ 0x1P-7HR
 #define __FLT_HAS_QUIET_NAN__ 1
 #define __FLT_MAX_10_EXP__ 38
 #define __LONG_MAX__ 0x7fffffffL
-#define __DEC128_SUBNORMAL_MIN__ 0.000000000000000000000000000000001E-6143DL
+#define __SIZEOF_SIZE_T__ 4
 #define __FLT_HAS_INFINITY__ 1
-#define __USA_FBIT__ 16
 #define __UINT_FAST16_TYPE__ unsigned int
-#define __DEC64_MAX__ 9.999999999999999E384DD
 #define __ARM_32BIT_STATE 1
 #define __INT_FAST32_WIDTH__ 32
 #define __CHAR16_TYPE__ short unsigned int
 #define __PRAGMA_REDEFINE_EXTNAME 1
 #define __SIZE_WIDTH__ 32
 #define __INT_LEAST16_MAX__ 0x7fff
-#define __DEC64_MANT_DIG__ 16
 #define __INT64_MAX__ 0x7fffffffffffffffLL
-#define __UINT_LEAST32_MAX__ 0xffffffffUL
 #define __SACCUM_FBIT__ 7
 #define __FLT32_DENORM_MIN__ 1.4012984643248171e-45F32
-#define __GCC_ATOMIC_LONG_LOCK_FREE 1
 #define __SIG_ATOMIC_WIDTH__ 32
 #define __INT_LEAST64_TYPE__ long long int
 #define __INT16_TYPE__ short int
 #define __INT_LEAST8_TYPE__ signed char
 #define __STDC_VERSION__ 201710L
 #define __SQ_FBIT__ 31
-#define __DEC32_MAX_EXP__ 97
 #define __ARM_ARCH_ISA_THUMB 1
 #define __INT_FAST8_MAX__ 0x7fffffff
 #define __ARM_ARCH 4
@@ -715,25 +685,25 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT64_HAS_QUIET_NAN__ 1
 #define __FLT32_MIN_10_EXP__ (-37)
 #define __FLT32X_DIG__ 15
+#define __PTRDIFF_WIDTH__ 32
 #define __LDBL_MANT_DIG__ 53
 #define __SFRACT_FBIT__ 7
 #define __SACCUM_MIN__ (-0X1P7HK-0X1P7HK)
-#define __DBL_HAS_QUIET_NAN__ 1
 #define __FLT64_HAS_INFINITY__ 1
 #define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
 #define __INTPTR_TYPE__ int
 #define __UINT16_TYPE__ short unsigned int
 #define __WCHAR_TYPE__ unsigned int
 #define __SIZEOF_FLOAT__ 4
+#define __TQ_FBIT__ 127
 #define __USQ_FBIT__ 32
 #define __UINTPTR_MAX__ 0xffffffffU
 #define __INT_FAST64_WIDTH__ 64
-#define __DEC64_MIN_EXP__ (-382)
 #define __ULLACCUM_IBIT__ 32
 #define __FLT32_DECIMAL_DIG__ 9
 #define __INT_FAST64_MAX__ 0x7fffffffffffffffLL
 #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
-#define __FLT_DIG__ 6
+#define __FLT_NORM_MAX__ 3.4028234663852886e+38F
 #define __FLT32_HAS_INFINITY__ 1
 #define __UINT_FAST64_TYPE__ long long unsigned int
 #define __INT_MAX__ 0x7fffffff
@@ -746,17 +716,18 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_MANT_DIG__ 53
 #define __INT_LEAST64_MAX__ 0x7fffffffffffffffLL
 #define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 1
-#define __DEC64_MIN__ 1E-383DD
 #define __WINT_TYPE__ unsigned int
 #define __UINT_LEAST32_TYPE__ long unsigned int
 #define __SIZEOF_SHORT__ 2
 #define __ULLFRACT_IBIT__ 0
+#define __FLT32_NORM_MAX__ 3.4028234663852886e+38F32
 #define __LDBL_MIN_EXP__ (-1021)
 #define __arm__ 1
 #define __FLT64_MAX__ 1.7976931348623157e+308F64
 #define __UDA_IBIT__ 32
 #define __WINT_WIDTH__ 32
 #define __INT_LEAST8_MAX__ 0x7f
+#define __INT_LEAST64_WIDTH__ 64
 #define __FLT32X_MAX_10_EXP__ 308
 #define __LFRACT_FBIT__ 31
 #define __LDBL_MAX_10_EXP__ 308
@@ -768,9 +739,12 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __SIZEOF_WCHAR_T__ 4
 #define __UINT64_TYPE__ long long unsigned int
 #define __LLFRACT_MAX__ 0X7FFFFFFFFFFFFFFFP-63LLR
-#define __TQ_FBIT__ 127
+#define __FLT64_NORM_MAX__ 1.7976931348623157e+308F64
+#define __INTMAX_MAX__ 0x7fffffffffffffffLL
 #define __INT_FAST8_TYPE__ int
 #define __ULLACCUM_EPSILON__ 0x1P-32ULLK
+#define __USACCUM_MAX__ 0XFFFFP-8UHK
+#define __LDBL_HAS_INFINITY__ 1
 #define __UHQ_IBIT__ 0
 #define __ARM_FEATURE_COPROC 1
 #define __LLACCUM_IBIT__ 32
@@ -779,20 +753,21 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __DBL_DECIMAL_DIG__ 17
 #define __STDC_UTF_32__ 1
 #define __INT_FAST8_WIDTH__ 32
-#define __DEC_EVAL_METHOD__ 2
 #define __FLT32X_MAX__ 1.7976931348623157e+308F32x
 #define __TA_FBIT__ 63
+#define __DBL_NORM_MAX__ ((double)1.7976931348623157e+308L)
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __UDQ_IBIT__ 0
+#define __INTMAX_WIDTH__ 64
 #define __ORDER_BIG_ENDIAN__ 4321
 #define __ACCUM_EPSILON__ 0x1P-15K
 #define __UINT32_C(c) c ## UL
-#define __INTMAX_MAX__ 0x7fffffffffffffffLL
-#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __FLT_DENORM_MIN__ 1.4012984643248171e-45F
 #define __LLFRACT_IBIT__ 0
 #define __INT8_MAX__ 0x7f
 #define __LONG_WIDTH__ 32
 #define __UINT_FAST32_TYPE__ unsigned int
+#define __FLT32X_NORM_MAX__ 1.7976931348623157e+308F32x
 #define __CHAR32_TYPE__ long unsigned int
 #define __FLT_MAX__ 3.4028234663852886e+38F
 #define __USACCUM_FBIT__ 8
@@ -803,20 +778,17 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT64_MIN__ 2.2250738585072014e-308F64
 #define __INT_LEAST32_WIDTH__ 32
 #define __INTMAX_TYPE__ long long int
-#define __DEC128_MAX_EXP__ 6145
 #define __FLT32X_HAS_QUIET_NAN__ 1
 #define __ATOMIC_CONSUME 1
-#define __GNUC_MINOR__ 3
+#define __GNUC_MINOR__ 2
 #define __INT_FAST16_WIDTH__ 32
 #define __UINTMAX_MAX__ 0xffffffffffffffffULL
-#define __DEC32_MANT_DIG__ 7
 #define __FLT32X_DENORM_MIN__ 4.9406564584124654e-324F32x
 #define __HA_FBIT__ 7
 #define __DBL_MAX_10_EXP__ 308
 #define __LDBL_DENORM_MIN__ 4.9406564584124654e-324L
 #define __INT16_C(c) c
 #define __STDC__ 1
-#define __ARM_ARCH_4T__ 1
 #define __PTRDIFF_TYPE__ int
 #define __LLFRACT_MIN__ (-0.5LLR-0.5LLR)
 #define __ATOMIC_SEQ_CST 5
@@ -825,20 +797,16 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __FLT32X_MIN_10_EXP__ (-307)
 #define __UINTPTR_TYPE__ unsigned int
 #define __USA_IBIT__ 16
-#define __DEC64_SUBNORMAL_MIN__ 0.000000000000001E-383DD
 #define __ARM_EABI__ 1
-#define __DEC128_MANT_DIG__ 34
 #define __LDBL_MIN_10_EXP__ (-307)
 #define __SIZEOF_LONG_LONG__ 8
 #define __ULACCUM_EPSILON__ 0x1P-32ULK
 #define __SACCUM_IBIT__ 8
 #define __GCC_ATOMIC_LLONG_LOCK_FREE 1
-#define __FLT32X_MIN__ 2.2250738585072014e-308F32x
-#define __LDBL_DIG__ 15
 #define __FLT_DECIMAL_DIG__ 9
 #define __UINT_FAST16_MAX__ 0xffffffffU
+#define __LDBL_NORM_MAX__ 1.7976931348623157e+308L
 #define __GCC_ATOMIC_SHORT_LOCK_FREE 1
-#define __INT_LEAST64_WIDTH__ 64
 #define __ULLFRACT_MAX__ 0XFFFFFFFFFFFFFFFFP-64ULLR
 #define __UINT_FAST8_TYPE__ unsigned int
 #define __USFRACT_EPSILON__ 0x1P-8UHR
@@ -847,37 +815,37 @@ out: #define __DBL_MIN_EXP__ (-1021)
 #define __ATOMIC_ACQ_REL 4
 #define __ATOMIC_RELEASE 3
 
-find program=['ar'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='AR' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-ar']
-/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc
+find program=['ar'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='AR' -> ['/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-ar']
+/usr/lib/ccache/arm-none-eabi-gcc
 ----------------------------------------
 Checking for c flags '-MMD'
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_0885b2f36f8e9ee090bcb13608b6f5be/test.c[0m
+[1/1] Compiling [32mbuild/.conf_check_0ac97caf1f990a230125ff16da1b93b8/test.c[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc', '-MMD', '-DWAF_BUILD=1', '../../test.c', '-c', '-otest.c.1.o']
+['/usr/lib/ccache/arm-none-eabi-gcc', '-MMD', '-DWAF_BUILD=1', '../../test.c', '-c', '-otest.c.1.o']
 yes
 ----------------------------------------
 Checking for cxx flags '-MMD'
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_08ca2ab05cf6362310fc52f520b57bdb/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_72faeff9e3e4886b9dc98ca316087524/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-MMD', '-DWAF_BUILD=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+['/usr/lib/ccache/arm-none-eabi-g++', '-MMD', '-DWAF_BUILD=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
 yes
 ----------------------------------------
 CXX Compiler
-g++ 9.3.1
+g++ 10.2.1
 ----------------------------------------
 Checking for program 'make'
 /usr/bin/make
-find program=['make'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='MAKE' -> ['/usr/bin/make']
+find program=['make'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='MAKE' -> ['/usr/bin/make']
 --------------------------------------------
 Checking for program 'arm-none-eabi-objcopy'
-/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-objcopy
-find program=['arm-none-eabi-objcopy'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='OBJCOPY' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-objcopy']
+/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-objcopy
+find program=['arm-none-eabi-objcopy'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='OBJCOPY' -> ['/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-objcopy']
 --------------------------------------------
 Enabling ChibiOS asserts
 no
@@ -906,13 +874,13 @@ Checking for HAVE_CMATH_ISFINITE
           return std::isfinite(1.0f);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_7174132a0f1210e488840e8ca3fa58a8/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_955ea0c12052c1e8dbe175a9a0a8c44a/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_7174132a0f1210e488840e8ca3fa58a8/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_955ea0c12052c1e8dbe175a9a0a8c44a/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 --------------------------------------------
@@ -925,13 +893,13 @@ Checking for HAVE_CMATH_ISINF
           return std::isinf(1.0f);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_fccef778523970a559dc2f5d4e5c25af/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_05276b38f1d380fe9dcb024d9f851f04/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_fccef778523970a559dc2f5d4e5c25af/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_05276b38f1d380fe9dcb024d9f851f04/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 --------------------------------------------
@@ -944,13 +912,13 @@ Checking for HAVE_CMATH_ISNAN
           return std::isnan(1.0f);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_75316bf7df9eae86640d643a453077d5/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_2639d87a0a9a41b55f520ce5770ba2ec/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_75316bf7df9eae86640d643a453077d5/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_2639d87a0a9a41b55f520ce5770ba2ec/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 ----------------------------------------------
@@ -966,13 +934,13 @@ Checking for NEED_CMATH_ISFINITE_STD_NAMESPACE
           return isfinite((double)1);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_154e86fa5fef463c2d40b2b49a1c9b6f/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_5ae8f1ef762db2c804083930e1c149c1/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_154e86fa5fef463c2d40b2b49a1c9b6f/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_5ae8f1ef762db2c804083930e1c149c1/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 ----------------------------------------------
@@ -988,13 +956,13 @@ Checking for NEED_CMATH_ISINF_STD_NAMESPACE
           return isinf((double)1);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_ea6212946d382ab408852227b8bc7af2/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_007b311ade9e76ab31b27b911d2843bb/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_ea6212946d382ab408852227b8bc7af2/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_007b311ade9e76ab31b27b911d2843bb/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 ----------------------------------------------
@@ -1010,13 +978,13 @@ Checking for NEED_CMATH_ISNAN_STD_NAMESPACE
           return isnan((double)1);
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_463d7c087f4bb05e220cb48ef53c6bd4/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_fc65ca4813a929bf89e8708de9cc7660/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_463d7c087f4bb05e220cb48ef53c6bd4/testbuild/fmuv3/testprog[0m
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_fc65ca4813a929bf89e8708de9cc7660/testbuild/fmuv3/testprog[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot/build/fmuv3', '-L/home/pratik/ardupilot/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
-err: /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
+['/usr/lib/ccache/arm-none-eabi-g++', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-u_port_lock', '-u_port_unlock', '-u_exit', '-u_kill', '-u_getpid', '-u_errno', '-uchThdExit', '-fno-common', '-nostartfiles', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-L/home/pratik/ardupilot_custom/build/fmuv3', '-L/home/pratik/ardupilot_custom/modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/ld', '-L/home/pratik/ardupilot_custom/libraries/AP_HAL_ChibiOS/hwdef/common', '-Wl,--gc-sections,--no-warn-mismatch,--library-path=/ld,--script=ldscript.ld,--defsym=__process_stack_size__=0x1C00,--defsym=__main_stack_size__=0x600', 'test.cpp.1.o', '-otestprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lgcc', '-lm']
+err: /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/bin/ld: warning: cannot find entry symbol Reset_Handler; defaulting to 0000000008004000
 
 yes
 ----------------------------------------------
@@ -1030,26 +998,26 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_ca87ffa5073a2e194e1ef44856bf6c1d/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_8eaa7eb2ac569148adf785a14cbdd0b5/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
 err: ../../test.cpp:1:10: fatal error: endian.h: No such file or directory
     1 | #include <endian.h>
       |          ^~~~~~~~~~
 compilation terminated.
 
-from /home/pratik/ardupilot: Test does not build: Traceback (most recent call last):
-  File "/home/pratik/ardupilot/modules/waf/waflib/Configure.py", line 584, in run_build
+from /home/pratik/ardupilot_custom: Test does not build: Traceback (most recent call last):
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Configure.py", line 584, in run_build
     bld.compile()
-  File "/home/pratik/ardupilot/modules/waf/waflib/Build.py", line 355, in compile
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Build.py", line 355, in compile
     raise Errors.BuildError(self.producer.error)
 waflib.Errors.BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140257397597344: cxx test.cpp -> test.cpp.1.o}
+	{task 140002325940032: cxx test.cpp -> test.cpp.1.o}
  (run with -v to display more information)
 
 not found
-from /home/pratik/ardupilot: The configuration failed
+from /home/pratik/ardupilot_custom: The configuration failed
 ----------------------------------------------
 Checking for header byteswap.h
 ==>
@@ -1061,26 +1029,26 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_0714445d03c9dd20d6cfc669e7f11f32/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_47b21e39d4c1898995db121c51ed1768/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
 err: ../../test.cpp:1:10: fatal error: byteswap.h: No such file or directory
     1 | #include <byteswap.h>
       |          ^~~~~~~~~~~~
 compilation terminated.
 
-from /home/pratik/ardupilot: Test does not build: Traceback (most recent call last):
-  File "/home/pratik/ardupilot/modules/waf/waflib/Configure.py", line 584, in run_build
+from /home/pratik/ardupilot_custom: Test does not build: Traceback (most recent call last):
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Configure.py", line 584, in run_build
     bld.compile()
-  File "/home/pratik/ardupilot/modules/waf/waflib/Build.py", line 355, in compile
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Build.py", line 355, in compile
     raise Errors.BuildError(self.producer.error)
 waflib.Errors.BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140257397340192: cxx test.cpp -> test.cpp.1.o}
+	{task 140002324809424: cxx test.cpp -> test.cpp.1.o}
  (run with -v to display more information)
 
 not found
-from /home/pratik/ardupilot: The configuration failed
+from /home/pratik/ardupilot_custom: The configuration failed
 ----------------------------------------------
 Checking for HAVE_MEMRCHR
 ==>
@@ -1091,9 +1059,9 @@ Checking for HAVE_MEMRCHR
           return memrchr((const void *)s, 0, 3) != NULL;
         }
 <==
-[1/2] Compiling [32mbuild/.conf_check_e2bcca0c0bbb07e2e8013ba3e1a403fa/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_c00a4cc80541f0d958ad09d0c68ff130/test.cpp[0m
 
-['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
+['/usr/lib/ccache/arm-none-eabi-g++', '-Werror=implicit-fallthrough', '-std=gnu++11', '-fdata-sections', '-ffunction-sections', '-fno-exceptions', '-fsigned-char', '-Wall', '-Wextra', '-Wpointer-arith', '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-reorder', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-expansion-to-defined', '-Werror=cast-align', '-Werror=attributes', '-Werror=format-security', '-Werror=format-extra-args', '-Werror=enum-compare', '-Werror=format', '-Werror=array-bounds', '-Werror=uninitialized', '-Werror=init-self', '-Werror=narrowing', '-Werror=return-type', '-Werror=switch', '-Werror=sign-compare', '-Werror=type-limits', '-Werror=undef', '-Werror=unused-result', '-Werror=shadow', '-Werror=unused-value', '-Werror=unused-variable', '-Werror=delete-non-virtual-dtor', '-Wfatal-errors', '-Wno-trigraphs', '-Werror=parentheses', '-DARDUPILOT_BUILD', '-Wuninitialized', '-Warray-bounds', '-Wno-format-contains-nul', '-Werror=unused-but-set-variable', '-Werror=suggest-override', '-Werror=implicit-fallthrough', '-Wmaybe-uninitialized', '-Wduplicated-cond', '-ffunction-sections', '-fdata-sections', '-fsigned-char', '-Wall', '-Wextra', '-Werror=format', '-Wpointer-arith', '-Wcast-align', '-Wno-missing-field-initializers', '-Wno-unused-parameter', '-Wno-redundant-decls', '-Wno-unknown-pragmas', '-Wno-trigraphs', '-Werror=shadow', '-Werror=return-type', '-Werror=unused-result', '-Werror=unused-variable', '-Werror=narrowing', '-Werror=attributes', '-Werror=overflow', '-Werror=parentheses', '-Werror=format-extra-args', '-Werror=ignored-qualifiers', '-Werror=undef', '-DARDUPILOT_BUILD', '-Wno-format-contains-nul', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-DARM_MATH_CM4', '-u_printf_float', '-Wlogical-op', '-Wframe-larger-than=1300', '-fsingle-precision-constant', '-Wno-attributes', '-fno-exceptions', '-Wall', '-Wextra', '-Wno-sign-compare', '-Wfloat-equal', '-Wpointer-arith', '-Wmissing-declarations', '-Wno-unused-parameter', '-Werror=array-bounds', '-Wfatal-errors', '-Werror=uninitialized', '-Werror=init-self', '-Werror=unused-but-set-variable', '-Wno-missing-field-initializers', '-Wno-trigraphs', '-fno-strict-aliasing', '-fomit-frame-pointer', '-falign-functions=16', '-ffunction-sections', '-fdata-sections', '-fno-strength-reduce', '-fno-builtin-printf', '-fno-builtin-fprintf', '-fno-builtin-vprintf', '-fno-builtin-vfprintf', '-fno-builtin-puts', '-mno-thumb-interwork', '-mthumb', '--specs=nano.specs', '--specs=nosys.specs', '-DCHIBIOS_BOARD_NAME="fmuv3"', '-D__USE_CMSIS', '-Werror=deprecated-declarations', '-DNDEBUG=1', '-Wno-error=double-promotion', '-Wno-error=missing-declarations', '-Wno-error=float-equal', '-Wno-error=undef', '-Wno-error=cpp', '-fno-rtti', '-fno-threadsafe-statics', '-Werror', '-MMD', '-Os', '-I../../../../libraries/AP_GyroFFT/CMSIS_5/include', '-I../../../../modules/uavcan/libuavcan/include', '-DAP_SCRIPTING_CHECKS=1', '-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS', '-DENABLE_HEAP=1', '-DENABLE_ONVIF=0', '-DENABLE_SCRIPTING=1', '-DHAVE_STD_NULLPTR_T=0', '-DLUA_32BITS=1', '-DUSE_LIBC_REALLOC=0', '-DWAF_BUILD=1', '-D__STDC_FORMAT_MACROS=1', '-DUAVCAN_CPP_VERSION=UAVCAN_CPP03', '-DUAVCAN_NO_ASSERTIONS=1', '-DUAVCAN_NULLPTR=nullptr', '-DHAVE_CMATH_ISFINITE=1', '-DHAVE_CMATH_ISINF=1', '-DHAVE_CMATH_ISNAN=1', '-DNEED_CMATH_ISFINITE_STD_NAMESPACE=1', '-DNEED_CMATH_ISINF_STD_NAMESPACE=1', '-DNEED_CMATH_ISNAN_STD_NAMESPACE=1', '../../test.cpp', '-c', '-otest.cpp.1.o']
 err: ../../test.cpp: In function 'int main()':
 ../../test.cpp:5:18: error: 'memrchr' was not declared in this scope; did you mean 'memchr'?
     5 |           return memrchr((const void *)s, 0, 3) != NULL;
@@ -1101,25 +1069,25 @@ err: ../../test.cpp: In function 'int main()':
       |                  memchr
 compilation terminated due to -Wfatal-errors.
 
-from /home/pratik/ardupilot: Test does not build: Traceback (most recent call last):
-  File "/home/pratik/ardupilot/modules/waf/waflib/Configure.py", line 584, in run_build
+from /home/pratik/ardupilot_custom: Test does not build: Traceback (most recent call last):
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Configure.py", line 584, in run_build
     bld.compile()
-  File "/home/pratik/ardupilot/modules/waf/waflib/Build.py", line 355, in compile
+  File "/home/pratik/ardupilot_custom/modules/waf/waflib/Build.py", line 355, in compile
     raise Errors.BuildError(self.producer.error)
 waflib.Errors.BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140257397150768: cxx test.cpp -> test.cpp.1.o}
+	{task 140002324635712: cxx test.cpp -> test.cpp.1.o}
  (run with -v to display more information)
 
 no
-from /home/pratik/ardupilot: The configuration failed
+from /home/pratik/ardupilot_custom: The configuration failed
 ----------------------------------------------
 Configured VSCode Intellisense:
 no
 ----------------------------------------------
 Checking for program 'python'
 /usr/bin/python
-find program=['python'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON' -> ['/usr/bin/python']
+find program=['python'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON' -> ['/usr/bin/python']
 ['/usr/bin/python', '-c', 'import imp;print(imp.get_tag())']
 out: cpython-38
 
@@ -1148,7 +1116,7 @@ Checking for python version >= 2.7.0
 ----------------------------------------------
 Checking for program 'python'
 /usr/bin/python
-find program=['python'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON' -> ['/usr/bin/python']
+find program=['python'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON' -> ['/usr/bin/python']
 ['/usr/bin/python', '-c', 'import imp;print(imp.get_tag())']
 out: cpython-38
 
@@ -1173,14 +1141,14 @@ yes
 ----------------------------------------------
 Checking for program 'git'
 /usr/bin/git
-find program=['git'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='GIT' -> ['/usr/bin/git']
+find program=['git'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='GIT' -> ['/usr/bin/git']
 ----------------------------------------------
 Gtest
 STM32 boards currently don't support compiling gtest
 ----------------------------------------------
 Checking for program 'arm-none-eabi-size'
-/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-size
-find program=['arm-none-eabi-size'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='SIZE' -> ['/opt/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-size']
+/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-size
+find program=['arm-none-eabi-size'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='SIZE' -> ['/opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-size']
 ----------------------------------------------
 Benchmarks
 disabled
@@ -1205,4 +1173,4 @@ disabled
 ----------------------------------------------
 Checking for program 'rsync'
 /usr/bin/rsync
-find program=['rsync'] paths=['/opt/ros/noetic/bin', '/home/chnging/anaconda3/bin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/home/pratik/anaconda3/condabin', '/home/pratik/ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-9-2020-q2-update/bin', '/usr/lib/ccache', '/home/pratik/Ardupilot/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='RSYNC' -> ['/usr/bin/rsync']
+find program=['rsync'] paths=['/usr/lib/ccache', '/home/pratik/ardupilot_custom/Tools/autotest', '/opt/gcc-arm-none-eabi-10-2020-q4-major/bin', '/home/pratik/.local/bin', '/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='RSYNC' -> ['/usr/bin/rsync']
