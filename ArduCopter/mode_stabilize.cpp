@@ -98,7 +98,7 @@ float battvolt = 0.0;
 ////// Initialization of gains values
 
 const float KR1 = 0.6;     // 0.6 (lab)
-const float KOmega1 = 0.8; // 0.8 (lab)
+const float KOmega1 = 1.0; // 0.8 (lab)
 
 const float KR2 = 0.9;     // 0.9 (lab)
 const float KOmega2 = 0.8; // 0.8 (lab)
@@ -139,6 +139,7 @@ Matrix3f Kxq_dot(
 // const float dt = 0.0025; // Sample time (50Hz)
 // const float RC = 1/(2*M_PI*20); // Cut-off frequency (20Hz)
 // Define filter variables
+
 float x_des_dot_previousValue = 0.0;
 float y_des_dot_previousValue = 0.0;
 float z_des_dot_previousValue = 0.0;
@@ -147,6 +148,11 @@ float H_roll_previousValue = 0.0;
 float H_pitch_previousValue = 0.0;
 float H_throttle_previousValue = 0.0;
 float H_yaw_rate_previousValue = 0.0;
+float encoder_roll_feedback_previousValue = 0.0;
+float encoder_pitch_feedback_previousValue = 0.0;
+float qc_dot_1_previousValue = 0.0;
+float qc_dot_2_previousValue = 0.0;
+float qc_dot_3_previousValue = 0.0;
 
 //////// Calculation of cable attitude device
 Vector3f qc_prev(0.0, 0.0, -1.0);
@@ -191,15 +197,15 @@ void ModeStabilize::run()
             if (RC_Channels::get_radio_in(CH_6) < 1500)
             {
                 //// run the motors at 1150 PWM
-                // PWM1 = 1100;
-                // PWM2 = 1100;
-                // PWM3 = 1100;
-                // PWM4 = 1100;
+                PWM1 = 1100;
+                PWM2 = 1100;
+                PWM3 = 1100;
+                PWM4 = 1100;
 
-                PWM1 = 1000;
-                PWM2 = 1000;
-                PWM3 = 1000;
-                PWM4 = 1000;
+                // PWM1 = 1000;
+                // PWM2 = 1000;
+                // PWM3 = 1000;
+                // PWM4 = 1000;
 
                 //// Reset the states
                 x_des = 0.0;
@@ -348,6 +354,15 @@ void ModeStabilize::NL_SQCSP_mode()
 void ModeStabilize::get_CAM_device_data()
 {
 
+    //////// Apply low pass filter on the CAM device data
+    // First ordered low pass filter
+    encoder_roll_feedback = 0.686 * encoder_roll_feedback_previousValue + 0.314 * encoder_roll_feedback;
+    encoder_roll_feedback_previousValue = encoder_roll_feedback;
+
+    // First ordered low pass filter
+    encoder_pitch_feedback = 0.686 * encoder_pitch_feedback_previousValue + 0.314 * encoder_pitch_feedback;
+    encoder_pitch_feedback_previousValue = encoder_pitch_feedback;
+
     Vector3f e_3_neg(0, 0, -1);
 
     // Calculate rotation about pitch axis of CAM device
@@ -363,15 +378,28 @@ void ModeStabilize::get_CAM_device_data()
         0, sinf(encoder_roll_feedback * PI / 180), cosf(encoder_roll_feedback * PI / 180));
 
     qc = Matrix_vector_mul(R, Matrix_vector_mul(CAM_R_x, Matrix_vector_mul(CAM_R_y, e_3_neg)));
-    Vector3f qc_dot = (qc - qc_prev);
+    Vector3f qc_dot = (qc - qc_prev)*frequency_of_the_code;
 
-    Omega_c = Matrix_vector_mul(hatmap(qc), qc_dot);
+    // Omega_c = Matrix_vector_mul(hatmap(qc), qc_dot);
     qc_prev = qc;
 
+    // First ordered low pass filter
+    qc_dot[0] = 0.686 * qc_dot_1_previousValue + 0.314 * qc_dot[0];
+    qc_dot_1_previousValue = qc_dot[0];
+
+    // First ordered low pass filter
+    qc_dot[1] = 0.686 * qc_dot_2_previousValue + 0.314 * qc_dot[1];
+    qc_dot_2_previousValue = qc_dot[1];
+
+    // First ordered low pass filter
+    qc_dot[2] = 0.686 * qc_dot_3_previousValue + 0.314 * qc_dot[2];
+    qc_dot_3_previousValue = qc_dot[2];
+
     // hal.console->printf("%0.3f,", imu_roll_log);
-    hal.console->printf("%0.3f,", encoder_roll_feedback);
+    // hal.console->printf("%0.3f,", encoder_roll_feedback_filtered);
     // hal.console->printf("%0.3f,", imu_pitch_log);
-    hal.console->printf("%0.3f\n", encoder_pitch_feedback);
+    // hal.console->printf("%0.3f\n", encoder_pitch_feedback_filtered);
+    // hal.console->printf("%0.3f,%0.3f,%0.3f \n", qc_dot[0], qc_dot[1], qc_dot[2]);
 
 }
 
@@ -723,8 +751,8 @@ void ModeStabilize::final_F_M_calling()
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    PWM1 = 1000;
-    PWM2 = 1000;
-    PWM3 = 1000;
-    PWM4 = 1000;
+    // PWM1 = 1000;
+    // PWM2 = 1000;
+    // PWM3 = 1000;
+    // PWM4 = 1000;
 }

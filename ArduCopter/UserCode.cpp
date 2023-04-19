@@ -305,10 +305,10 @@ void Copter::getEncoderData()
     imu_pitch_log = -(ahrs.pitch_sensor) / 100.0;    // degrees
     // imu_yaw_log = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
 
-    // hal.console->printf("%0.3f,", imu_roll_log);
-    hal.console->printf("%0.3f,", encoder_roll_feedback);
+    // hal.console->printf("From Usercode.cpp");
+    // hal.console->printf("%0.3f,", encoder_roll_feedback);
     // hal.console->printf("%0.3f,", imu_pitch_log);
-    hal.console->printf("%0.3f\n", encoder_pitch_feedback);
+    // hal.console->printf("%0.3f\n", encoder_pitch_feedback);
 }
 
 void Copter::gains_data_from_Rpi()
