@@ -49,10 +49,10 @@ Matrix3f R_log(1.0,0.0,0.0,
 float x_des  = 0.0;
 float y_des  = 0.0;
 float z_des  = 0.0;
+float yaw_des = 0.0;
 float x_des_dot  = 0.0;
 float y_des_dot  = 0.0;
 float z_des_dot  = 0.0;
-
 float yaw_des_dot = 0.0;
 
 Matrix3f Rd_log(1.0,0.0,0.0,
@@ -107,11 +107,38 @@ float KI3           = 0.0;
 
 //////// Savitzky–Golay filter global variables
 
-float y_minus_2_sq = 0.0;
-float y_minus_1_sq = 0.0;
-float y_current_sq = 0.0;
-float y_plus_1_sq  = 0.0;
-float y_plus_2_sq  = 0.0;
+// float y_minus_2_sq = 0.0;
+// float y_minus_1_sq = 0.0;
+// float y_current_sq = 0.0;
+// float y_plus_1_sq  = 0.0;
+// float y_plus_2_sq  = 0.0;
+
+float x_des_dot_SQ_current    = 0.0;
+float x_des_dot_SQ_minus_1    = 0.0;
+float x_des_dot_SQ_minus_2    = 0.0;
+float x_des_dot_SQ_plus_1     = 0.0;
+float x_des_dot_SQ_plus_2     = 0.0;
+float x_des_dot_SQ_filter     = 0.0;
+
+//////// First order low pass filter
+
+// Define filter parameters
+// const float dt = 0.0025; // Sample time (50Hz)
+// const float RC = 1/(2*M_PI*20); // Cut-off frequency (20Hz)
+
+// Define filter variables
+float x_des_dot_filteredValue   = 0;
+float x_des_dot_previousValue   = 0;
+float y_des_dot_filteredValue   =  0;
+float y_des_dot_previousValue   = 0;
+float z_des_dot_filteredValue   = 0;
+float z_des_dot_previousValue   = 0;
+float yaw_des_dot_filteredValue = 0.0;
+float yaw_des_dot_previousValue = 0.0;
+
+//////// Numerical intergration with Trapezoindal rule
+
+
 
 void ModeStabilize::run()
 {
@@ -616,6 +643,10 @@ void ModeStabilize::pilot_input(){
     if (H_pitch >  2.0 && H_pitch <  45.0){H_pitch = H_pitch - 2.0;}
     // Scale the (-45 to 45) values to desired velocity limits
     x_des_dot   = H_pitch/slop_for_horizontal_scaling;
+    // First ordered low pass filter
+    x_des_dot_filteredValue = 0.686 * x_des_dot_previousValue + 0.314 * x_des_dot;
+    x_des_dot_previousValue = x_des_dot_filteredValue;
+    x_des           = x_des +( x_des_dot_filteredValue + x_des_dot_previousValue) / 2 * 0.0025;
     ////////////////////////////////
 
     //////// Convert H_roll into desired velocity in y
@@ -626,6 +657,10 @@ void ModeStabilize::pilot_input(){
     if (H_roll >  2.0 && H_roll <  45.0){H_roll = H_roll - 2.0;}
     // Scale the (-45 to 45) values to desired velocity limits
     y_des_dot   = H_roll/slop_for_horizontal_scaling;
+    // First ordered low pass filter
+    y_des_dot_filteredValue = 0.686 * y_des_dot_previousValue + 0.314 * y_des_dot;
+    y_des_dot_previousValue = y_des_dot_filteredValue;
+    y_des           = y_des +( y_des_dot_filteredValue + y_des_dot_previousValue) / 2 * 0.0025;
     ////////////////////////////////
 
     //////// Convert H_throttle into desired velocity in z
@@ -636,6 +671,10 @@ void ModeStabilize::pilot_input(){
     if (H_throttle >  20.0 && H_throttle <  500.0){H_throttle = H_throttle - 20.0;}
     // Scale the (-500 to 500) values to desired velocity limits
     z_des_dot   = H_throttle/slop_for_vertical_scaling;
+    // First ordered low pass filter
+    z_des_dot_filteredValue = 0.686 * z_des_dot_previousValue + 0.314 * z_des_dot;
+    z_des_dot_previousValue = z_des_dot_filteredValue;
+    z_des           = z_des +( z_des_dot_filteredValue + z_des_dot_previousValue) / 2 * 0.0025;
     ////////////////////////////////
 
     //////// Convert H_yaw_rate into desired yaw rate
@@ -646,18 +685,21 @@ void ModeStabilize::pilot_input(){
     if (H_yaw_rate >  2.0 && H_yaw_rate <  45.0){H_yaw_rate = H_yaw_rate - 2.0;}
     // Scale the (-45 to 45) values to desired velocity limits
     yaw_des_dot   = H_yaw_rate/slop_for_yaw_scaling;
+    // First ordered low pass filter
+    yaw_des_dot_filteredValue = 0.686 * yaw_des_dot_previousValue + 0.314 * yaw_des_dot;
+    yaw_des_dot_previousValue = yaw_des_dot_filteredValue;
+    yaw_des           = yaw_des +( yaw_des_dot_filteredValue + yaw_des_dot_previousValue) / 2 * 0.0025;
     ////////////////////////////////
 
-    //////// Convert x_des_dot into x_des
-
     //////// To debug the code
-    hal.console->printf("%f,%f,%f,%f\n",x_des_dot,y_des_dot,z_des_dot,yaw_des_dot);
+    // hal.console->printf("%f,%f,%f,%f\n",x_des_dot,y_des_dot,z_des_dot,yaw_des_dot);
+    hal.console->printf("%f,%f,%f,%f\n",x_des,y_des,z_des,yaw_des);
 
 }
 
-float ModeStabilize::SQ_filter(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2){
+float ModeStabilize::SQ_filter_fifth_order(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2){
 
-    SQ_fil_data = (1.0/35.0)*(-3.0 * y_minus_2 + 12.0 * y_minus_1 + 17.0 * y + 12.0 * y_plus_1 - 3.0 * y_plus_2);
+    float SQ_fil_data = (1.0/35.0)*(-3.0 * y_minus_2 + 12.0 * y_minus_1 + 17.0 * y + 12.0 * y_plus_1 - 3.0 * y_plus_2);
     return SQ_fil_data;
 }
 

@@ -1465,7 +1465,7 @@ public:
     void CAC_PD_controller();
     void IROS_controller_code();
     void FUNC_disarm();
-    float SQ_filter(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2);
+    float SQ_filter_fifth_order(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2);
     
 protected:
 
