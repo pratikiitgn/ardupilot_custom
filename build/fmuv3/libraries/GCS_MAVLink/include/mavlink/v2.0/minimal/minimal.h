@@ -10,7 +10,8 @@
     #error Wrong include order: MAVLINK_MINIMAL.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_MINIMAL_XML_HASH 4130209446048589324
+#undef MAVLINK_THIS_XML_IDX
+#define MAVLINK_THIS_XML_IDX 4
 
 #ifdef __cplusplus
 extern "C" {
@@ -314,8 +315,10 @@ typedef enum MAV_COMPONENT
 // base include
 
 
+#undef MAVLINK_THIS_XML_IDX
+#define MAVLINK_THIS_XML_IDX 4
 
-#if MAVLINK_MINIMAL_XML_HASH == MAVLINK_PRIMARY_XML_HASH
+#if MAVLINK_THIS_XML_IDX == MAVLINK_PRIMARY_XML_IDX
 # define MAVLINK_MESSAGE_INFO {MAVLINK_MESSAGE_INFO_HEARTBEAT}
 # define MAVLINK_MESSAGE_NAMES {{ "HEARTBEAT", 0 }}
 # if MAVLINK_COMMAND_24BIT

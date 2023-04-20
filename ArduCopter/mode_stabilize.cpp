@@ -26,6 +26,7 @@ float current_time          = 0.0;
 float rate_counter_time     = 0.0;
 float t_start_else_loop_end = 0.0;
 int rate_counter            = 0;
+float frequency_of_the_code = 400.0;
 
 ////// Quadcopter state variables
 float quad_x        = 0.0;
@@ -51,6 +52,9 @@ float z_des  = 0.0;
 float x_des_dot  = 0.0;
 float y_des_dot  = 0.0;
 float z_des_dot  = 0.0;
+
+float yaw_des_dot = 0.0;
+
 Matrix3f Rd_log(1.0,0.0,0.0,
                0.0,1.0,0.0,
                0.0,0.0,1.0);
@@ -101,9 +105,13 @@ float KR3           = 0.0;
 float KOmega3       = 0.0;
 float KI3           = 0.0;
 
+//////// Savitzky–Golay filter global variables
 
-float yaw_offsetted_IROS    = 0.0;
-
+float y_minus_2_sq = 0.0;
+float y_minus_1_sq = 0.0;
+float y_current_sq = 0.0;
+float y_plus_1_sq  = 0.0;
+float y_plus_2_sq  = 0.0;
 
 void ModeStabilize::run()
 {
@@ -121,6 +129,7 @@ void ModeStabilize::run()
 
     }else{
 
+    //////////// To count the frequency of the code
         rate_counter_time = (AP_HAL::millis() - t_start_else_loop_end)/1000.0;
 
         if (rate_counter_time > 1.0){
@@ -132,6 +141,7 @@ void ModeStabilize::run()
         }
 
     ///////////// Arming checks  /////////////
+
         if (copter.motors->armed()){
             arm_disarm_flag = 1;
         }else{
@@ -146,6 +156,15 @@ void ModeStabilize::run()
         quad_states();
     ///////////// For attitude and altitude controller /////////////
         attitude_altitude_controller();
+
+    /////////////// Debuging to disarm the quadcopter ///////////////
+    // bool AP_Arming_Copter::disarm(const AP_Arming::Method method, bool do_disarm_checks){
+    //     return true;
+    // }
+
+    // if (RC_Channels::get_radio_in(CH_8) > 1500){
+        
+    // }
 
     }
 }
@@ -165,8 +184,6 @@ void ModeStabilize::attitude_altitude_controller(){
         imu_yaw_ini = 0.0;
         H_yaw   = 360.0-(ahrs.yaw_sensor)   / 100.0;     // degrees ;
 
-        yaw_offsetted_IROS = (360.0-(ahrs.yaw_sensor) / 100.0) - HH_IMU_yaw_feedback;
-
         float quad_x_ini_inertial =  inertial_nav.get_position().x / 100.0;
         float quad_y_ini_inertial =  inertial_nav.get_position().y / 100.0;
 
@@ -179,19 +196,24 @@ void ModeStabilize::attitude_altitude_controller(){
         PWM3 = 1000;
         PWM4 = 1000;
 
-        }
-        else if (RC_Channels::get_radio_in(CH_6) > 1400 && RC_Channels::get_radio_in(CH_6) < 1600 ){
+        }else if (RC_Channels::get_radio_in(CH_5) < 1200){
             if (copter.motors->armed()){
                     IROS_controller_code();
             }
-        }else if (RC_Channels::get_radio_in(CH_6) > 1600){                                                                              
-            if(copter.motors->armed()){
-
-                ///////////////////////// Code for IROS 2022 /////////////////////////
+        }else if (RC_Channels::get_radio_in(CH_5) > 1400 && RC_Channels::get_radio_in(CH_5) < 1600){
+            if (copter.motors->armed()){
                     IROS_controller_code();
-                ///////////////////////// Code for IROS 2022 /////////////////////////
+            }
+        }else if (RC_Channels::get_radio_in(CH_5) > 1600 && RC_Channels::get_radio_in(CH_5) < 2000){
+            if (copter.motors->armed()){
+                    IROS_controller_code();
             }
         }
+}
+
+
+void ModeStabilize::FUNC_disarm(){
+    copter.motors->armed(false);
 }
 
 void ModeStabilize::IROS_controller_code(){
@@ -573,30 +595,70 @@ void ModeStabilize::quad_states(){
 
 void ModeStabilize::pilot_input(){
 
-    H_roll      = (double)(channel_roll->get_control_in())/100.0;
-    H_pitch     = (double)(channel_pitch->get_control_in())/100.0;
+    H_roll      = -(double)(channel_roll->get_control_in())/100.0;          // range: (-45 to 45)
+    H_pitch     = -(double)(channel_pitch->get_control_in())/100.0;         // range: (-45 to 45)
+    H_yaw_rate  = -(double)(channel_yaw->get_control_in())/100.0;           // range: (-45 to 45)
+    H_throttle  =  (double)(channel_throttle->get_control_in())-500.0;      // range: (-500 to 500)
 
-    H_pitch_dot = (H_pitch - H_pitch_prev)/400.0;
-    H_pitch_prev= H_pitch;
+    //////// Common values 
+    float max_des_velocity_horizontal   = 5.0;      // (m/s)
+    float max_des_velocity_vertical     = 5.0;      // (m/s)
+    float max_yaw_dot_                  = 25.0;     // (deg/s)
+    float slop_for_horizontal_scaling   = 45.0 / max_des_velocity_horizontal;
+    float slop_for_vertical_scaling     = 500.0 / max_des_velocity_vertical;
+    float slop_for_yaw_scaling          = 45.0 / max_yaw_dot_;
 
-    H_yaw_rate  = -(double)(channel_yaw->get_control_in()) / 100.0;
-    H_throttle  =  (double)channel_throttle->get_control_in()-500.0;
+    //////// Convert H_pitch into desired velocity in x
+    // Trim (-2 to 2) data. This will help preventing the drone to drift
+    if (H_pitch > -2.0 && H_pitch < 2.0){H_pitch = 0.0;}
+    // Start the values considering -2 and 2 as the origin
+    if (H_pitch < -2.0 && H_pitch > -45.0){H_pitch = H_pitch + 2.0;}
+    if (H_pitch >  2.0 && H_pitch <  45.0){H_pitch = H_pitch - 2.0;}
+    // Scale the (-45 to 45) values to desired velocity limits
+    x_des_dot   = H_pitch/slop_for_horizontal_scaling;
+    ////////////////////////////////
 
-    float dt_yaw = 1.0/100.0;
-    H_yaw = wrap_360(H_yaw + H_yaw_rate*dt_yaw);
+    //////// Convert H_roll into desired velocity in y
+    // Trim (-2 to 2) data. This will help preventing the drone to drift
+    if (H_roll > -2.0 && H_roll < 2.0){H_roll = 0.0;}
+    // Start the values considering -2 and 2 as the origin
+    if (H_roll < -2.0 && H_roll > -45.0){H_roll = H_roll + 2.0;}
+    if (H_roll >  2.0 && H_roll <  45.0){H_roll = H_roll - 2.0;}
+    // Scale the (-45 to 45) values to desired velocity limits
+    y_des_dot   = H_roll/slop_for_horizontal_scaling;
+    ////////////////////////////////
 
-    if (H_throttle > -20 && H_throttle < 20){
-        H_throttle = 0.0;
-    }
+    //////// Convert H_throttle into desired velocity in z
+    // Trim (-20 to 20) data. This will help preventing the drone to drift
+    if (H_throttle > -20.0 && H_throttle < 20.0){H_throttle = 0.0;}
+    // Start the values considering -2 and 2 as the origin
+    if (H_throttle < -20.0 && H_throttle > -500.0){H_throttle = H_throttle + 20.0;}
+    if (H_throttle >  20.0 && H_throttle <  500.0){H_throttle = H_throttle - 20.0;}
+    // Scale the (-500 to 500) values to desired velocity limits
+    z_des_dot   = H_throttle/slop_for_vertical_scaling;
+    ////////////////////////////////
 
-    float dt_z = 1.0/15000.0;
-    z_des       =  z_des + H_throttle * dt_z;
-    if (z_des > 5.0){
-        z_des = 5.0;
-    }
-    if (z_des < 0.0){
-        z_des = 0.0;
-    }
+    //////// Convert H_yaw_rate into desired yaw rate
+    // Trim (-2 to 2) data. This will help preventing the drone to drift
+    if (H_yaw_rate > -2.0 && H_yaw_rate < 2.0){H_yaw_rate = 0.0;}
+    // Start the values considering -2 and 2 as the origin
+    if (H_yaw_rate < -2.0 && H_yaw_rate > -45.0){H_yaw_rate = H_yaw_rate + 2.0;}
+    if (H_yaw_rate >  2.0 && H_yaw_rate <  45.0){H_yaw_rate = H_yaw_rate - 2.0;}
+    // Scale the (-45 to 45) values to desired velocity limits
+    yaw_des_dot   = H_yaw_rate/slop_for_yaw_scaling;
+    ////////////////////////////////
+
+    //////// Convert x_des_dot into x_des
+
+    //////// To debug the code
+    hal.console->printf("%f,%f,%f,%f\n",x_des_dot,y_des_dot,z_des_dot,yaw_des_dot);
+
+}
+
+float ModeStabilize::SQ_filter(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2){
+
+    SQ_fil_data = (1.0/35.0)*(-3.0 * y_minus_2 + 12.0 * y_minus_1 + 17.0 * y + 12.0 * y_plus_1 - 3.0 * y_plus_2);
+    return SQ_fil_data;
 }
 
 int ModeStabilize::Inverse_thrust_function(float Force){
