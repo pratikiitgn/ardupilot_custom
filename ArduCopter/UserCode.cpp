@@ -32,92 +32,6 @@ float imu_yaw_log = 0.0;
 char sz[20];
 
 char attitude[] = "50001_50000";
-char gain_data_portenta[] = "/00000,00000,00000\n";
-
-float HH_on_off_feedback = 0.0;
-float HH_yaw_feedback = 0.0;
-float HH_pitch_feedback = 0.0;
-
-float HH_IMU_roll_feedback = 0.0;
-float HH_IMU_pitch_feedback = 0.0;
-float HH_IMU_yaw_feedback = 0.0;
-
-Vector3f qp(0.0, 0.0, 0.0);
-Vector3f qc(0.0, 0.0, 0.0);
-Vector3f qp_prev(0.0, 0.0, 0.0);
-Vector3f qc_prev(0.0, 0.0, 0.0);
-Vector3f Omega_p(0.0, 0.0, 0.0);
-Vector3f Omega_c(0.0, 0.0, 0.0);
-Vector3f qpd(1.0, 0.0, 0.0);
-// Vector3f qp_in_HH_frame();
-// For filtering qp_dot and qc_dot
-
-// int fil_iter_qp_dot = 20;
-// float fil_qp1_dot_array[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-// float fil_qp2_dot_array[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-// float fil_qp3_dot_array[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-
-float qp3_dot_fil1 = 0.0;
-float qp3_dot_fil2 = 0.0;
-float qp3_dot_fil3 = 0.0;
-float qp3_dot_fil4 = 0.0;
-float qp3_dot_fil5 = 0.0;
-float qp3_dot_fil6 = 0.0;
-float qp3_dot_fil7 = 0.0;
-float qp3_dot_fil8 = 0.0;
-float qp3_dot_fil9 = 0.0;
-float qp3_dot_fil10 = 0.0;
-
-float qp2_dot_fil1 = 0.0;
-float qp2_dot_fil2 = 0.0;
-float qp2_dot_fil3 = 0.0;
-float qp2_dot_fil4 = 0.0;
-float qp2_dot_fil5 = 0.0;
-float qp2_dot_fil6 = 0.0;
-float qp2_dot_fil7 = 0.0;
-float qp2_dot_fil8 = 0.0;
-float qp2_dot_fil9 = 0.0;
-float qp2_dot_fil10 = 0.0;
-
-float qp1_dot_fil1 = 0.0;
-float qp1_dot_fil2 = 0.0;
-float qp1_dot_fil3 = 0.0;
-float qp1_dot_fil4 = 0.0;
-float qp1_dot_fil5 = 0.0;
-float qp1_dot_fil6 = 0.0;
-float qp1_dot_fil7 = 0.0;
-float qp1_dot_fil8 = 0.0;
-float qp1_dot_fil9 = 0.0;
-float qp1_dot_fil10 = 0.0;
-
-float qp3_dot_fil_final = 0.0;
-float qp2_dot_fil_final = 0.0;
-float qp1_dot_fil_final = 0.0;
-
-float qc1_dot_fil1 = 0.0;
-float qc1_dot_fil2 = 0.0;
-float qc1_dot_fil3 = 0.0;
-float qc1_dot_fil4 = 0.0;
-float qc1_dot_fil5 = 0.0;
-float qc1_dot_fil6 = 0.0;
-float qc1_dot_fil7 = 0.0;
-float qc1_dot_fil8 = 0.0;
-float qc1_dot_fil9 = 0.0;
-float qc1_dot_fil10 = 0.0;
-
-float qc2_dot_fil1 = 0.0;
-float qc2_dot_fil2 = 0.0;
-float qc2_dot_fil3 = 0.0;
-float qc2_dot_fil4 = 0.0;
-float qc2_dot_fil5 = 0.0;
-float qc2_dot_fil6 = 0.0;
-float qc2_dot_fil7 = 0.0;
-float qc2_dot_fil8 = 0.0;
-float qc2_dot_fil9 = 0.0;
-float qc2_dot_fil10 = 0.0;
-
-float qc1_dot_fil_final = 0.0;
-float qc2_dot_fil_final = 0.0;
 
 uint16_t PWM1 = 1000;
 uint16_t PWM2 = 1000;
@@ -176,11 +90,11 @@ void Copter::userhook_FastLoop()
     Log_Write_velocity();
     log_attitude_tracking();
 
-    get_CAM_device_data();
-
     imu_roll_log = (ahrs.roll_sensor) / 100.0;       // degrees
     imu_pitch_log = -(ahrs.pitch_sensor) / 100.0;    // degrees
     imu_yaw_log = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
+
+    // hal.console->printf("Hi\n");
 
     //////////// For RPI 3 ////////////
     //// Data logging for system identification
@@ -261,29 +175,7 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
 }
 #endif
 
-void Copter::get_CAM_device_data()
-{
 
-    Vector3f e_3_neg(0, 0, -1);
-
-    // Calculate rotation about pitch axis of CAM device
-    Matrix3f CAM_R_y(
-        cosf(encoder_pitch_feedback * PI / 180), 0, sinf(encoder_pitch_feedback * PI / 180),
-        0, 1, 0,
-        -sinf(encoder_pitch_feedback * PI / 180), 0, cosf(encoder_pitch_feedback * PI / 180));
-
-    // Calculate rotation about roll axis of CAM device
-    Matrix3f CAM_R_x(
-        1, 0, 0,
-        0, cosf(encoder_roll_feedback * PI / 180), -sinf(encoder_roll_feedback * PI / 180),
-        0, sinf(encoder_roll_feedback * PI / 180), cosf(encoder_roll_feedback * PI / 180));
-
-    qc = Matrix_vector_mul(R, Matrix_vector_mul(CAM_R_x, Matrix_vector_mul(CAM_R_y, e_3_neg)));
-    Vector3f qc_dot = (qc - qc_prev);
-
-    Omega_c = Matrix_vector_mul(hatmap(qc), qc_dot);
-    qc_prev = qc;
-}
 
 Vector3f Copter::Matrix_vector_mul(Matrix3f R_quad, Vector3f v_quad)
 {
@@ -386,8 +278,8 @@ void Copter::getEncoderData()
     encoder_roll_feedback = (float)((encoder_roll_int - 50000.0) / 100.0);
     encoder_pitch_feedback = (float)((encoder_pitch_int - 50000.0) / 100.0);
 
-    encoder_pitch_feedback = encoder_pitch_feedback + 28.13;
-    encoder_roll_feedback = encoder_roll_feedback + 62.93;
+    encoder_pitch_feedback = encoder_pitch_feedback + 2.64;
+    encoder_roll_feedback = encoder_roll_feedback - 2.0;
 
     // hal.console->printf("%5.2f,%5.2f\n",encoder_roll_feedback,encoder_pitch_feedback);
 
@@ -409,12 +301,19 @@ void Copter::getEncoderData()
         encoder_pitch_feedback = -65.0;
     }
 
+    imu_roll_log = (ahrs.roll_sensor) / 100.0;       // degrees
+    imu_pitch_log = -(ahrs.pitch_sensor) / 100.0;    // degrees
+    // imu_yaw_log = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
+
+    // hal.console->printf("%0.3f,", imu_roll_log);
     hal.console->printf("%0.3f,", encoder_roll_feedback);
+    // hal.console->printf("%0.3f,", imu_pitch_log);
     hal.console->printf("%0.3f\n", encoder_pitch_feedback);
 }
 
 void Copter::gains_data_from_Rpi()
 {
+
 }
 
 void Copter::Log_Write_position()

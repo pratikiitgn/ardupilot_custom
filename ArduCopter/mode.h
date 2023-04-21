@@ -1466,6 +1466,7 @@ public:
     Vector3f e_X_dot();
     void final_F_M_calling();
     float norm_of_vec(Vector3f vec_);
+    void get_CAM_device_data();
 
 protected:
 

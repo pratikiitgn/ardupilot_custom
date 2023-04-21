@@ -37,7 +37,7 @@ float t_start_else_loop_end = 0.0;
 int rate_counter = 0;
 float frequency_of_the_code = 400.0;
 
-////// Quadcopter state variables
+////// System state variables
 float quad_x = 0.0;
 float quad_y = 0.0;
 float quad_z = 0.0;
@@ -50,6 +50,9 @@ Matrix3f R(1.0, 0.0, 0.0,
            0.0, 1.0, 0.0,
            0.0, 0.0, 1.0);
 Vector3f Omega(0.0, 0.0, 0.0);
+
+Vector3f qc(0.0,0.0,1.0);
+Vector3f Omega_c(0.0, 0.0, 0.0);
 
 ////// Desired state of the system
 float x_des = 0.0;
@@ -144,6 +147,9 @@ float H_roll_previousValue = 0.0;
 float H_pitch_previousValue = 0.0;
 float H_throttle_previousValue = 0.0;
 float H_yaw_rate_previousValue = 0.0;
+
+//////// Calculation of cable attitude device
+Vector3f qc_prev(0.0, 0.0, -1.0);
 
 void ModeStabilize::run()
 {
@@ -280,6 +286,8 @@ void ModeStabilize::run()
         pilot_input();
         ///////////// getting states of quadcopter /////////////
         quad_states();
+        ///////////// getting cable attitude from the CAM device /////////////
+        get_CAM_device_data();
     }
 }
 
@@ -337,6 +345,35 @@ void ModeStabilize::NL_SQCSP_mode()
     
 }
 
+void ModeStabilize::get_CAM_device_data()
+{
+
+    Vector3f e_3_neg(0, 0, -1);
+
+    // Calculate rotation about pitch axis of CAM device
+    Matrix3f CAM_R_y(
+        cosf(encoder_pitch_feedback * PI / 180), 0, sinf(encoder_pitch_feedback * PI / 180),
+        0, 1, 0,
+        -sinf(encoder_pitch_feedback * PI / 180), 0, cosf(encoder_pitch_feedback * PI / 180));
+
+    // Calculate rotation about roll axis of CAM device
+    Matrix3f CAM_R_x(
+        1, 0, 0,
+        0, cosf(encoder_roll_feedback * PI / 180), -sinf(encoder_roll_feedback * PI / 180),
+        0, sinf(encoder_roll_feedback * PI / 180), cosf(encoder_roll_feedback * PI / 180));
+
+    qc = Matrix_vector_mul(R, Matrix_vector_mul(CAM_R_x, Matrix_vector_mul(CAM_R_y, e_3_neg)));
+    Vector3f qc_dot = (qc - qc_prev);
+
+    Omega_c = Matrix_vector_mul(hatmap(qc), qc_dot);
+    qc_prev = qc;
+
+    // hal.console->printf("%0.3f,", imu_roll_log);
+    hal.console->printf("%0.3f,", encoder_roll_feedback);
+    // hal.console->printf("%0.3f,", imu_pitch_log);
+    hal.console->printf("%0.3f\n", encoder_pitch_feedback);
+
+}
 
 float ModeStabilize::Thrust_saturation(float f_value)
 {
@@ -686,8 +723,8 @@ void ModeStabilize::final_F_M_calling()
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    // PWM1 = 1000;
-    // PWM2 = 1000;
-    // PWM3 = 1000;
-    // PWM4 = 1000;
+    PWM1 = 1000;
+    PWM2 = 1000;
+    PWM3 = 1000;
+    PWM4 = 1000;
 }
