@@ -1436,21 +1436,14 @@ public:
     bool allows_autotune() const override { return true; }
     bool allows_flip() const override { return true; }
     void custom_pwm_code();
-    void system_identification_main();
-    void system_identification_x_axis();
-    void system_identification_y_axis();
     void quad_states();
-    void custom_PID_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
-    void custom_PID_controller_sysID(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
     void pilot_input();
     float saturation_for_roll_pitch_angle_error(float error);
     float sat_I_gain_ph_th(float sum);
     float sat_I_gain_psi(float sum);
     int Inverse_thrust_function(float Force);
     float saturation_for_yaw_angle_error(float error);
-    void attitude_altitude_controller();
     void battery_check();
-    void custom_PID_position_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
     float euler_to_Rotation_mat(float ph, float th, float ps);
     void custom_geometric_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
     Vector3f e_R(Matrix3f R, Matrix3f Rd);
@@ -1461,12 +1454,19 @@ public:
     Matrix3f matrix_transpose(Matrix3f R);
     Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
     Vector3f sat_e_I(Vector3f vec);
-    void data_logging_portenta();
-    void CAC_PD_controller();
-    void IROS_controller_code();
     void FUNC_disarm();
     float SQ_filter_fifth_order(float y_minus_2, float y_minus_1, float y, float y_plus_1, float y_plus_2);
-    
+    float Bounds_on_XY_des(float value);
+    float Bounds_on_Z_des(float value);
+    void custom_Stabilize_mode();
+    void custom_Loiter_mode();
+    void NL_SQCSP_mode();
+    float Thrust_saturation(float f_value);
+    Vector3f e_X();
+    Vector3f e_X_dot();
+    void final_F_M_calling();
+    float norm_of_vec(Vector3f vec_);
+
 protected:
 
     const char *name() const override { return "STABILIZE"; }

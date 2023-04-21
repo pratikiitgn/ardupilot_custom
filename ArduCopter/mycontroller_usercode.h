@@ -4,14 +4,6 @@ extern float H_roll;
 extern float H_pitch;
 extern float H_yaw;
 
-extern float imu_roll;
-extern float imu_pitch;
-extern float imu_yaw;
-
-extern float imu_roll_dot;
-extern float imu_pitch_dot;
-extern float imu_yaw_dot;
-
 extern float quad_x;
 extern float quad_y;
 extern float quad_z;
@@ -49,7 +41,9 @@ extern float y_des;
 extern float z_des;
 
 // Variable for geometric controller
-extern Matrix3f R_log;
+extern Matrix3f R;
+extern Vector3f rpy;
+extern Vector3f Omega;
 extern Matrix3f Rd_log;
 extern Vector3f e_R_log;
 extern Vector3f e_Omega_log;
@@ -92,6 +86,8 @@ extern float Ay;
 extern float Az;
 
 extern float constant_mg_IROS;
+
+
 
 // extern float MG;
 // extern float KP_gain;
