@@ -14,8 +14,6 @@
  */
 
 #include "AP_RangeFinder_MAVLink.h"
-#include <AP_HAL/AP_HAL.h>
-
 /*
    Set the distance based on a MAVLINK message
 */
@@ -31,6 +29,7 @@ void AP_RangeFinder_MAVLink::handle_msg(const mavlink_message_t &msg)
         _max_distance_cm = packet.max_distance;
         _min_distance_cm = packet.min_distance;
         sensor_type = (MAV_DISTANCE_SENSOR)packet.type;
+
     }
 }
 

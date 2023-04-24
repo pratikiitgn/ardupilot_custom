@@ -10,7 +10,7 @@
 #include <AP_Logger/LogStructure.h>
 #include <AP_Logger/AP_Logger.h>
 
-extern const AP_HAL::HAL& hal;
+extern const AP_HAL::HAL &hal;
 
 #define ESC_HZ 490
 #define PI 3.14
@@ -51,7 +51,7 @@ Matrix3f R(1.0, 0.0, 0.0,
            0.0, 0.0, 1.0);
 Vector3f Omega(0.0, 0.0, 0.0);
 
-Vector3f qc(0.0,0.0,1.0);
+Vector3f qc(0.0, 0.0, 1.0);
 Vector3f Omega_c(0.0, 0.0, 0.0);
 
 ////// Desired state of the system
@@ -98,10 +98,10 @@ float battvolt = 0.0;
 ////// Initialization of gains values
 
 const float KR1 = 0.6;     // 0.6 (lab)
-const float KOmega1 = 1.0; // 0.8 (lab)
+const float KOmega1 = 0.6; // 0.8 (lab)
 
-const float KR2 = 0.9;     // 0.9 (lab)
-const float KOmega2 = 0.8; // 0.8 (lab)
+const float KR2 = 0.6;     // 0.9 (lab)
+const float KOmega2 = 0.6; // 0.8 (lab)
 
 const float KR3 = 5.0;     // 5.0  (lab)
 const float KOmega3 = 1.0; // 1.0 (lab)
@@ -153,9 +153,57 @@ float encoder_pitch_feedback_previousValue = 0.0;
 float qc_dot_1_previousValue = 0.0;
 float qc_dot_2_previousValue = 0.0;
 float qc_dot_3_previousValue = 0.0;
+float quad_z_previousValue = 0.0;
+
+//////// Calculations for second order filtering
+// Define filter parameters
+const float dt = 1.0 / 400.0; // Sample time (400Hz)
+const float fc = 40;          // Cut-off frequency (40Hz)
+const float damping = 0.7;    // Damping ratio
+
+// Define filter variables
+float filteredValue = 0;
+float previousValue = 0;
+float previousFilteredValue = 0;
+
+// Calculate filter coefficients
+const float w0 = 2 * PI * fc;
+const float alpha = sinf(w0) / (2 * damping);
+const float beta = dt * w0 / 2;
+
+///////// Calculation of Savitzky–Golay filter
+/////////
+
+// Define filter parameters
+const int window_size = 7;                   // Window size (odd number)
+const int poly_order = 2;                    // Polynomial order
+const int half_size = (window_size - 1) / 2; // Half of window size
+
+// Define filter variables
+int filteredValue_SG = 0;
+// Define Savitzky-Golay filter coefficients
+float sg_coeffs[window_size] = {0.0357142857, 0.1071428571, 0.1785714286, 0.2142857143, 0.2142857143, 0.1785714286, 0.1071428571}; // Define data buffer
+float data_buffer[window_size] = {0};
+bool quad_z_changed = false;
 
 //////// Calculation of cable attitude device
+////////
 Vector3f qc_prev(0.0, 0.0, -1.0);
+
+//////// Applying simple moving average filter
+const int WINDOW_SIZE_simple_moving_average = 20;
+// Initialize array to store last 5 samples
+float samples_simple_moving_average[WINDOW_SIZE_simple_moving_average] = {0};
+int index_simple_moving_average = 0;
+
+
+// //////// Applying weighted moving average filter
+// const int WINDOW_SIZE_WeightedMovingAverage = 5;
+// // Initialize array to store last 5 samples
+// float samples_WeightedMovingAverage[WINDOW_SIZE_WeightedMovingAverage] = {0};
+// int index_WeightedMovingAverage = 0;
+// // Set weights for weighted moving average filter
+// float weights[WINDOW_SIZE_WeightedMovingAverage] = {0.1, 0.2, 0.2, 0.4, 0.4};
 
 void ModeStabilize::run()
 {
@@ -197,15 +245,15 @@ void ModeStabilize::run()
             if (RC_Channels::get_radio_in(CH_6) < 1500)
             {
                 //// run the motors at 1150 PWM
-                PWM1 = 1100;
-                PWM2 = 1100;
-                PWM3 = 1100;
-                PWM4 = 1100;
+                // PWM1 = 1100;
+                // PWM2 = 1100;
+                // PWM3 = 1100;
+                // PWM4 = 1100;
 
-                // PWM1 = 1000;
-                // PWM2 = 1000;
-                // PWM3 = 1000;
-                // PWM4 = 1000;
+                PWM1 = 1000;
+                PWM2 = 1000;
+                PWM3 = 1000;
+                PWM4 = 1000;
 
                 //// Reset the states
                 x_des = 0.0;
@@ -299,15 +347,18 @@ void ModeStabilize::run()
 
 void ModeStabilize::custom_Stabilize_mode()
 {
-    F = mass_quad * gravity_acc + Kp_z * e_X()[2] + Kd_z * e_X_dot()[2];
+
+    F = mass_quad * gravity_acc + Kp_z * (z_des - quad_z) + Kd_z * (quad_z_dot - z_des_dot);
     F = Thrust_saturation(F);
+    // hal.console->printf("%3.4f,%3.4f,%3.4f\n", quad_z, quad_z_dot, F);
+
     Matrix3f Rd_temp(eulerAnglesToRotationMatrix(rpyd * PI / 180.0));
     Rd = Rd_temp;
 
     Vector3f M(Matrix_vector_mul(KR, e_R(R, Rd)) + Matrix_vector_mul(KOmega, e_Omega(R, Rd, Omega, Omegad)) + Omega % Matrix_vector_mul(JJ, Omega));
     Mb1 = -M[0];
     Mb2 = -M[1];
-    Mb3 =  M[2];
+    Mb3 = M[2];
 
     final_F_M_calling();
 
@@ -322,7 +373,7 @@ void ModeStabilize::custom_Stabilize_mode()
 void ModeStabilize::custom_Loiter_mode()
 {
     Vector3f e_3_with_gravity(0, 0, gravity_acc);
-    Vector3f u = ( Matrix_vector_mul(Kxq,e_X()) + Matrix_vector_mul(Kxq_dot,e_X_dot()) + e_3_with_gravity);
+    Vector3f u = (Matrix_vector_mul(Kxq, e_X()) + Matrix_vector_mul(Kxq_dot, e_X_dot()) + e_3_with_gravity);
     u[0] = mass_quad * u[0];
     u[1] = mass_quad * u[1];
     u[2] = mass_quad * u[2];
@@ -332,15 +383,15 @@ void ModeStabilize::custom_Loiter_mode()
     b3d[1] = u[1] / norm_of_vec(u);
     b3d[2] = u[2] / norm_of_vec(u);
 
-    Vector3f b1c(cosf( yaw_des * PI / 180.0), sinf(yaw_des * PI / 180.0), 0.0);
+    Vector3f b1c(cosf(yaw_des * PI / 180.0), sinf(yaw_des * PI / 180.0), 0.0);
     Vector3f b2d;
-    b2d = Matrix_vector_mul(hatmap(b3d),b1c);
+    b2d = Matrix_vector_mul(hatmap(b3d), b1c);
     Vector3f b1d;
-    b1d = Matrix_vector_mul(hatmap(b2d),b3d);
+    b1d = Matrix_vector_mul(hatmap(b2d), b3d);
 
-    Matrix3f Rd_temp_( b1d[0], b2d[0], b3d[0],
-                       b1d[1], b2d[1], b3d[1],
-                       b1d[2], b2d[2], b3d[2]);
+    Matrix3f Rd_temp_(b1d[0], b2d[0], b3d[0],
+                      b1d[1], b2d[1], b3d[1],
+                      b1d[2], b2d[2], b3d[2]);
     Rd = Rd_temp_;
 
     final_F_M_calling();
@@ -348,7 +399,6 @@ void ModeStabilize::custom_Loiter_mode()
 
 void ModeStabilize::NL_SQCSP_mode()
 {
-    
 }
 
 void ModeStabilize::get_CAM_device_data()
@@ -378,7 +428,7 @@ void ModeStabilize::get_CAM_device_data()
         0, sinf(encoder_roll_feedback * PI / 180), cosf(encoder_roll_feedback * PI / 180));
 
     qc = Matrix_vector_mul(R, Matrix_vector_mul(CAM_R_x, Matrix_vector_mul(CAM_R_y, e_3_neg)));
-    Vector3f qc_dot = (qc - qc_prev)*frequency_of_the_code;
+    Vector3f qc_dot = (qc - qc_prev) * frequency_of_the_code;
 
     // Omega_c = Matrix_vector_mul(hatmap(qc), qc_dot);
     qc_prev = qc;
@@ -400,14 +450,14 @@ void ModeStabilize::get_CAM_device_data()
     // hal.console->printf("%0.3f,", imu_pitch_log);
     // hal.console->printf("%0.3f\n", encoder_pitch_feedback_filtered);
     // hal.console->printf("%0.3f,%0.3f,%0.3f \n", qc_dot[0], qc_dot[1], qc_dot[2]);
-
 }
 
 float ModeStabilize::Thrust_saturation(float f_value)
 {
-    if (f_value > 20.0)
+    float max_thrust_value = 15.0;
+    if (f_value > max_thrust_value)
     {
-        f_value = 20.0;
+        f_value = max_thrust_value;
     }
     if (f_value < 0.0)
     {
@@ -425,7 +475,6 @@ void ModeStabilize::FUNC_disarm()
 {
     copter.motors->armed(false);
 }
-
 
 Vector3f ModeStabilize::e_X()
 {
@@ -483,8 +532,9 @@ Matrix3f ModeStabilize::matrix_transpose(Matrix3f R_func)
     return R_T;
 }
 
-float ModeStabilize::norm_of_vec(Vector3f vec_){
-    float norm_of_vec__ = sqrtf(vec_[0]*vec_[0] + vec_[1]*vec_[1] + vec_[2]*vec_[2]);
+float ModeStabilize::norm_of_vec(Vector3f vec_)
+{
+    float norm_of_vec__ = sqrtf(vec_[0] * vec_[0] + vec_[1] * vec_[1] + vec_[2] * vec_[2]);
     return norm_of_vec__;
 }
 
@@ -514,12 +564,34 @@ void ModeStabilize::quad_states()
     // Position in inertial reference frame
     quad_x = (inertial_nav.get_position().x / 100.0) - quad_x_ini; // m
     quad_y = (inertial_nav.get_position().y / 100.0) - quad_y_ini; // m
-    quad_z = (inertial_nav.get_position().z / 100.0) - quad_z_ini; // m
 
     // Linear velocity in inertial frame of reference
     quad_x_dot = inertial_nav.get_velocity().x / 100.0; // m/s
     quad_y_dot = inertial_nav.get_velocity().y / 100.0; // m/s
-    quad_z_dot = inertial_nav.get_velocity().z / 100.0; // m/s
+
+    ///////// Get the data from the TF mini plus
+    // if (copter.rangefinder_alt_ok()){
+    // quad_z = (copter.rangefinder_state.alt_cm) / 100.0;
+    quad_z = (copter.rangefinder_state.alt_cm);
+    // hal.console->printf("%3.3f,",quad_z);
+
+    ///////// Applying first ordered low pass filter
+    // quad_z = 0.686 * quad_z_previousValue + 0.314 * quad_z;
+    // quad_z_previousValue = quad_z;
+
+    /////// Applying moving average filter
+    float smoothedSample_simple_moving_average = updateMovingAverage(quad_z);
+
+    // //////// Applying weighted moving average filter
+    // float smoothedSample_weighted_moving_average = updateWeightedMovingAverage(quad_z);
+
+    //////// Taking time derivative of quad_z_vel
+    // quad_z_dot = (quad_z - quad_z_previousValue) / dt;
+
+    //////// To debug the code
+    hal.console->printf("%3.3f,", quad_z);
+    hal.console->printf("%3.3f\n", smoothedSample_simple_moving_average);
+    // hal.console->printf("%3.3f\n", smoothedSample_weighted_moving_average);
 
     // Attitude of the quadcopter
     rpy[0] = (ahrs.roll_sensor) / 100.0;        // degrees
@@ -532,7 +604,52 @@ void ModeStabilize::quad_states()
     Omega[0] = (ahrs.get_gyro().x);  // degrees/second
     Omega[1] = -(ahrs.get_gyro().y); // degrees/second
     Omega[2] = -(ahrs.get_gyro().z); // degrees/second
+
+    // float abcd = RangeFinderState.alt_cm;
 }
+
+float ModeStabilize::updateMovingAverage(float newSample)
+{
+    // Add new sample to array and update index
+    samples_simple_moving_average[index_simple_moving_average] = newSample;
+    index_simple_moving_average = (index_simple_moving_average + 1) % WINDOW_SIZE_simple_moving_average;
+
+    // Calculate sum of samples in window
+    float sum = 0;
+    for (int i = 0; i < WINDOW_SIZE_simple_moving_average; i++)
+    {
+        sum += samples_simple_moving_average[i];
+    }
+
+    // Calculate and return moving average
+    float average = sum / WINDOW_SIZE_simple_moving_average;
+
+    // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f, and ,", samples_simple_moving_average[0],samples_simple_moving_average[1],samples_simple_moving_average[2],samples_simple_moving_average[3],samples_simple_moving_average[4]);
+
+    return average;
+}
+
+// float ModeStabilize::updateWeightedMovingAverage(float newSample)
+// {
+//     // Add new sample to array and update index
+//     samples_WeightedMovingAverage[index_WeightedMovingAverage] = newSample;
+//     index_WeightedMovingAverage = (index_WeightedMovingAverage + 1) % WINDOW_SIZE_WeightedMovingAverage;
+
+//     // Calculate sum of samples in window
+//     float weightedSum = 0;
+//     for (int i = 0; i < WINDOW_SIZE_WeightedMovingAverage; i++)
+//     {
+//         // weightedSum += weights[i] * samples_WeightedMovingAverage[(index_WeightedMovingAverage + i) % WINDOW_SIZE_WeightedMovingAverage];
+//         weightedSum += weights[i] * samples_WeightedMovingAverage[(index_WeightedMovingAverage + i) % WINDOW_SIZE_WeightedMovingAverage];
+//     }
+
+//     // Calculate and return moving average
+//     float average = weightedSum / WINDOW_SIZE_simple_moving_average;
+
+//     // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f, and ,", samples_simple_moving_average[0],samples_simple_moving_average[1],samples_simple_moving_average[2],samples_simple_moving_average[3],samples_simple_moving_average[4]);
+
+//     return average;
+// }
 
 void ModeStabilize::pilot_input()
 {
@@ -751,8 +868,8 @@ void ModeStabilize::final_F_M_calling()
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    // PWM1 = 1000;
-    // PWM2 = 1000;
-    // PWM3 = 1000;
-    // PWM4 = 1000;
+    PWM1 = 1000;
+    PWM2 = 1000;
+    PWM3 = 1000;
+    PWM4 = 1000;
 }
