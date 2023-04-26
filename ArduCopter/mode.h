@@ -1467,8 +1467,10 @@ public:
     void final_F_M_calling();
     float norm_of_vec(Vector3f vec_);
     void get_CAM_device_data();
-    float updateMovingAverage(float newSample);
+    float updateMovingAverage_quad_z(float newSample);
+    float updateMovingAverage_quad_z_dot(float newSample);
     float updateWeightedMovingAverage(float newSample);
+    float second_order_central_diff_method();
 
 protected:
 

@@ -41,9 +41,11 @@ float frequency_of_the_code = 400.0;
 float quad_x = 0.0;
 float quad_y = 0.0;
 float quad_z = 0.0;
+float quad_z_final = 0.0;
 float quad_x_dot = 0.0;
 float quad_y_dot = 0.0;
 float quad_z_dot = 0.0;
+float quad_z_prev = 0.0;
 
 Vector3f rpy(0.0, 0.0, 0.0);
 Matrix3f R(1.0, 0.0, 0.0,
@@ -121,8 +123,8 @@ const float Kd_x = 2.0; // 1.0 (best)
 const float Kp_y = 4.0; // 2.0 (best)
 const float Kd_y = 2.0; // 1.0 (best)
 
-const float Kp_z = 4.0; // 2.0 (best)
-const float Kd_z = 2.0; // 1.0 (best)
+const float Kp_z = 1.0; // 2.0 (best)
+const float Kd_z = 0.1; // 1.0 (best)
 
 Matrix3f Kxq(
     Kp_x, 0.0, 0.0,
@@ -153,7 +155,11 @@ float encoder_pitch_feedback_previousValue = 0.0;
 float qc_dot_1_previousValue = 0.0;
 float qc_dot_2_previousValue = 0.0;
 float qc_dot_3_previousValue = 0.0;
-float quad_z_previousValue = 0.0;
+float quad_z_first_order_low_pass_previousValue = 0.0;
+float quad_z_first_order_low_pass = 0.0;
+float quad_z_filtered_moving_average_prev = 0.0;
+float quad_z_dot_filtered_moving_average_low_pass = 0.0;
+float quad_z_dot_filtered_moving_average_previousValue = 0.0;
 
 //////// Calculations for second order filtering
 // Define filter parameters
@@ -190,12 +196,27 @@ bool quad_z_changed = false;
 ////////
 Vector3f qc_prev(0.0, 0.0, -1.0);
 
-//////// Applying simple moving average filter
+//////// Applying simple moving average filter for quad_z
 const int WINDOW_SIZE_simple_moving_average = 20;
-// Initialize array to store last 5 samples
 float samples_simple_moving_average[WINDOW_SIZE_simple_moving_average] = {0};
 int index_simple_moving_average = 0;
+float quad_z_filtered_moving_average = 0.0;
 
+//////// Applying simple moving average filter for quad_z_dot
+const int WINDOW_SIZE_simple_moving_average_quad_z_dot = 20;
+float samples_simple_moving_average_quad_z_dot[WINDOW_SIZE_simple_moving_average_quad_z_dot] = {0};
+int index_simple_moving_average_quad_z_dot = 0;
+float quad_z_dot_filtered_moving_average = 0.0;
+
+//////// Applying second-order central difference method to find time derivative of the signal
+const int BUFFER_SIZE_SOCD = 10;       // Size of circular buffer
+const float TIME_INTERVAL_SOCD = 0.05; // Time interval between Lidar measurements in seconds
+// Define the circular buffer and its variables
+int lidarData_BUFFER_SIZE_SOCD[BUFFER_SIZE_SOCD] = {0};
+int oldestIndex_SOCD = 0;
+int newestIndex_SOCD = 0;
+int numSamples_SOCD = 0;
+int counter_SOCD = 0;
 
 // //////// Applying weighted moving average filter
 // const int WINDOW_SIZE_WeightedMovingAverage = 5;
@@ -347,9 +368,13 @@ void ModeStabilize::run()
 
 void ModeStabilize::custom_Stabilize_mode()
 {
-
-    F = mass_quad * gravity_acc + Kp_z * (z_des - quad_z) + Kd_z * (quad_z_dot - z_des_dot);
+    float e_quad_z__ = (z_des - quad_z);
+    float e_quad_z__dot = (z_des_dot - quad_z_dot);
+    F = mass_quad * gravity_acc + Kp_z * e_quad_z__ + Kd_z * e_quad_z__dot;
     F = Thrust_saturation(F);
+
+    // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n", z_des, z_des_dot, e_quad_z__, e_quad_z__dot, F);
+
     // hal.console->printf("%3.4f,%3.4f,%3.4f\n", quad_z, quad_z_dot, F);
 
     Matrix3f Rd_temp(eulerAnglesToRotationMatrix(rpyd * PI / 180.0));
@@ -399,6 +424,8 @@ void ModeStabilize::custom_Loiter_mode()
 
 void ModeStabilize::NL_SQCSP_mode()
 {
+    // Vector3f u = Matrix_vector_mul(Kxq,e_X()) + Matrix_vector_mul(Kxq_dot,e_X_dot()) + ;
+
 }
 
 void ModeStabilize::get_CAM_device_data()
@@ -561,6 +588,20 @@ Matrix3f ModeStabilize::eulerAnglesToRotationMatrix(Vector3f rpy_func)
 void ModeStabilize::quad_states()
 {
 
+    // Attitude of the quadcopter
+    rpy[0] = (ahrs.roll_sensor) / 100.0;        // degrees
+    rpy[1] = -(ahrs.pitch_sensor) / 100.0;      // degrees
+    rpy[2] = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
+    Matrix3f R_temp(eulerAnglesToRotationMatrix(rpy * PI / 180.0));
+    R = R_temp;
+
+    // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n", R[0][0], R[1][0], R[2][0], R[0][1], R[1][1], R[2][1]);
+
+    // Angular velocity of the quadcopter
+    Omega[0] = (ahrs.get_gyro().x);  // degrees/second
+    Omega[1] = -(ahrs.get_gyro().y); // degrees/second
+    Omega[2] = -(ahrs.get_gyro().z); // degrees/second
+
     // Position in inertial reference frame
     quad_x = (inertial_nav.get_position().x / 100.0) - quad_x_ini; // m
     quad_y = (inertial_nav.get_position().y / 100.0) - quad_y_ini; // m
@@ -571,44 +612,61 @@ void ModeStabilize::quad_states()
 
     ///////// Get the data from the TF mini plus
     // if (copter.rangefinder_alt_ok()){
-    // quad_z = (copter.rangefinder_state.alt_cm) / 100.0;
-    quad_z = (copter.rangefinder_state.alt_cm);
-    // hal.console->printf("%3.3f,",quad_z);
-
-    ///////// Applying first ordered low pass filter
-    // quad_z = 0.686 * quad_z_previousValue + 0.314 * quad_z;
-    // quad_z_previousValue = quad_z;
+    float quad_z_from_sensor = (copter.rangefinder_state.alt_cm) / 100.0; // in meters
 
     /////// Applying moving average filter
-    float smoothedSample_simple_moving_average = updateMovingAverage(quad_z);
+    quad_z = updateMovingAverage_quad_z(quad_z_from_sensor);
 
-    // //////// Applying weighted moving average filter
-    // float smoothedSample_weighted_moving_average = updateWeightedMovingAverage(quad_z);
+    // quad_z = (copter.rangefinder_state.alt_cm);
+    // hal.console->printf("%3.3f,",quad_z);
 
-    //////// Taking time derivative of quad_z_vel
-    // quad_z_dot = (quad_z - quad_z_previousValue) / dt;
+    ///////// compansate for the rotation
+    /////// The TF mini plus sensor is offsetted +242 mm in X direction and + 28 mm in Y direction
+    /////// Hence, the position vector would be p_TF_mini = [ 242.0, 28.0, 0.0] mm;
+    Vector3f p_TF_mini(0.242, 0.029, 0.0);
+    Vector3f p_TF_mini_inertial = Matrix_vector_mul(R, p_TF_mini);
+    // hal.console->printf("%3.3f,%3.3f,%3.3f\n", p_TF_mini_inertial[0], p_TF_mini_inertial[1],p_TF_mini_inertial[2]);
+
+    Vector3f r;
+    r[0] = -R[0][2] * quad_z;
+    r[1] = -R[1][2] * quad_z;
+    r[2] = -R[2][2] * quad_z;
+    // hal.console->printf("%3.3f,%3.3f,%3.3f\n", r[0], r[1],r[2]);
+
+    Vector3f temp__ = r + p_TF_mini_inertial;
+    quad_z = -temp__[2];
+    // hal.console->printf("%3.3f,%3.3f\n", quad_z, quad_z_from_sensor);
+
+    ///////// Taking time derivative of quad_z
+    quad_z_dot = (quad_z - quad_z_prev) * frequency_of_the_code;
+    quad_z_prev = quad_z;
+    quad_z_dot_filtered_moving_average = updateMovingAverage_quad_z_dot(quad_z_dot);
+
+    /////////// Applying the first order low pass filter on z_quad_dot
+    quad_z_dot_filtered_moving_average_low_pass = 0.686 * quad_z_dot_filtered_moving_average_previousValue + 0.314 * quad_z_dot_filtered_moving_average;
+    quad_z_dot_filtered_moving_average_previousValue = quad_z_dot_filtered_moving_average_low_pass;
+    quad_z_dot = quad_z_dot_filtered_moving_average_low_pass;
 
     //////// To debug the code
-    hal.console->printf("%3.3f,", quad_z);
-    hal.console->printf("%3.3f\n", smoothedSample_simple_moving_average);
+    hal.console->printf("%3.3f,%3.3f\n", quad_z, quad_z_dot);
+    // hal.console->printf("%3.3f,", quad_z_filtered_moving_average);
+    // hal.console->printf("%3.3f\n", quad_z_dot_filtered_moving_average_low_pass);
     // hal.console->printf("%3.3f\n", smoothedSample_weighted_moving_average);
-
-    // Attitude of the quadcopter
-    rpy[0] = (ahrs.roll_sensor) / 100.0;        // degrees
-    rpy[1] = -(ahrs.pitch_sensor) / 100.0;      // degrees
-    rpy[2] = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
-    Matrix3f R_temp(eulerAnglesToRotationMatrix(rpy * PI / 180.0));
-    R = R_temp;
-
-    // Angular velocity of the quadcopter
-    Omega[0] = (ahrs.get_gyro().x);  // degrees/second
-    Omega[1] = -(ahrs.get_gyro().y); // degrees/second
-    Omega[2] = -(ahrs.get_gyro().z); // degrees/second
 
     // float abcd = RangeFinderState.alt_cm;
 }
 
-float ModeStabilize::updateMovingAverage(float newSample)
+float ModeStabilize::second_order_central_diff_method()
+{
+    int currentIndex = newestIndex_SOCD;
+    int prevIndex = (currentIndex - 1 + BUFFER_SIZE_SOCD) % BUFFER_SIZE_SOCD;
+
+    float derivative = (lidarData_BUFFER_SIZE_SOCD[currentIndex] - lidarData_BUFFER_SIZE_SOCD[prevIndex]) / (1 / frequency_of_the_code);
+
+    return derivative;
+}
+
+float ModeStabilize::updateMovingAverage_quad_z(float newSample)
 {
     // Add new sample to array and update index
     samples_simple_moving_average[index_simple_moving_average] = newSample;
@@ -623,9 +681,24 @@ float ModeStabilize::updateMovingAverage(float newSample)
 
     // Calculate and return moving average
     float average = sum / WINDOW_SIZE_simple_moving_average;
+    return average;
+}
 
-    // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f, and ,", samples_simple_moving_average[0],samples_simple_moving_average[1],samples_simple_moving_average[2],samples_simple_moving_average[3],samples_simple_moving_average[4]);
+float ModeStabilize::updateMovingAverage_quad_z_dot(float newSample)
+{
+    // Add new sample to array and update index
+    samples_simple_moving_average_quad_z_dot[index_simple_moving_average_quad_z_dot] = newSample;
+    index_simple_moving_average_quad_z_dot = (index_simple_moving_average_quad_z_dot + 1) % WINDOW_SIZE_simple_moving_average_quad_z_dot;
 
+    // Calculate sum of samples in window
+    float sum = 0;
+    for (int i = 0; i < WINDOW_SIZE_simple_moving_average_quad_z_dot; i++)
+    {
+        sum += samples_simple_moving_average_quad_z_dot[i];
+    }
+
+    // Calculate and return moving average
+    float average = sum / WINDOW_SIZE_simple_moving_average_quad_z_dot;
     return average;
 }
 
@@ -752,6 +825,14 @@ void ModeStabilize::pilot_input()
     z_des_dot_previousValue = z_des_dot;
     z_des = z_des + (z_des_dot + z_des_dot_previousValue) / 2 * 0.0025;
     z_des = Bounds_on_Z_des(z_des);
+    if (z_des < 0.1)
+    {
+        z_des_dot = 0.0;
+    }
+    if (z_des > 4.9)
+    {
+        z_des_dot = 0.0;
+    }
     ////////////////////////////////
 
     //////// Convert H_yaw_rate into desired yaw rate
@@ -816,9 +897,9 @@ float ModeStabilize::Bounds_on_Z_des(float value)
     {
         value = Bounds_on_XY_des_value;
     }
-    if (value < -Bounds_on_XY_des_value)
+    if (value < 0.0)
     {
-        value = -Bounds_on_XY_des_value;
+        value = 0.0;
     }
     return value;
 }
