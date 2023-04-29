@@ -1471,6 +1471,7 @@ public:
     float updateMovingAverage_quad_z_dot(float newSample);
     float updateWeightedMovingAverage(float newSample);
     float second_order_central_diff_method();
+    float e_quad_z_accumulation_saturation(float data);
 
 protected:
 

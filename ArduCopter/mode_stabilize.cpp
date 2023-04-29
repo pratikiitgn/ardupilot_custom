@@ -17,7 +17,8 @@ extern const AP_HAL::HAL &hal;
 
 ////// System parameters
 const float arm_length = 0.161;
-const float mass_quad = 1.236;
+const float mass_quad = 1.2;
+// const float mass_quad = 1.236;
 const float gravity_acc = 9.81;
 
 // Intertia matrix
@@ -99,14 +100,17 @@ float battvolt = 0.0;
 
 ////// Initialization of gains values
 
-const float KR1 = 0.6;     // 0.6 (lab)
-const float KOmega1 = 0.6; // 0.8 (lab)
+float KR1 = 0.7;     // 0.8 (best)
+float KOmega1 = 0.9; // 0.9 (best)
 
-const float KR2 = 0.6;     // 0.9 (lab)
-const float KOmega2 = 0.6; // 0.8 (lab)
+float KR2 = 0.7;     // 0.8 (best)
+float KOmega2 = 1.0; // 1.0 (best)
 
-const float KR3 = 5.0;     // 5.0  (lab)
-const float KOmega3 = 1.0; // 1.0 (lab)
+// float KR2 = 1.1;     // 0.9 (lab), 1.1 (RP)
+// float KOmega2 = 0.9; // 0.8 (lab), 1.0 (RP)
+
+float KR3 = 5.0;     // 5.0  (lab)
+float KOmega3 = 1.0; // 1.0 (lab)
 
 Matrix3f KR(
     KR1, 0.0, 0.0,
@@ -123,8 +127,12 @@ const float Kd_x = 2.0; // 1.0 (best)
 const float Kp_y = 4.0; // 2.0 (best)
 const float Kd_y = 2.0; // 1.0 (best)
 
-const float Kp_z = 1.0; // 2.0 (best)
-const float Kd_z = 0.1; // 1.0 (best)
+const float Kp_z = 9.0; // 9.0 (best)
+const float Kd_z = 5.0; // 5.0 (best)
+const float Ki_z = 0.2;  // 
+
+float e_quad_z_accumulation = 0.0;
+float e_quad_z_prev = 0.0;
 
 Matrix3f Kxq(
     Kp_x, 0.0, 0.0,
@@ -266,20 +274,20 @@ void ModeStabilize::run()
             if (RC_Channels::get_radio_in(CH_6) < 1500)
             {
                 //// run the motors at 1150 PWM
-                // PWM1 = 1100;
-                // PWM2 = 1100;
-                // PWM3 = 1100;
-                // PWM4 = 1100;
-
                 PWM1 = 1000;
                 PWM2 = 1000;
                 PWM3 = 1000;
                 PWM4 = 1000;
 
+                // PWM1 = 1000;
+                // PWM2 = 1000;
+                // PWM3 = 1000;
+                // PWM4 = 1000;
+
                 //// Reset the states
                 x_des = 0.0;
                 y_des = 0.0;
-                z_des = 0.0;
+                z_des = quad_z;
                 yaw_des = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
                 x_des_dot = 0.0;
                 y_des_dot = 0.0;
@@ -287,7 +295,8 @@ void ModeStabilize::run()
                 yaw_des_dot = 0.0;
                 quad_x_ini = inertial_nav.get_position().x / 100.0;
                 quad_y_ini = inertial_nav.get_position().y / 100.0;
-                quad_z_ini = inertial_nav.get_position().z / 100.0;
+                quad_z_ini = quad_z;
+                e_quad_z_accumulation = 0.0;
                 //// Safe landing code
                 if (RC_Channels::get_radio_in(CH_8) > 1500)
                 {
@@ -341,15 +350,15 @@ void ModeStabilize::run()
         {
             x_des = 0.0;
             y_des = 0.0;
-            z_des = 0.0;
-            // yaw_des = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
+            z_des = quad_z;
+            yaw_des = 360.0 - (ahrs.yaw_sensor) / 100.0; // degrees
             x_des_dot = 0.0;
             y_des_dot = 0.0;
             z_des_dot = 0.0;
             yaw_des_dot = 0.0;
             quad_x_ini = inertial_nav.get_position().x / 100.0;
             quad_y_ini = inertial_nav.get_position().y / 100.0;
-            quad_z_ini = inertial_nav.get_position().z / 100.0;
+            quad_z_ini = quad_z;
 
             //// run the motors at 1150 PWM
             PWM1 = 1000;
@@ -371,9 +380,15 @@ void ModeStabilize::custom_Stabilize_mode()
     float e_quad_z__ = (z_des - quad_z);
     float e_quad_z__dot = (z_des_dot - quad_z_dot);
     F = mass_quad * gravity_acc + Kp_z * e_quad_z__ + Kd_z * e_quad_z__dot;
+
+    e_quad_z_accumulation += e_quad_z__;
+    e_quad_z_accumulation = e_quad_z_accumulation_saturation(e_quad_z_accumulation);
+
+    F = F + Ki_z * e_quad_z_accumulation;
     F = Thrust_saturation(F);
 
-    // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n", z_des, z_des_dot, e_quad_z__, e_quad_z__dot, F);
+    // hal.console->printf("zd-> %3.3f, zd_dot-> %3.3f, z-> %3.3f, z_dot -> %3.3f, ez_sum-> %3.3f, F-> %3.3f\n", z_des, z_des_dot, quad_z, quad_z_dot, e_quad_z_accumulation, F);
+    // hal.console->printf("%3.3f,%3.3f\n", z_des, z_des_dot);
 
     // hal.console->printf("%3.4f,%3.4f,%3.4f\n", quad_z, quad_z_dot, F);
 
@@ -381,6 +396,7 @@ void ModeStabilize::custom_Stabilize_mode()
     Rd = Rd_temp;
 
     Vector3f M(Matrix_vector_mul(KR, e_R(R, Rd)) + Matrix_vector_mul(KOmega, e_Omega(R, Rd, Omega, Omegad)) + Omega % Matrix_vector_mul(JJ, Omega));
+    // Vector3f M(Matrix_vector_mul(KR, e_R(R, Rd)) + Matrix_vector_mul(KOmega, e_Omega(R, Rd, Omega, Omegad)));
     Mb1 = -M[0];
     Mb2 = -M[1];
     Mb3 = M[2];
@@ -389,10 +405,24 @@ void ModeStabilize::custom_Stabilize_mode()
 
     // Vector3f check_ = e_R(R, Rd);
     // Vector3f check__ = e_Omega(R, Rd, Omega, Omegad);
-    // hal.console->printf("%3.4f,%3.4f\n", check_[0], check__[0]);
+    // hal.console->printf("%3.4f,%3.4f,%3.4f\n", check_[0], check_[1],check_[2]);
     // hal.console->printf("%3.2f,%3.2f,%3.2f,%3.2f\n", F,M[0],M[1],M[2]);
     // hal.console->printf("%3.4f,%3.4f,%3.4f\n",check_[0],check_[1],check_[2]);
     // hal.console->printf("%3.4f,%3.4f,%3.4f\n",check__[0],check__[1],check__[2]);
+}
+
+float ModeStabilize::e_quad_z_accumulation_saturation(float dataa)
+{
+    float quad_z_accumulation_limit = 6.0;
+    if (dataa > quad_z_accumulation_limit)
+    {
+        dataa = quad_z_accumulation_limit;
+    }
+    if (dataa < -quad_z_accumulation_limit)
+    {
+        dataa = -quad_z_accumulation_limit;
+    }
+    return dataa;
 }
 
 void ModeStabilize::custom_Loiter_mode()
@@ -481,7 +511,7 @@ void ModeStabilize::get_CAM_device_data()
 
 float ModeStabilize::Thrust_saturation(float f_value)
 {
-    float max_thrust_value = 15.0;
+    float max_thrust_value = 20.0;
     if (f_value > max_thrust_value)
     {
         f_value = max_thrust_value;
@@ -541,12 +571,12 @@ Vector3f ModeStabilize::vee_map(Matrix3f R_func)
     return vector;
 }
 
-Vector3f ModeStabilize::Matrix_vector_mul(Matrix3f R_quad, Vector3f v_quad)
+Vector3f ModeStabilize::Matrix_vector_mul(Matrix3f R_quad__, Vector3f v_quad)
 {
     Vector3f mul_vector(
-        R_quad[0][0] * v_quad[0] + R_quad[0][1] * v_quad[1] + R_quad[0][2] * v_quad[2],
-        R_quad[1][0] * v_quad[0] + R_quad[1][1] * v_quad[1] + R_quad[1][2] * v_quad[2],
-        R_quad[2][0] * v_quad[0] + R_quad[2][1] * v_quad[1] + R_quad[2][2] * v_quad[2]);
+        R_quad__[0][0] * v_quad[0] + R_quad__[0][1] * v_quad[1] + R_quad__[0][2] * v_quad[2],
+        R_quad__[1][0] * v_quad[0] + R_quad__[1][1] * v_quad[1] + R_quad__[1][2] * v_quad[2],
+        R_quad__[2][0] * v_quad[0] + R_quad__[2][1] * v_quad[1] + R_quad__[2][2] * v_quad[2]);
     return mul_vector;
 }
 
@@ -602,6 +632,8 @@ void ModeStabilize::quad_states()
     Omega[1] = -(ahrs.get_gyro().y); // degrees/second
     Omega[2] = -(ahrs.get_gyro().z); // degrees/second
 
+    hal.console->printf("%3.3f,%3.3f\n", rpy[0],Omega[0]);
+
     // Position in inertial reference frame
     quad_x = (inertial_nav.get_position().x / 100.0) - quad_x_ini; // m
     quad_y = (inertial_nav.get_position().y / 100.0) - quad_y_ini; // m
@@ -635,6 +667,7 @@ void ModeStabilize::quad_states()
 
     Vector3f temp__ = r + p_TF_mini_inertial;
     quad_z = -temp__[2];
+    // quad_z = quad_z;
     // hal.console->printf("%3.3f,%3.3f\n", quad_z, quad_z_from_sensor);
 
     ///////// Taking time derivative of quad_z
@@ -647,8 +680,9 @@ void ModeStabilize::quad_states()
     quad_z_dot_filtered_moving_average_previousValue = quad_z_dot_filtered_moving_average_low_pass;
     quad_z_dot = quad_z_dot_filtered_moving_average_low_pass;
 
+    // quad_z_dot = quad_z_dot_filtered_moving_average;
     //////// To debug the code
-    hal.console->printf("%3.3f,%3.3f\n", quad_z, quad_z_dot);
+    // hal.console->printf("%3.3f,%3.3f\n", quad_z, quad_z_dot);
     // hal.console->printf("%3.3f,", quad_z_filtered_moving_average);
     // hal.console->printf("%3.3f\n", quad_z_dot_filtered_moving_average_low_pass);
     // hal.console->printf("%3.3f\n", smoothedSample_weighted_moving_average);
@@ -735,6 +769,8 @@ void ModeStabilize::pilot_input()
     H_pitch = -(double)(channel_pitch->get_control_in()) / 100.0; // range: (-45 to 45)
     // First ordered low pass filter
     H_pitch = 0.686 * H_pitch_previousValue + 0.314 * H_pitch;
+    float H_pitch_offset_manual = -1.5;
+    H_pitch = H_pitch + H_pitch_offset_manual;
     H_pitch_previousValue = H_pitch;
 
     H_yaw_rate = -(double)(channel_yaw->get_control_in()) / 100.0; // range: (-45 to 45)
@@ -907,14 +943,14 @@ float ModeStabilize::Bounds_on_Z_des(float value)
 int ModeStabilize::Inverse_thrust_function(float Force)
 {
     int PWM = 1200;
-    if (battvolt >= 11.5)
-    {
+    // if (battvolt >= 11.5)
+    // {
         PWM = 1000 * (0.9206 + (sqrtf(12.8953 + 30.3264 * Force) / (15.1632)));
-    }
-    else
-    {
-        PWM = 1000 * (0.6021 + (sqrtf(33.2341 + 19.418 * Force) / (9.5740)));
-    }
+    // }
+    // else
+    // {
+        // PWM = 1000 * (0.6021 + (sqrtf(33.2341 + 19.418 * Force) / (9.5740)));
+    // }
     if (PWM > 2000)
     {
         PWM = 2000;
@@ -949,8 +985,8 @@ void ModeStabilize::final_F_M_calling()
     PWM3 = Inverse_thrust_function(function_F3);
     PWM4 = Inverse_thrust_function(function_F4);
 
-    PWM1 = 1000;
-    PWM2 = 1000;
-    PWM3 = 1000;
-    PWM4 = 1000;
+    // PWM1 = 1000;
+    // PWM2 = 1000;
+    // PWM3 = 1000;
+    // PWM4 = 1000;
 }
