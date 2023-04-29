@@ -101,10 +101,12 @@ float battvolt = 0.0;
 ////// Initialization of gains values
 
 float KR1 = 0.7;     // 0.8 (best)
-float KOmega1 = 0.9; // 0.9 (best)
+float KOmega1 = 0.8; // 0.9 (best)
 
 float KR2 = 0.7;     // 0.8 (best)
-float KOmega2 = 1.0; // 1.0 (best)
+float KOmega2 = 0.8; // 1.0 (best)
+
+float KI1           = 0.0;
 
 // float KR2 = 1.1;     // 0.9 (lab), 1.1 (RP)
 // float KOmega2 = 0.9; // 0.8 (lab), 1.0 (RP)
