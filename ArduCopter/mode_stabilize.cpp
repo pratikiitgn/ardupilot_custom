@@ -73,9 +73,6 @@ Matrix3f Rd(1.0, 0.0, 0.0,
             0.0, 0.0, 1.0);
 Vector3f Omegad(0.0, 0.0, 0.0);
 
-////// Errors in states
-Vector3f e_I_val_old(0.0, 0.0, 0.0);
-
 ////// Initial state of the system
 float quad_x_ini = 0.0;
 float quad_y_ini = 0.0;
@@ -106,10 +103,9 @@ float KOmega1 = 0.8; // 0.9 (best)
 float KR2 = 0.7;     // 0.8 (best)
 float KOmega2 = 0.8; // 1.0 (best)
 
-float KI1           = 0.0;
-
-// float KR2 = 1.1;     // 0.9 (lab), 1.1 (RP)
-// float KOmega2 = 0.9; // 0.8 (lab), 1.0 (RP)
+float KI1           = 0.01;
+float KI2           = 0.01;
+float KI3           = 0.0;
 
 float KR3 = 5.0;     // 5.0  (lab)
 float KOmega3 = 1.0; // 1.0 (lab)
@@ -123,18 +119,26 @@ Matrix3f KOmega(
     0.0, KOmega2, 0.0,
     0.0, 0.0, KOmega3);
 
-const float Kp_x = 4.0; // 2.0 (best)
-const float Kd_x = 2.0; // 1.0 (best)
+Matrix3f KI(
+            KI1,0.0,0.0,
+            0.0,KI2,0.0,
+            0.0,0.0,KI3
+            );
 
-const float Kp_y = 4.0; // 2.0 (best)
-const float Kd_y = 2.0; // 1.0 (best)
+float Kp_x = 4.0; // 2.0 (best)
+float Kd_x = 2.0; // 1.0 (best)
 
-const float Kp_z = 9.0; // 9.0 (best)
-const float Kd_z = 5.0; // 5.0 (best)
-const float Ki_z = 0.2;  // 
+float Kp_y = 4.0; // 2.0 (best)
+float Kd_y = 2.0; // 1.0 (best)
+
+float Kp_z = 9.0; // 9.0 (best)
+float Kd_z = 5.0; // 5.0 (best)
+float Ki_z = 0.2;  // 
 
 float e_quad_z_accumulation = 0.0;
 float e_quad_z_prev = 0.0;
+Vector3f e_I_val_sum(0.0, 0.0, 0.0);
+Vector3f e_I_val_old(0.0, 0.0, 0.0);
 
 Matrix3f Kxq(
     Kp_x, 0.0, 0.0,
@@ -145,6 +149,7 @@ Matrix3f Kxq_dot(
     Kd_x, 0.0, 0.0,
     0.0, Kd_y, 0.0,
     0.0, 0.0, Kd_z);
+
 
 //////// First order low pass filter
 // Define filter parameters
@@ -398,6 +403,15 @@ void ModeStabilize::custom_Stabilize_mode()
     Rd = Rd_temp;
 
     Vector3f M(Matrix_vector_mul(KR, e_R(R, Rd)) + Matrix_vector_mul(KOmega, e_Omega(R, Rd, Omega, Omegad)) + Omega % Matrix_vector_mul(JJ, Omega));
+    
+    float c2 = 2.0;
+    Vector3f e_R_val        = e_R(R,Rd);
+    Vector3f e_Omega_val    = e_Omega(R,Rd,Omega,Omegad);
+    Vector3f e_I_val        = e_Omega_val + Vector3f(e_R_val[0]*c2,e_R_val[1]*c2,e_R_val[2]*c2);
+    e_I_val_sum    = sat_e_I(e_I_val_old + e_I_val);
+    M = M + Matrix_vector_mul(KI,e_I_val_sum);
+    e_I_val_old             = e_I_val;
+
     // Vector3f M(Matrix_vector_mul(KR, e_R(R, Rd)) + Matrix_vector_mul(KOmega, e_Omega(R, Rd, Omega, Omegad)));
     Mb1 = -M[0];
     Mb2 = -M[1];
@@ -991,4 +1005,18 @@ void ModeStabilize::final_F_M_calling()
     // PWM2 = 1000;
     // PWM3 = 1000;
     // PWM4 = 1000;
+}
+
+
+Vector3f ModeStabilize::sat_e_I(Vector3f vec){
+    float sat_lim = 0.5;
+    for (int ii=0; ii<3; ii++){
+        if (vec[ii] > sat_lim){
+            vec[ii] = sat_lim;
+        }
+        if (vec[ii] < -sat_lim){
+            vec[ii] = -sat_lim;
+        }
+    }
+    return vec;
 }
