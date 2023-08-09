@@ -10,7 +10,6 @@
 #include <AP_Logger/LogStructure.h>
 #include <AP_Logger/AP_Logger.h>  
 
-
 #define ESC_HZ 490
 
 int code_starting_flag = 0;
@@ -199,7 +198,7 @@ void ModeStabilize::run()
 
         // hal.console->printf("Hello captain from general");
     // hal.console->printf("landing_timer -> %f \n",landing_timer);
-    hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
+    // hal.console->printf("z -> %f, zd -> %f, F -> %f \n",quad_z,z_des,F);
 
 
 ///////////// OLD CODE  /////////////
