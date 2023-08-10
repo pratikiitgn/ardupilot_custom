@@ -78,12 +78,6 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if MODE_MYMODECONTROLLER_ENABLED == ENABLED
-        case Mode::Number::MYCONTROLLER:
-            ret = &mode_mycontroller;
-            break;
-#endif
-
 #if MODE_DRIFT_ENABLED == ENABLED
         case Mode::Number::DRIFT:
             ret = &mode_drift;

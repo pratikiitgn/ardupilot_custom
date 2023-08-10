@@ -218,6 +218,7 @@ libraries/AP_Frsky_Telem/AP_Frsky_SPort.cpp.0.o: \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/./mavlink_msg_obstacle_distance_3d.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/./mavlink_msg_water_depth.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/./mavlink_msg_mcu_status.h \
+ libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/./mavlink_msg_cam_device_data.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/common.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_sys_status.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_system_time.h \
@@ -397,6 +398,7 @@ libraries/AP_Frsky_Telem/AP_Frsky_SPort.cpp.0.o: \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_wheel_distance.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_winch_status.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_hygrometer_sensor.h \
+ libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/./mavlink_msg_key_command.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/../minimal/minimal.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../common/../minimal/./mavlink_msg_heartbeat.h \
  libraries/GCS_MAVLink/include/mavlink/v2.0/ardupilotmega/../uAvionix/uAvionix.h \

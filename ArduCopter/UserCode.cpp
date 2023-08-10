@@ -13,6 +13,8 @@
 #include <stdio.h>
 #endif
 
+#define PI 3.14159265359
+
 float encoder_roll_feedback     = 0.0;
 float encoder_pitch_feedback    = 0.0;
 
@@ -26,6 +28,7 @@ char attitude[]         = "50000_50000";
 char roll_char[]        = "11111";
 char pitch_char[]       = "11111";
 
+Vector3f qc(0.0,0.0,0.0);
 
 #ifdef USERHOOK_INIT
 void Copter::userhook_init()
@@ -48,10 +51,10 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
     // put your 100Hz code here
-    Log_Write_position();
-    Log_Write_velocity();
-    log_attitude_tracking();
-    log_sys_ID_ph_func();
+    // Log_Write_position();
+    // Log_Write_velocity();
+    // log_attitude_tracking();
+    // log_sys_ID_ph_func();
 
     // hal.console->printf("Pf %d PWM1 %d PWM2 %d PWM3 %d PWM4 %d Roll %f time %f \n",Pf,PWM1,PWM2,PWM3,PWM4,imu_roll,t_ph_sys_ID);
     
@@ -91,7 +94,6 @@ void Copter::userhook_FastLoop()
 // if (imu_roll_ < -4500){
 //     imu_roll_ = -4500;
 // }
-
 
     // hal.serial(2)->printf("%f",quad_x);
     // hal.serial(2)->printf(",");
@@ -215,21 +217,64 @@ void Copter::log_attitude_tracking()
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
-void Copter::log_sys_ID_ph_func()
-{
-    struct log_sys_ID_ph pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_SID_PH_MSG),
-        time_us  : AP_HAL::micros64(),
-        PWM1     : PWM1,
-        PWM2     : PWM2,
-        PWM3     : PWM3,
-        PWM4     : PWM4,
-        Pf       : Pf,
-        phi      : imu_roll_log,
-        theta    : imu_pitch_log,
-        psi      : imu_yaw_log,
-    };
-    logger.WriteBlock(&pkt, sizeof(pkt));
+// void Copter::log_sys_ID_ph_func()
+// {
+//     struct log_sys_ID_ph pkt = {
+//         LOG_PACKET_HEADER_INIT(LOG_SID_PH_MSG),
+//         time_us  : AP_HAL::micros64(),
+//         PWM1     : PWM1,
+//         PWM2     : PWM2,
+//         PWM3     : PWM3,
+//         PWM4     : PWM4,
+//         Pf       : Pf,
+//         phi      : imu_roll_log,
+//         theta    : imu_pitch_log,
+//         psi      : imu_yaw_log,
+//     };
+//     logger.WriteBlock(&pkt, sizeof(pkt));
+// }
+
+Matrix3f Copter::eulerAnglesToRotationMatrix(Vector3f rpy){
+     // Calculate rotation about x axis
+    Matrix3f R_x (
+               1,       0,              0,
+               0,       cosf(rpy[0]),   -sinf(rpy[0]),
+               0,       sinf(rpy[0]),   cosf(rpy[0])
+               );
+
+    // Calculate rotation about y axis
+    Matrix3f R_y (
+               cosf(rpy[1]),    0,      sinf(rpy[1]),
+               0,               1,      0,
+               -sinf(rpy[1]),   0,      cosf(rpy[1])
+               );
+
+    // Calculate rotation about z axis
+    Matrix3f R_z (
+               cosf(rpy[2]),    -sinf(rpy[2]),      0,
+               sinf(rpy[2]),    cosf(rpy[2]),       0,
+               0,               0,                  1);
+
+    // Combined rotation matrix
+    Matrix3f R = R_z * R_y * R_x;
+    return R;
+}
+
+Vector3f Copter::Matrix_vector_mul(Matrix3f R, Vector3f v){
+    Vector3f mul_vector(
+                        R[0][0]*v[0] + R[0][1]*v[1] + R[0][2]*v[2] ,
+                        R[1][0]*v[0] + R[1][1]*v[1] + R[1][2]*v[2] ,
+                        R[2][0]*v[0] + R[2][1]*v[1] + R[2][2]*v[2]
+                        );
+    return mul_vector;
+}
+
+Matrix3f Copter::hatmap(Vector3f v){
+    Matrix3f R (
+               0,         -v[2],      v[1],
+               v[2],         0 ,     -v[0],
+               -v[1],      v[0],       0);
+    return R;
 }
 
 
@@ -290,8 +335,8 @@ void Copter::getEncoderData()
         encoder_roll_feedback  = (float)((encoder_roll_int  - 50000.0) / 100.0);
         encoder_pitch_feedback = (float)((encoder_pitch_int - 50000.0) / 100.0);
         
-        hal.console->printf("%3.3f,", encoder_roll_feedback);
-        hal.console->printf("%3.3f\n", encoder_pitch_feedback);
+        // hal.console->printf("%3.3f,", encoder_roll_feedback);
+        // hal.console->printf("%3.3f\n", encoder_pitch_feedback);
 
         if (encoder_roll_feedback > 60.0){
             encoder_roll_feedback = 60.0;
@@ -315,4 +360,26 @@ void Copter::getEncoderData()
 
         // hal.console->printf("CAM_device_data -> %f,%f\n",encoder_roll_feedback,encoder_pitch_feedback);
 
+        Vector3f rpy(imu_roll*PI/180.0,imu_pitch*PI/180.0,0*PI/180.0);
+        Vector3f e_3_neg(0,0,-1);
+        Matrix3f R(eulerAnglesToRotationMatrix(rpy));
+
+        // Calculate rotation about pitch axis of CAM device
+        Matrix3f CAM_R_y (
+                cosf(encoder_pitch_feedback*PI/180),    0,      sinf(encoder_pitch_feedback*PI/180),
+                0,               1,      0,
+                -sinf(encoder_pitch_feedback*PI/180),   0,      cosf(encoder_pitch_feedback*PI/180)
+                );
+
+        // Calculate rotation about roll axis of CAM device
+        Matrix3f CAM_R_x (
+                1,       0,              0,
+                0,       cosf(encoder_roll_feedback*PI/180),   -sinf(encoder_roll_feedback*PI/180),
+                0,       sinf(encoder_roll_feedback*PI/180),   cosf(encoder_roll_feedback*PI/180)
+                );
+
+        qc = Matrix_vector_mul(R,Matrix_vector_mul(CAM_R_x,Matrix_vector_mul(CAM_R_y,e_3_neg)));
+
+        // hal.console->printf("%3.3f,%3.3f,%3.3f\n", qc[0],qc[1],qc[2]);
 }
+
