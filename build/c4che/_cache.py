@@ -1,6 +1,6 @@
 AUTOCONFIG = True
 BINDIR = '/usr/bin'
-BOARD = 'fmuv3'
+BOARD = 'CubeOrange'
 COVERAGE = False
 DEBUG = False
 LIBDIR = '/usr/lib'

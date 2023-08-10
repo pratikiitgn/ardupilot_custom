@@ -196,7 +196,6 @@ public:
     friend class AutoTune;
 
     friend class Mode;
-    friend class ModeMyController;
     friend class ModeAcro;
     friend class ModeAcro_Heli;
     friend class ModeAltHold;
@@ -915,9 +914,21 @@ private:
     void Log_Write_position();
     void Log_Write_velocity();
     void log_attitude_tracking();
-    void log_sys_ID_ph_func();
     void getEncoderData();
-
+    void gains_data_from_Rpi();
+    void Portenta_data();
+    void getHumanIMUdata();
+    void getHumanEncoderdata();
+    void get_Gain_data_from_portenta();
+    void log_thurst_moment();
+    void get_IROS_data();
+    void log_IROS_raw_data();
+    void log_IROS_data();
+    void log_IROS_HH_acc();
+    void log_IROS_ATT_Track();
+    Matrix3f eulerAnglesToRotationMatrix(Vector3f rpy);
+    Vector3f Matrix_vector_mul(Matrix3f R, Vector3f v);
+    Matrix3f hatmap(Vector3f v);
     // vehicle specific waypoint info helpers
     bool get_wp_distance_m(float &distance) const override;
     bool get_wp_bearing_deg(float &bearing) const override;
@@ -1000,9 +1011,6 @@ private:
 #endif
 #if MODE_TURTLE_ENABLED == ENABLED
     ModeTurtle mode_turtle;
-#endif
-#if MODE_MYMODECONTROLLER_ENABLED == ENABLED
-    ModeMyController mode_mycontroller; // My controller mode
 #endif
     // mode.cpp
     Mode *mode_from_mode_num(const Mode::Number mode);

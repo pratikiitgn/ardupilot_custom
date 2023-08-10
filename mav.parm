@@ -355,9 +355,9 @@ FHLD_XY_P        0.200000
 FLIGHT_OPTIONS   0
 FLOW_TYPE        0
 FLTMODE1         0
-FLTMODE2         29
+FLTMODE2         5
 FLTMODE3         0
-FLTMODE4         29
+FLTMODE4         5
 FLTMODE5         0
 FLTMODE6         5
 FLTMODE_CH       5
