@@ -624,4 +624,5 @@ ArduCopter/mode_stabilize.cpp.41.o: ../../ArduCopter/mode_stabilize.cpp \
  ../../libraries/AP_Scripting/AP_Scripting_CANSensor.h \
  ../../libraries/AP_CANManager/AP_CANSensor.h \
  ../../ArduCopter/Parameters.h ../../ArduCopter/avoidance_adsb.h \
- ../../libraries/AP_Avoidance/AP_Avoidance.h
+ ../../libraries/AP_Avoidance/AP_Avoidance.h \
+ ../../ArduCopter/mycontroller_usercode.h

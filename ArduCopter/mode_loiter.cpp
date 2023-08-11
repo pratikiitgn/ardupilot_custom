@@ -1,7 +1,8 @@
 #include "Copter.h"
+#include "mycontroller_usercode.h"
 
 #if MODE_LOITER_ENABLED == ENABLED
-
+int code_starting_flag = 1;
 /*
  * Init and run calls for loiter flight mode
  */
@@ -77,6 +78,10 @@ void ModeLoiter::precision_loiter_xy()
 // should be called at 100hz or more
 void ModeLoiter::run()
 {
+    // hal.console->printf("Current -> %3.3f,%3.3f,%3.3f\n", quad_x,quad_y,quad_z);
+    // hal.console->printf("desired -> %3.3f,%3.3f,%3.3f\n", x_des,y_des,z_des);
+
+    code_starting_flag = 1;
     float target_roll, target_pitch;
     float target_yaw_rate = 0.0f;
     float target_climb_rate = 0.0f;

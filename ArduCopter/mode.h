@@ -1394,7 +1394,14 @@ public:
     void attitude_altitude_controller();
     void battery_check();
     void custom_PID_position_controller(float des_phi, float des_theta, float des_psi,float des_phi_dot, float des_theta_dot, float des_psi_dot, float des_z, float des_z_dot);
-    
+    void cable_states();
+    void Non_linear_controller_single_quad();
+    void Satuation_func_Final_roll_angle(float angle);
+    void Satuation_func_Final_pitch_angle(float angle);
+    void Satuation_func_Final_yaw_rate(float angle_rate);
+    void Satuation_func_Final_throttle(float throttle_value);
+    float Simple_Linear_mapping_code(float current_value, float x_upper_lim, float x_lower_lim,float y_upper_lim, float y_lower_lim );
+    void ByDefault_Mode_stabiliz_code_motor_initializer();
 protected:
 
     const char *name() const override { return "STABILIZE"; }
