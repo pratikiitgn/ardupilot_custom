@@ -26,13 +26,13 @@ float H_pitch_dot   = 0.0;
 float H_pitch_prev  = 0.0;
 float H_roll_prev   = 0.0;
 
-float imu_roll      = 0.0;
-float imu_pitch     = 0.0;
-float imu_yaw       = 0.0;
+float imu_roll      = 0.0;      // degrees 
+float imu_pitch     = 0.0;      // degrees 
+float imu_yaw       = 0.0;      // degrees 
 
-float imu_roll_dot  = 0.0;
-float imu_pitch_dot = 0.0;
-float imu_yaw_dot   = 0.0;
+float imu_roll_dot  = 0.0;      // degrees/sec
+float imu_pitch_dot = 0.0;      // degrees/sec
+float imu_yaw_dot   = 0.0;      // degrees/sec
 float battvolt      = 0.0;
 
 float quad_x = 0.0;
@@ -276,82 +276,13 @@ void ModeStabilize::battery_check(){
     battvolt=copter.battery_volt();
 }
 
-void ModeStabilize::Non_linear_controller_single_quad(){
-    // if (copter.motors->armed()){
-
-        // X direction desired position
-        if (H_pitch > -2.0 && H_pitch < 2.0){H_pitch = 0.0;}
-        float dt_x = 1.0/5000.0;
-        x_des       =  x_des + (-H_pitch) * dt_x;
-        if (x_des > 5.0){x_des = 5.0;}
-        if (x_des < -5.0){x_des = -5.0;}
-        x_des_dot = 0.0;
-
-        // Y direction desired position
-        if (H_roll > -2.0 && H_roll < 2.0){H_roll = 0.0;}
-        float dt_y = 1.0/5000.0;
-        y_des       =  y_des + (-H_roll) * dt_y;
-        if (y_des > 5.0){y_des = 5.0;}
-        if (y_des < -5.0){y_des = -5.0;}
-        y_des_dot = 0.0;
-
-        // Position controller
-        if (H_throttle > -20.0 && H_throttle < 20.0){H_throttle = 0.0;}
-        float dt_z = 1.0/20000.0;
-        z_des       =  z_des + H_throttle * dt_z;
-        if (z_des > 5.0){z_des = 5.0;}
-        if (z_des < -5.0){z_des = -5.0;}
-        z_des_dot = 0.0;
-
-        float e_z       = z_des - quad_z;
-        float e_z_dot   = z_des_dot - quad_z_dot;
-        float Kp_z      = 0.5;    // 0.5 (best)
-        float Kd_z      = 0.2;    // 0.2 (best)
-
-        // final_thrust - should be friom -1 to 1
-        float final_thrust = Kp_z * e_z + Kd_z * e_z_dot;
-
-        // final_thrust = 0.0;
-        // hal.console->printf("Current -> %3.3f,%3.3f,%3.3f || desired -> %3.3f,%3.3f,%3.3f \n", quad_x,quad_y,quad_z,x_des,y_des,z_des);
-
-        /// X position controller
-        float e_x       = x_des - quad_x;
-        float e_x_dot   = x_des_dot - quad_x_dot;
-        float Kp_x      = 10.0;    // 2.0 (best)
-        float Kd_x      = 5.0;     // 1.0 (best)
-        float Trust_1         = Kp_x * e_x + Kd_x * e_x_dot;    // -45 to 45
-
-        H_roll      = H_roll;        // -45 to 45
-        H_pitch     = H_pitch;       // -45 to 45
-        H_yaw_rate  = H_yaw_rate;    // -45 to 45
-        H_throttle  = H_throttle;    // -500 to 500
-
-        // Simple_Linear_mapping_code()
-
-        Final_roll_angle_TRO_single_quad    = H_roll* 100.0;
-        Final_pitch_angle_TRO_single_quad   = Trust_1* 100.0;
-        Final_yaw_rate_TRO_single_quad      = -H_yaw_rate* 500.0;
-        float throttle_offset               = 0.395;
-        Final_throttle_TRO_single_quad      = throttle_offset + final_thrust;
-
-        // To make sure the inputs are within limits
-        // [1] Roll angle -> [-3500 3500]
-        // [2] Roll pitch -> [-3500 3500]
-        // [3] Roll angle -> [-20250 20250]
-        // [4] Throttle   -> [ 0 1] - offset = 0.219
-
-        Satuation_func_Final_roll_angle(Final_roll_angle_TRO_single_quad);
-        Satuation_func_Final_pitch_angle(Final_pitch_angle_TRO_single_quad);
-        Satuation_func_Final_yaw_rate(Final_yaw_rate_TRO_single_quad);
-        Satuation_func_Final_throttle(Final_throttle_TRO_single_quad);
-
-        // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f\n", Final_roll_angle_TRO_single_quad, Final_pitch_angle_TRO_single_quad, Final_yaw_rate_TRO_single_quad,Final_throttle_TRO_single_quad);
-
-        // call default attitude controller
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(Final_roll_angle_TRO_single_quad,Final_pitch_angle_TRO_single_quad,Final_yaw_rate_TRO_single_quad);
-        // call default altitude controller
-        attitude_control->set_throttle_out(Final_throttle_TRO_single_quad, true, g.throttle_filt);
-    // }
+Vector3f ModeStabilize::Matrix_vector_mul(Matrix3f R, Vector3f v){
+    Vector3f mul_vector(
+                        R[0][0]*v[0] + R[0][1]*v[1] + R[0][2]*v[2] ,
+                        R[1][0]*v[0] + R[1][1]*v[1] + R[1][2]*v[2] ,
+                        R[2][0]*v[0] + R[2][1]*v[1] + R[2][2]*v[2]
+                        );
+    return mul_vector;
 }
 
 void ModeStabilize::quad_states(){
@@ -534,4 +465,124 @@ void ModeStabilize::Satuation_func_Final_throttle(float throttle_value){
     {
         Final_throttle_TRO_single_quad = min_throttle_value;
     }
+}
+
+
+
+float ModeStabilize::vector_norm(Vector3f v){
+    float norm_ = sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    return norm_;
+}
+
+void ModeStabilize::Non_linear_controller_single_quad(){
+    // if (copter.motors->armed()){
+
+        // X direction desired position
+        if (H_pitch > -2.0 && H_pitch < 2.0){H_pitch = 0.0;}
+        float dt_x = 1.0/5000.0;
+        x_des       =  x_des + (-H_pitch) * dt_x;
+        if (x_des > 5.0){x_des = 5.0;}
+        if (x_des < -5.0){x_des = -5.0;}
+        x_des_dot = 0.0;
+
+        // Y direction desired position
+        if (H_roll > -2.0 && H_roll < 2.0){H_roll = 0.0;}
+        float dt_y = 1.0/5000.0;
+        y_des       =  y_des + (-H_roll) * dt_y;
+        if (y_des > 5.0){y_des = 5.0;}
+        if (y_des < -5.0){y_des = -5.0;}
+        y_des_dot = 0.0;
+
+        // Position controller
+        if (H_throttle > -20.0 && H_throttle < 20.0){H_throttle = 0.0;}
+        float dt_z = 1.0/20000.0;
+        z_des       =  z_des + H_throttle * dt_z;
+        if (z_des > 5.0){z_des = 5.0;}
+        if (z_des < -5.0){z_des = -5.0;}
+        z_des_dot = 0.0;
+
+        // error defination
+        float e_x       = x_des - quad_x;
+        float e_x_dot   = x_des_dot - quad_x_dot;
+
+        float e_y       = y_des - quad_y;
+        float e_y_dot   = y_des_dot - quad_y_dot;
+
+        float e_z       = z_des - quad_z;
+        float e_z_dot   = z_des_dot - quad_z_dot;
+
+        // gains values
+
+        float Kp_x      = 0.0;    // 0.5 (best)
+        float Kd_x      = 0.0;    // 0.2 (best)
+
+        float Kp_y      = 0.0;    // 0.5 (best)
+        float Kd_y      = 0.0;    // 0.2 (best)
+
+        float Kp_z      = 0.5;    // 0.5 (best)
+        float Kd_z      = 0.2;    // 0.2 (best)
+
+        Matrix3f K_xq(
+                Kp_x,0.0,0.0,
+                0.0,Kp_y,0.0,
+                0.0,0.0,Kp_z
+                );
+
+        Matrix3f K_xq_dot(
+                Kp_x,0.0,0.0,
+                0.0,Kp_y,0.0,
+                0.0,0.0,Kp_z
+                );
+
+        Vector3f e_xq(e_x,e_y,e_z);
+        Vector3f e_xq_dot(e_x_dot,e_y_dot,e_z_dot);
+
+        Vector3f u_quad_pos(Matrix_vector_mul(K_xq,e_xq) + Matrix_vector_mul(K_xq_dot,e_xq_dot));
+
+        Vector3f b1c(cosf(imu_yaw*PI/180.0), sinf(imu_yaw*PI/180.0), 0);       // imu_yaw - degrees
+
+        Vector3f b3d( u_quad_pos[0]/vector_norm(u_quad_pos), u_quad_pos[1]/vector_norm(u_quad_pos), u_quad_pos[3]/vector_norm(u_quad_pos));
+
+        Vector3f b2d(Matrix_vector_mul(hatmap(b3d),b1c));
+        Vector3f b1d(Matrix_vector_mul(hatmap(b2d),b3d));
+
+        Matrix3f R_d(   b1d[0], b2d[0], b3d[0],
+                        b1d[1], b2d[0], b3d[0],
+                        b1d[2], b2d[0], b3d[0]
+                        );
+
+        // final_thrust = 0.0;
+        // hal.console->printf("Current -> %3.3f,%3.3f,%3.3f || desired -> %3.3f,%3.3f,%3.3f \n", quad_x,quad_y,quad_z,x_des,y_des,z_des);
+
+        H_roll      = H_roll;        // -45 to 45
+        H_pitch     = H_pitch;       // -45 to 45
+        H_yaw_rate  = H_yaw_rate;    // -45 to 45
+        H_throttle  = H_throttle;    // -500 to 500
+
+        // Simple_Linear_mapping_code()
+
+        Final_roll_angle_TRO_single_quad    = H_roll* 100.0;
+        Final_pitch_angle_TRO_single_quad   = Trust_x* 100.0;
+        Final_yaw_rate_TRO_single_quad      = -H_yaw_rate* 500.0;
+        float throttle_offset               = 0.395;
+        Final_throttle_TRO_single_quad      = throttle_offset + final_thrust;
+
+        // To make sure the inputs are within limits
+        // [1] Roll angle -> [-3500 3500]
+        // [2] Roll pitch -> [-3500 3500]
+        // [3] Roll angle -> [-20250 20250]
+        // [4] Throttle   -> [ 0 1] - offset = 0.219
+
+        Satuation_func_Final_roll_angle(Final_roll_angle_TRO_single_quad);
+        Satuation_func_Final_pitch_angle(Final_pitch_angle_TRO_single_quad);
+        Satuation_func_Final_yaw_rate(Final_yaw_rate_TRO_single_quad);
+        Satuation_func_Final_throttle(Final_throttle_TRO_single_quad);
+
+        // hal.console->printf("%3.3f,%3.3f,%3.3f,%3.3f\n", Final_roll_angle_TRO_single_quad, Final_pitch_angle_TRO_single_quad, Final_yaw_rate_TRO_single_quad,Final_throttle_TRO_single_quad);
+
+        // call default attitude controller
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(Final_roll_angle_TRO_single_quad,Final_pitch_angle_TRO_single_quad,Final_yaw_rate_TRO_single_quad);
+        // call default altitude controller
+        attitude_control->set_throttle_out(Final_throttle_TRO_single_quad, true, g.throttle_filt);
+    // }
 }
