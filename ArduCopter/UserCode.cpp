@@ -28,8 +28,6 @@ char attitude[]         = "50000_50000";
 char roll_char[]        = "11111";
 char pitch_char[]       = "11111";
 
-Vector3f qc(0.0,0.0,0.0);
-
 #ifdef USERHOOK_INIT
 void Copter::userhook_init()
 {
@@ -382,4 +380,3 @@ void Copter::getEncoderData()
 
         // hal.console->printf("%3.3f,%3.3f,%3.3f\n", qc[0],qc[1],qc[2]);
 }
-

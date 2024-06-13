@@ -1186,7 +1186,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_AHRS/AP_AHRS.cpp",
       "-c",
-      "-olibraries/AP_AHRS/AP_AHRS.cpp.3.o"
+      "-olibraries/AP_AHRS/AP_AHRS.cpp.2.o"
     ],
     "file": "../../libraries/AP_AHRS/AP_AHRS.cpp"
   },
@@ -1387,7 +1387,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_AHRS/AP_AHRS_Backend.cpp",
       "-c",
-      "-olibraries/AP_AHRS/AP_AHRS_Backend.cpp.3.o"
+      "-olibraries/AP_AHRS/AP_AHRS_Backend.cpp.2.o"
     ],
     "file": "../../libraries/AP_AHRS/AP_AHRS_Backend.cpp"
   },
@@ -1588,7 +1588,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_AHRS/AP_AHRS_DCM.cpp",
       "-c",
-      "-olibraries/AP_AHRS/AP_AHRS_DCM.cpp.3.o"
+      "-olibraries/AP_AHRS/AP_AHRS_DCM.cpp.2.o"
     ],
     "file": "../../libraries/AP_AHRS/AP_AHRS_DCM.cpp"
   },
@@ -3967,7 +3967,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Airspeed/AP_Airspeed.cpp",
       "-c",
-      "-olibraries/AP_Airspeed/AP_Airspeed.cpp.3.o"
+      "-olibraries/AP_Airspeed/AP_Airspeed.cpp.2.o"
     ],
     "file": "../../libraries/AP_Airspeed/AP_Airspeed.cpp"
   },
@@ -4168,7 +4168,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Airspeed/AP_Airspeed_NMEA.cpp",
       "-c",
-      "-olibraries/AP_Airspeed/AP_Airspeed_NMEA.cpp.3.o"
+      "-olibraries/AP_Airspeed/AP_Airspeed_NMEA.cpp.2.o"
     ],
     "file": "../../libraries/AP_Airspeed/AP_Airspeed_NMEA.cpp"
   },
@@ -7933,7 +7933,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Baro/AP_Baro.cpp",
       "-c",
-      "-olibraries/AP_Baro/AP_Baro.cpp.3.o"
+      "-olibraries/AP_Baro/AP_Baro.cpp.2.o"
     ],
     "file": "../../libraries/AP_Baro/AP_Baro.cpp"
   },
@@ -8134,7 +8134,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Baro/AP_Baro_SITL.cpp",
       "-c",
-      "-olibraries/AP_Baro/AP_Baro_SITL.cpp.3.o"
+      "-olibraries/AP_Baro/AP_Baro_SITL.cpp.2.o"
     ],
     "file": "../../libraries/AP_Baro/AP_Baro_SITL.cpp"
   },
@@ -12295,7 +12295,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_BattMonitor/AP_BattMonitor.cpp",
       "-c",
-      "-olibraries/AP_BattMonitor/AP_BattMonitor.cpp.3.o"
+      "-olibraries/AP_BattMonitor/AP_BattMonitor.cpp.2.o"
     ],
     "file": "../../libraries/AP_BattMonitor/AP_BattMonitor.cpp"
   },
@@ -12892,7 +12892,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_BoardConfig/AP_BoardConfig.cpp",
       "-c",
-      "-olibraries/AP_BoardConfig/AP_BoardConfig.cpp.3.o"
+      "-olibraries/AP_BoardConfig/AP_BoardConfig.cpp.2.o"
     ],
     "file": "../../libraries/AP_BoardConfig/AP_BoardConfig.cpp"
   },
@@ -14875,7 +14875,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_CANManager/AP_CANDriver.cpp",
       "-c",
-      "-olibraries/AP_CANManager/AP_CANDriver.cpp.3.o"
+      "-olibraries/AP_CANManager/AP_CANDriver.cpp.2.o"
     ],
     "file": "../../libraries/AP_CANManager/AP_CANDriver.cpp"
   },
@@ -15076,7 +15076,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_CANManager/AP_CANManager.cpp",
       "-c",
-      "-olibraries/AP_CANManager/AP_CANManager.cpp.3.o"
+      "-olibraries/AP_CANManager/AP_CANManager.cpp.2.o"
     ],
     "file": "../../libraries/AP_CANManager/AP_CANManager.cpp"
   },
@@ -21019,7 +21019,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Compass/AP_Compass.cpp",
       "-c",
-      "-olibraries/AP_Compass/AP_Compass.cpp.3.o"
+      "-olibraries/AP_Compass/AP_Compass.cpp.2.o"
     ],
     "file": "../../libraries/AP_Compass/AP_Compass.cpp"
   },
@@ -21220,7 +21220,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Compass/AP_Compass_Backend.cpp",
       "-c",
-      "-olibraries/AP_Compass/AP_Compass_Backend.cpp.3.o"
+      "-olibraries/AP_Compass/AP_Compass_Backend.cpp.2.o"
     ],
     "file": "../../libraries/AP_Compass/AP_Compass_Backend.cpp"
   },
@@ -35873,7 +35873,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_InertialSensor/AP_InertialSensor.cpp",
       "-c",
-      "-olibraries/AP_InertialSensor/AP_InertialSensor.cpp.3.o"
+      "-olibraries/AP_InertialSensor/AP_InertialSensor.cpp.2.o"
     ],
     "file": "../../libraries/AP_InertialSensor/AP_InertialSensor.cpp"
   },
@@ -39638,7 +39638,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Mission/AP_Mission.cpp",
       "-c",
-      "-olibraries/AP_Mission/AP_Mission.cpp.3.o"
+      "-olibraries/AP_Mission/AP_Mission.cpp.2.o"
     ],
     "file": "../../libraries/AP_Mission/AP_Mission.cpp"
   },
@@ -40829,7 +40829,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_DAL/AP_DAL.cpp",
       "-c",
-      "-olibraries/AP_DAL/AP_DAL.cpp.3.o"
+      "-olibraries/AP_DAL/AP_DAL.cpp.2.o"
     ],
     "file": "../../libraries/AP_DAL/AP_DAL.cpp"
   },
@@ -41030,7 +41030,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_DAL/AP_DAL_Beacon.cpp",
       "-c",
-      "-olibraries/AP_DAL/AP_DAL_Beacon.cpp.3.o"
+      "-olibraries/AP_DAL/AP_DAL_Beacon.cpp.2.o"
     ],
     "file": "../../libraries/AP_DAL/AP_DAL_Beacon.cpp"
   },
@@ -41231,7 +41231,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_DAL/AP_DAL_RangeFinder.cpp",
       "-c",
-      "-olibraries/AP_DAL/AP_DAL_RangeFinder.cpp.3.o"
+      "-olibraries/AP_DAL/AP_DAL_RangeFinder.cpp.2.o"
     ],
     "file": "../../libraries/AP_DAL/AP_DAL_RangeFinder.cpp"
   },
@@ -41432,7 +41432,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_DAL/AP_DAL_VisualOdom.cpp",
       "-c",
-      "-olibraries/AP_DAL/AP_DAL_VisualOdom.cpp.3.o"
+      "-olibraries/AP_DAL/AP_DAL_VisualOdom.cpp.2.o"
     ],
     "file": "../../libraries/AP_DAL/AP_DAL_VisualOdom.cpp"
   },
@@ -44999,7 +44999,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF2/AP_NavEKF2.cpp",
       "-c",
-      "-olibraries/AP_NavEKF2/AP_NavEKF2.cpp.3.o"
+      "-olibraries/AP_NavEKF2/AP_NavEKF2.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF2/AP_NavEKF2.cpp"
   },
@@ -45200,7 +45200,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3.cpp"
   },
@@ -45401,7 +45401,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_AirDataFusion.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_AirDataFusion.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_AirDataFusion.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_AirDataFusion.cpp"
   },
@@ -45602,7 +45602,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_Control.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_Control.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_Control.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_Control.cpp"
   },
@@ -45803,7 +45803,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_GyroBias.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_GyroBias.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_GyroBias.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_GyroBias.cpp"
   },
@@ -46004,7 +46004,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_Logging.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_Logging.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_Logging.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_Logging.cpp"
   },
@@ -46205,7 +46205,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_MagFusion.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_MagFusion.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_MagFusion.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_MagFusion.cpp"
   },
@@ -46406,7 +46406,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_Measurements.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_Measurements.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_Measurements.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_Measurements.cpp"
   },
@@ -46607,7 +46607,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_OptFlowFusion.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_OptFlowFusion.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_OptFlowFusion.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_OptFlowFusion.cpp"
   },
@@ -46808,7 +46808,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_Outputs.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_Outputs.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_Outputs.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_Outputs.cpp"
   },
@@ -47009,7 +47009,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_PosVelFusion.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_PosVelFusion.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_PosVelFusion.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_PosVelFusion.cpp"
   },
@@ -47210,7 +47210,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_RngBcnFusion.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_RngBcnFusion.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_RngBcnFusion.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_RngBcnFusion.cpp"
   },
@@ -47411,7 +47411,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_VehicleStatus.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_VehicleStatus.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_VehicleStatus.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_VehicleStatus.cpp"
   },
@@ -47612,7 +47612,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_NavEKF3/AP_NavEKF3_core.cpp",
       "-c",
-      "-olibraries/AP_NavEKF3/AP_NavEKF3_core.cpp.3.o"
+      "-olibraries/AP_NavEKF3/AP_NavEKF3_core.cpp.2.o"
     ],
     "file": "../../libraries/AP_NavEKF3/AP_NavEKF3_core.cpp"
   },
@@ -56129,7 +56129,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Rally/AP_Rally.cpp",
       "-c",
-      "-olibraries/AP_Rally/AP_Rally.cpp.3.o"
+      "-olibraries/AP_Rally/AP_Rally.cpp.2.o"
     ],
     "file": "../../libraries/AP_Rally/AP_Rally.cpp"
   },
@@ -62468,7 +62468,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RangeFinder/AP_RangeFinder.cpp",
       "-c",
-      "-olibraries/AP_RangeFinder/AP_RangeFinder.cpp.3.o"
+      "-olibraries/AP_RangeFinder/AP_RangeFinder.cpp.2.o"
     ],
     "file": "../../libraries/AP_RangeFinder/AP_RangeFinder.cpp"
   },
@@ -62867,7 +62867,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Scheduler/AP_Scheduler.cpp",
       "-c",
-      "-olibraries/AP_Scheduler/AP_Scheduler.cpp.3.o"
+      "-olibraries/AP_Scheduler/AP_Scheduler.cpp.2.o"
     ],
     "file": "../../libraries/AP_Scheduler/AP_Scheduler.cpp"
   },
@@ -64058,7 +64058,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Terrain/AP_Terrain.cpp",
       "-c",
-      "-olibraries/AP_Terrain/AP_Terrain.cpp.3.o"
+      "-olibraries/AP_Terrain/AP_Terrain.cpp.2.o"
     ],
     "file": "../../libraries/AP_Terrain/AP_Terrain.cpp"
   },
@@ -64259,7 +64259,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Vehicle/AP_Vehicle.cpp",
       "-c",
-      "-olibraries/AP_Vehicle/AP_Vehicle.cpp.3.o"
+      "-olibraries/AP_Vehicle/AP_Vehicle.cpp.2.o"
     ],
     "file": "../../libraries/AP_Vehicle/AP_Vehicle.cpp"
   },
@@ -66044,7 +66044,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Logger/AP_Logger.cpp",
       "-c",
-      "-olibraries/AP_Logger/AP_Logger.cpp.3.o"
+      "-olibraries/AP_Logger/AP_Logger.cpp.2.o"
     ],
     "file": "../../libraries/AP_Logger/AP_Logger.cpp"
   },
@@ -66245,7 +66245,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Logger/AP_Logger_Backend.cpp",
       "-c",
-      "-olibraries/AP_Logger/AP_Logger_Backend.cpp.3.o"
+      "-olibraries/AP_Logger/AP_Logger_Backend.cpp.2.o"
     ],
     "file": "../../libraries/AP_Logger/AP_Logger_Backend.cpp"
   },
@@ -66446,7 +66446,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Logger/AP_Logger_File.cpp",
       "-c",
-      "-olibraries/AP_Logger/AP_Logger_File.cpp.3.o"
+      "-olibraries/AP_Logger/AP_Logger_File.cpp.2.o"
     ],
     "file": "../../libraries/AP_Logger/AP_Logger_File.cpp"
   },
@@ -71003,7 +71003,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/GCS_MAVLink/GCS_Common.cpp",
       "-c",
-      "-olibraries/GCS_MAVLink/GCS_Common.cpp.3.o"
+      "-olibraries/GCS_MAVLink/GCS_Common.cpp.2.o"
     ],
     "file": "../../libraries/GCS_MAVLink/GCS_Common.cpp"
   },
@@ -71204,7 +71204,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/GCS_MAVLink/GCS_Dummy.cpp",
       "-c",
-      "-olibraries/GCS_MAVLink/GCS_Dummy.cpp.3.o"
+      "-olibraries/GCS_MAVLink/GCS_Dummy.cpp.2.o"
     ],
     "file": "../../libraries/GCS_MAVLink/GCS_Dummy.cpp"
   },
@@ -72197,7 +72197,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/SRV_Channel/SRV_Channels.cpp",
       "-c",
-      "-olibraries/SRV_Channel/SRV_Channels.cpp.3.o"
+      "-olibraries/SRV_Channel/SRV_Channels.cpp.2.o"
     ],
     "file": "../../libraries/SRV_Channel/SRV_Channels.cpp"
   },
@@ -78932,7 +78932,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Frsky_Telem/AP_Frsky_SPort_Passthrough.cpp",
       "-c",
-      "-olibraries/AP_Frsky_Telem/AP_Frsky_SPort_Passthrough.cpp.3.o"
+      "-olibraries/AP_Frsky_Telem/AP_Frsky_SPort_Passthrough.cpp.2.o"
     ],
     "file": "../../libraries/AP_Frsky_Telem/AP_Frsky_SPort_Passthrough.cpp"
   },
@@ -84939,7 +84939,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_Backend.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_Backend.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_Backend.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_Backend.cpp"
   },
@@ -85140,7 +85140,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_CRSF.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_CRSF.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_CRSF.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_CRSF.cpp"
   },
@@ -85341,7 +85341,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_DSM.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_DSM.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_DSM.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_DSM.cpp"
   },
@@ -85542,7 +85542,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_FPort.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_FPort.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_FPort.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_FPort.cpp"
   },
@@ -85743,7 +85743,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_FPort2.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_FPort2.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_FPort2.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_FPort2.cpp"
   },
@@ -85944,7 +85944,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCProtocol/AP_RCProtocol_SRXL2.cpp",
       "-c",
-      "-olibraries/AP_RCProtocol/AP_RCProtocol_SRXL2.cpp.3.o"
+      "-olibraries/AP_RCProtocol/AP_RCProtocol_SRXL2.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCProtocol/AP_RCProtocol_SRXL2.cpp"
   },
@@ -88719,7 +88719,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_BLHeli/AP_BLHeli.cpp",
       "-c",
-      "-olibraries/AP_BLHeli/AP_BLHeli.cpp.3.o"
+      "-olibraries/AP_BLHeli/AP_BLHeli.cpp.2.o"
     ],
     "file": "../../libraries/AP_BLHeli/AP_BLHeli.cpp"
   },
@@ -94068,7 +94068,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AC_Fence/AC_Fence.cpp",
       "-c",
-      "-olibraries/AC_Fence/AC_Fence.cpp.3.o"
+      "-olibraries/AC_Fence/AC_Fence.cpp.2.o"
     ],
     "file": "../../libraries/AC_Fence/AC_Fence.cpp"
   },
@@ -95457,7 +95457,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AC_Avoidance/AC_Avoid.cpp",
       "-c",
-      "-olibraries/AC_Avoidance/AC_Avoid.cpp.3.o"
+      "-olibraries/AC_Avoidance/AC_Avoid.cpp.2.o"
     ],
     "file": "../../libraries/AC_Avoidance/AC_Avoid.cpp"
   },
@@ -98034,7 +98034,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Filesystem/AP_Filesystem_posix.cpp",
       "-c",
-      "-olibraries/AP_Filesystem/AP_Filesystem_posix.cpp.3.o"
+      "-olibraries/AP_Filesystem/AP_Filesystem_posix.cpp.2.o"
     ],
     "file": "../../libraries/AP_Filesystem/AP_Filesystem_posix.cpp"
   },
@@ -99027,7 +99027,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_ADSB/AP_ADSB.cpp",
       "-c",
-      "-olibraries/AP_ADSB/AP_ADSB.cpp.3.o"
+      "-olibraries/AP_ADSB/AP_ADSB.cpp.2.o"
     ],
     "file": "../../libraries/AP_ADSB/AP_ADSB.cpp"
   },
@@ -102990,7 +102990,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_GyroFFT/AP_GyroFFT.cpp",
       "-c",
-      "-olibraries/AP_GyroFFT/AP_GyroFFT.cpp.3.o"
+      "-olibraries/AP_GyroFFT/AP_GyroFFT.cpp.2.o"
     ],
     "file": "../../libraries/AP_GyroFFT/AP_GyroFFT.cpp"
   },
@@ -103389,7 +103389,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCTelemetry/AP_CRSF_Telem.cpp",
       "-c",
-      "-olibraries/AP_RCTelemetry/AP_CRSF_Telem.cpp.3.o"
+      "-olibraries/AP_RCTelemetry/AP_CRSF_Telem.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCTelemetry/AP_CRSF_Telem.cpp"
   },
@@ -103590,7 +103590,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_RCTelemetry/AP_RCTelemetry.cpp",
       "-c",
-      "-olibraries/AP_RCTelemetry/AP_RCTelemetry.cpp.3.o"
+      "-olibraries/AP_RCTelemetry/AP_RCTelemetry.cpp.2.o"
     ],
     "file": "../../libraries/AP_RCTelemetry/AP_RCTelemetry.cpp"
   },
@@ -110127,7 +110127,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp",
       "-c",
-      "-olibraries/AC_AttitudeControl/AC_AttitudeControl.cpp.3.o"
+      "-olibraries/AC_AttitudeControl/AC_AttitudeControl.cpp.2.o"
     ],
     "file": "../../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp"
   },
@@ -110328,7 +110328,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AC_AttitudeControl/AC_PosControl.cpp",
       "-c",
-      "-olibraries/AC_AttitudeControl/AC_PosControl.cpp.3.o"
+      "-olibraries/AC_AttitudeControl/AC_PosControl.cpp.2.o"
     ],
     "file": "../../libraries/AC_AttitudeControl/AC_PosControl.cpp"
   },
@@ -117063,7 +117063,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Motors/AP_MotorsMatrix.cpp",
       "-c",
-      "-olibraries/AP_Motors/AP_MotorsMatrix.cpp.3.o"
+      "-olibraries/AP_Motors/AP_MotorsMatrix.cpp.2.o"
     ],
     "file": "../../libraries/AP_Motors/AP_MotorsMatrix.cpp"
   },
@@ -117264,7 +117264,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Motors/AP_MotorsTri.cpp",
       "-c",
-      "-olibraries/AP_Motors/AP_MotorsTri.cpp.3.o"
+      "-olibraries/AP_Motors/AP_MotorsTri.cpp.2.o"
     ],
     "file": "../../libraries/AP_Motors/AP_MotorsTri.cpp"
   },
@@ -117663,7 +117663,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Avoidance/AP_Avoidance.cpp",
       "-c",
-      "-olibraries/AP_Avoidance/AP_Avoidance.cpp.3.o"
+      "-olibraries/AP_Avoidance/AP_Avoidance.cpp.2.o"
     ],
     "file": "../../libraries/AP_Avoidance/AP_Avoidance.cpp"
   },
@@ -119448,7 +119448,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Arming/AP_Arming.cpp",
       "-c",
-      "-olibraries/AP_Arming/AP_Arming.cpp.3.o"
+      "-olibraries/AP_Arming/AP_Arming.cpp.2.o"
     ],
     "file": "../../libraries/AP_Arming/AP_Arming.cpp"
   },
@@ -120441,7 +120441,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_Follow/AP_Follow.cpp",
       "-c",
-      "-olibraries/AP_Follow/AP_Follow.cpp.3.o"
+      "-olibraries/AP_Follow/AP_Follow.cpp.2.o"
     ],
     "file": "../../libraries/AP_Follow/AP_Follow.cpp"
   },
@@ -122424,7 +122424,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_OSD/AP_OSD_ParamScreen.cpp",
       "-c",
-      "-olibraries/AP_OSD/AP_OSD_ParamScreen.cpp.3.o"
+      "-olibraries/AP_OSD/AP_OSD_ParamScreen.cpp.2.o"
     ],
     "file": "../../libraries/AP_OSD/AP_OSD_ParamScreen.cpp"
   },
@@ -122625,7 +122625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_OSD/AP_OSD_ParamSetting.cpp",
       "-c",
-      "-olibraries/AP_OSD/AP_OSD_ParamSetting.cpp.3.o"
+      "-olibraries/AP_OSD/AP_OSD_ParamSetting.cpp.2.o"
     ],
     "file": "../../libraries/AP_OSD/AP_OSD_ParamSetting.cpp"
   },
@@ -122826,7 +122826,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_OSD/AP_OSD_Screen.cpp",
       "-c",
-      "-olibraries/AP_OSD/AP_OSD_Screen.cpp.3.o"
+      "-olibraries/AP_OSD/AP_OSD_Screen.cpp.2.o"
     ],
     "file": "../../libraries/AP_OSD/AP_OSD_Screen.cpp"
   },
@@ -123027,7 +123027,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AC_AutoTune/AC_AutoTune.cpp",
       "-c",
-      "-olibraries/AC_AutoTune/AC_AutoTune.cpp.3.o"
+      "-olibraries/AC_AutoTune/AC_AutoTune.cpp.2.o"
     ],
     "file": "../../libraries/AC_AutoTune/AC_AutoTune.cpp"
   },
@@ -127584,7 +127584,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_HAL_ChibiOS/GPIO.cpp",
       "-c",
-      "-olibraries/AP_HAL_ChibiOS/GPIO.cpp.3.o"
+      "-olibraries/AP_HAL_ChibiOS/GPIO.cpp.2.o"
     ],
     "file": "../../libraries/AP_HAL_ChibiOS/GPIO.cpp"
   },
@@ -127785,7 +127785,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_HAL_ChibiOS/HAL_ChibiOS_Class.cpp",
       "-c",
-      "-olibraries/AP_HAL_ChibiOS/HAL_ChibiOS_Class.cpp.3.o"
+      "-olibraries/AP_HAL_ChibiOS/HAL_ChibiOS_Class.cpp.2.o"
     ],
     "file": "../../libraries/AP_HAL_ChibiOS/HAL_ChibiOS_Class.cpp"
   },
@@ -127986,7 +127986,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_HAL_ChibiOS/RCOutput.cpp",
       "-c",
-      "-olibraries/AP_HAL_ChibiOS/RCOutput.cpp.3.o"
+      "-olibraries/AP_HAL_ChibiOS/RCOutput.cpp.2.o"
     ],
     "file": "../../libraries/AP_HAL_ChibiOS/RCOutput.cpp"
   },
@@ -128187,7 +128187,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_HAL_ChibiOS/Storage.cpp",
       "-c",
-      "-olibraries/AP_HAL_ChibiOS/Storage.cpp.3.o"
+      "-olibraries/AP_HAL_ChibiOS/Storage.cpp.2.o"
     ],
     "file": "../../libraries/AP_HAL_ChibiOS/Storage.cpp"
   },
@@ -128388,7 +128388,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../libraries/AP_HAL_ChibiOS/system.cpp",
       "-c",
-      "-olibraries/AP_HAL_ChibiOS/system.cpp.3.o"
+      "-olibraries/AP_HAL_ChibiOS/system.cpp.2.o"
     ],
     "file": "../../libraries/AP_HAL_ChibiOS/system.cpp"
   },
@@ -129975,7 +129975,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "libraries/AP_Scripting/lua_generated_bindings.cpp",
       "-c",
-      "-olibraries/AP_Scripting/lua_generated_bindings.cpp.3.o"
+      "-olibraries/AP_Scripting/lua_generated_bindings.cpp.2.o"
     ],
     "file": "libraries/AP_Scripting/lua_generated_bindings.cpp"
   },
@@ -141225,7 +141225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/AP_Arming.cpp",
       "-c",
-      "-oArduCopter/AP_Arming.cpp.40.o"
+      "-oArduCopter/AP_Arming.cpp.41.o"
     ],
     "file": "../../ArduCopter/AP_Arming.cpp"
   },
@@ -141425,7 +141425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/AP_Rally.cpp",
       "-c",
-      "-oArduCopter/AP_Rally.cpp.40.o"
+      "-oArduCopter/AP_Rally.cpp.41.o"
     ],
     "file": "../../ArduCopter/AP_Rally.cpp"
   },
@@ -141625,7 +141625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/AP_State.cpp",
       "-c",
-      "-oArduCopter/AP_State.cpp.40.o"
+      "-oArduCopter/AP_State.cpp.41.o"
     ],
     "file": "../../ArduCopter/AP_State.cpp"
   },
@@ -141825,7 +141825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/Attitude.cpp",
       "-c",
-      "-oArduCopter/Attitude.cpp.40.o"
+      "-oArduCopter/Attitude.cpp.41.o"
     ],
     "file": "../../ArduCopter/Attitude.cpp"
   },
@@ -142025,7 +142025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/Copter.cpp",
       "-c",
-      "-oArduCopter/Copter.cpp.40.o"
+      "-oArduCopter/Copter.cpp.41.o"
     ],
     "file": "../../ArduCopter/Copter.cpp"
   },
@@ -142225,7 +142225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/GCS_Copter.cpp",
       "-c",
-      "-oArduCopter/GCS_Copter.cpp.40.o"
+      "-oArduCopter/GCS_Copter.cpp.41.o"
     ],
     "file": "../../ArduCopter/GCS_Copter.cpp"
   },
@@ -142425,7 +142425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/GCS_Mavlink.cpp",
       "-c",
-      "-oArduCopter/GCS_Mavlink.cpp.40.o"
+      "-oArduCopter/GCS_Mavlink.cpp.41.o"
     ],
     "file": "../../ArduCopter/GCS_Mavlink.cpp"
   },
@@ -142625,7 +142625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/Log.cpp",
       "-c",
-      "-oArduCopter/Log.cpp.40.o"
+      "-oArduCopter/Log.cpp.41.o"
     ],
     "file": "../../ArduCopter/Log.cpp"
   },
@@ -142825,7 +142825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/Parameters.cpp",
       "-c",
-      "-oArduCopter/Parameters.cpp.40.o"
+      "-oArduCopter/Parameters.cpp.41.o"
     ],
     "file": "../../ArduCopter/Parameters.cpp"
   },
@@ -143025,7 +143025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/RC_Channel.cpp",
       "-c",
-      "-oArduCopter/RC_Channel.cpp.40.o"
+      "-oArduCopter/RC_Channel.cpp.41.o"
     ],
     "file": "../../ArduCopter/RC_Channel.cpp"
   },
@@ -143225,7 +143225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/UserCode.cpp",
       "-c",
-      "-oArduCopter/UserCode.cpp.40.o"
+      "-oArduCopter/UserCode.cpp.41.o"
     ],
     "file": "../../ArduCopter/UserCode.cpp"
   },
@@ -143425,7 +143425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/UserParameters.cpp",
       "-c",
-      "-oArduCopter/UserParameters.cpp.40.o"
+      "-oArduCopter/UserParameters.cpp.41.o"
     ],
     "file": "../../ArduCopter/UserParameters.cpp"
   },
@@ -143625,7 +143625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/afs_copter.cpp",
       "-c",
-      "-oArduCopter/afs_copter.cpp.40.o"
+      "-oArduCopter/afs_copter.cpp.41.o"
     ],
     "file": "../../ArduCopter/afs_copter.cpp"
   },
@@ -143825,7 +143825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/autoyaw.cpp",
       "-c",
-      "-oArduCopter/autoyaw.cpp.40.o"
+      "-oArduCopter/autoyaw.cpp.41.o"
     ],
     "file": "../../ArduCopter/autoyaw.cpp"
   },
@@ -144025,7 +144025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/avoidance.cpp",
       "-c",
-      "-oArduCopter/avoidance.cpp.40.o"
+      "-oArduCopter/avoidance.cpp.41.o"
     ],
     "file": "../../ArduCopter/avoidance.cpp"
   },
@@ -144225,7 +144225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/avoidance_adsb.cpp",
       "-c",
-      "-oArduCopter/avoidance_adsb.cpp.40.o"
+      "-oArduCopter/avoidance_adsb.cpp.41.o"
     ],
     "file": "../../ArduCopter/avoidance_adsb.cpp"
   },
@@ -144425,7 +144425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/baro_ground_effect.cpp",
       "-c",
-      "-oArduCopter/baro_ground_effect.cpp.40.o"
+      "-oArduCopter/baro_ground_effect.cpp.41.o"
     ],
     "file": "../../ArduCopter/baro_ground_effect.cpp"
   },
@@ -144625,7 +144625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/commands.cpp",
       "-c",
-      "-oArduCopter/commands.cpp.40.o"
+      "-oArduCopter/commands.cpp.41.o"
     ],
     "file": "../../ArduCopter/commands.cpp"
   },
@@ -144825,7 +144825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/compassmot.cpp",
       "-c",
-      "-oArduCopter/compassmot.cpp.40.o"
+      "-oArduCopter/compassmot.cpp.41.o"
     ],
     "file": "../../ArduCopter/compassmot.cpp"
   },
@@ -145025,7 +145025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/crash_check.cpp",
       "-c",
-      "-oArduCopter/crash_check.cpp.40.o"
+      "-oArduCopter/crash_check.cpp.41.o"
     ],
     "file": "../../ArduCopter/crash_check.cpp"
   },
@@ -145225,7 +145225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/ekf_check.cpp",
       "-c",
-      "-oArduCopter/ekf_check.cpp.40.o"
+      "-oArduCopter/ekf_check.cpp.41.o"
     ],
     "file": "../../ArduCopter/ekf_check.cpp"
   },
@@ -145425,7 +145425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/esc_calibration.cpp",
       "-c",
-      "-oArduCopter/esc_calibration.cpp.40.o"
+      "-oArduCopter/esc_calibration.cpp.41.o"
     ],
     "file": "../../ArduCopter/esc_calibration.cpp"
   },
@@ -145625,7 +145625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/events.cpp",
       "-c",
-      "-oArduCopter/events.cpp.40.o"
+      "-oArduCopter/events.cpp.41.o"
     ],
     "file": "../../ArduCopter/events.cpp"
   },
@@ -145825,7 +145825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/failsafe.cpp",
       "-c",
-      "-oArduCopter/failsafe.cpp.40.o"
+      "-oArduCopter/failsafe.cpp.41.o"
     ],
     "file": "../../ArduCopter/failsafe.cpp"
   },
@@ -146025,7 +146025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/fence.cpp",
       "-c",
-      "-oArduCopter/fence.cpp.40.o"
+      "-oArduCopter/fence.cpp.41.o"
     ],
     "file": "../../ArduCopter/fence.cpp"
   },
@@ -146225,7 +146225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/heli.cpp",
       "-c",
-      "-oArduCopter/heli.cpp.40.o"
+      "-oArduCopter/heli.cpp.41.o"
     ],
     "file": "../../ArduCopter/heli.cpp"
   },
@@ -146425,7 +146425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/inertia.cpp",
       "-c",
-      "-oArduCopter/inertia.cpp.40.o"
+      "-oArduCopter/inertia.cpp.41.o"
     ],
     "file": "../../ArduCopter/inertia.cpp"
   },
@@ -146625,7 +146625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/land_detector.cpp",
       "-c",
-      "-oArduCopter/land_detector.cpp.40.o"
+      "-oArduCopter/land_detector.cpp.41.o"
     ],
     "file": "../../ArduCopter/land_detector.cpp"
   },
@@ -146825,7 +146825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/landing_gear.cpp",
       "-c",
-      "-oArduCopter/landing_gear.cpp.40.o"
+      "-oArduCopter/landing_gear.cpp.41.o"
     ],
     "file": "../../ArduCopter/landing_gear.cpp"
   },
@@ -147025,7 +147025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/leds.cpp",
       "-c",
-      "-oArduCopter/leds.cpp.40.o"
+      "-oArduCopter/leds.cpp.41.o"
     ],
     "file": "../../ArduCopter/leds.cpp"
   },
@@ -147225,7 +147225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode.cpp",
       "-c",
-      "-oArduCopter/mode.cpp.40.o"
+      "-oArduCopter/mode.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode.cpp"
   },
@@ -147425,7 +147425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_acro.cpp",
       "-c",
-      "-oArduCopter/mode_acro.cpp.40.o"
+      "-oArduCopter/mode_acro.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_acro.cpp"
   },
@@ -147625,7 +147625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_acro_heli.cpp",
       "-c",
-      "-oArduCopter/mode_acro_heli.cpp.40.o"
+      "-oArduCopter/mode_acro_heli.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_acro_heli.cpp"
   },
@@ -147825,7 +147825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_althold.cpp",
       "-c",
-      "-oArduCopter/mode_althold.cpp.40.o"
+      "-oArduCopter/mode_althold.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_althold.cpp"
   },
@@ -148025,7 +148025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_auto.cpp",
       "-c",
-      "-oArduCopter/mode_auto.cpp.40.o"
+      "-oArduCopter/mode_auto.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_auto.cpp"
   },
@@ -148225,7 +148225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_autorotate.cpp",
       "-c",
-      "-oArduCopter/mode_autorotate.cpp.40.o"
+      "-oArduCopter/mode_autorotate.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_autorotate.cpp"
   },
@@ -148425,7 +148425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_autotune.cpp",
       "-c",
-      "-oArduCopter/mode_autotune.cpp.40.o"
+      "-oArduCopter/mode_autotune.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_autotune.cpp"
   },
@@ -148625,7 +148625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_avoid_adsb.cpp",
       "-c",
-      "-oArduCopter/mode_avoid_adsb.cpp.40.o"
+      "-oArduCopter/mode_avoid_adsb.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_avoid_adsb.cpp"
   },
@@ -148825,7 +148825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_brake.cpp",
       "-c",
-      "-oArduCopter/mode_brake.cpp.40.o"
+      "-oArduCopter/mode_brake.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_brake.cpp"
   },
@@ -149025,7 +149025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_circle.cpp",
       "-c",
-      "-oArduCopter/mode_circle.cpp.40.o"
+      "-oArduCopter/mode_circle.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_circle.cpp"
   },
@@ -149225,7 +149225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_drift.cpp",
       "-c",
-      "-oArduCopter/mode_drift.cpp.40.o"
+      "-oArduCopter/mode_drift.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_drift.cpp"
   },
@@ -149425,7 +149425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_flip.cpp",
       "-c",
-      "-oArduCopter/mode_flip.cpp.40.o"
+      "-oArduCopter/mode_flip.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_flip.cpp"
   },
@@ -149625,7 +149625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_flowhold.cpp",
       "-c",
-      "-oArduCopter/mode_flowhold.cpp.40.o"
+      "-oArduCopter/mode_flowhold.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_flowhold.cpp"
   },
@@ -149825,7 +149825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_follow.cpp",
       "-c",
-      "-oArduCopter/mode_follow.cpp.40.o"
+      "-oArduCopter/mode_follow.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_follow.cpp"
   },
@@ -150025,7 +150025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_guided.cpp",
       "-c",
-      "-oArduCopter/mode_guided.cpp.40.o"
+      "-oArduCopter/mode_guided.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_guided.cpp"
   },
@@ -150225,7 +150225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_guided_nogps.cpp",
       "-c",
-      "-oArduCopter/mode_guided_nogps.cpp.40.o"
+      "-oArduCopter/mode_guided_nogps.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_guided_nogps.cpp"
   },
@@ -150425,7 +150425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_land.cpp",
       "-c",
-      "-oArduCopter/mode_land.cpp.40.o"
+      "-oArduCopter/mode_land.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_land.cpp"
   },
@@ -150625,7 +150625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_loiter.cpp",
       "-c",
-      "-oArduCopter/mode_loiter.cpp.40.o"
+      "-oArduCopter/mode_loiter.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_loiter.cpp"
   },
@@ -150822,205 +150822,10 @@
       "-DFRAME_CONFIG=MULTICOPTER_FRAME",
       "-DAPM_BUILD_DIRECTORY=APM_BUILD_ArduCopter",
       "-DSKETCH=\"ArduCopter\"",
-      "-DSKETCHNAME=\"ArduCopter\""
-    ] },
-  {
-    "directory": "/home/pratik/ardupilot_custom/build/CubeOrange",
-    "arguments": [
-      "/usr/lib/ccache/arm-none-eabi-g++",
-      "-Werror=implicit-fallthrough",
-      "-std=gnu++11",
-      "-fdata-sections",
-      "-ffunction-sections",
-      "-fno-exceptions",
-      "-fsigned-char",
-      "-Wall",
-      "-Wextra",
-      "-Wpointer-arith",
-      "-Wno-unused-parameter",
-      "-Wno-missing-field-initializers",
-      "-Wno-reorder",
-      "-Wno-redundant-decls",
-      "-Wno-unknown-pragmas",
-      "-Wno-expansion-to-defined",
-      "-Werror=cast-align",
-      "-Werror=attributes",
-      "-Werror=format-security",
-      "-Werror=format-extra-args",
-      "-Werror=enum-compare",
-      "-Werror=format",
-      "-Werror=array-bounds",
-      "-Werror=uninitialized",
-      "-Werror=init-self",
-      "-Werror=narrowing",
-      "-Werror=return-type",
-      "-Werror=switch",
-      "-Werror=sign-compare",
-      "-Werror=type-limits",
-      "-Werror=undef",
-      "-Werror=unused-result",
-      "-Werror=shadow",
-      "-Werror=unused-value",
-      "-Werror=unused-variable",
-      "-Werror=delete-non-virtual-dtor",
-      "-Wfatal-errors",
-      "-Wno-trigraphs",
-      "-Werror=parentheses",
-      "-DARDUPILOT_BUILD",
-      "-Wuninitialized",
-      "-Warray-bounds",
-      "-Wno-format-contains-nul",
-      "-Werror=unused-but-set-variable",
-      "-Werror=suggest-override",
-      "-Werror=implicit-fallthrough",
-      "-Wmaybe-uninitialized",
-      "-Wduplicated-cond",
-      "-ffunction-sections",
-      "-fdata-sections",
-      "-fsigned-char",
-      "-Wall",
-      "-Wextra",
-      "-Werror=format",
-      "-Wpointer-arith",
-      "-Wcast-align",
-      "-Wno-missing-field-initializers",
-      "-Wno-unused-parameter",
-      "-Wno-redundant-decls",
-      "-Wno-unknown-pragmas",
-      "-Wno-trigraphs",
-      "-Werror=shadow",
-      "-Werror=return-type",
-      "-Werror=unused-result",
-      "-Werror=unused-variable",
-      "-Werror=narrowing",
-      "-Werror=attributes",
-      "-Werror=overflow",
-      "-Werror=parentheses",
-      "-Werror=format-extra-args",
-      "-Werror=ignored-qualifiers",
-      "-Werror=undef",
-      "-DARDUPILOT_BUILD",
-      "-Wno-format-contains-nul",
-      "-mcpu=cortex-m7",
-      "-mfpu=fpv5-d16",
-      "-mfloat-abi=hard",
-      "-DARM_MATH_CM7",
-      "-u_printf_float",
-      "-Wlogical-op",
-      "-Wframe-larger-than=1300",
-      "-fsingle-precision-constant",
-      "-Wno-attributes",
-      "-fno-exceptions",
-      "-Wall",
-      "-Wextra",
-      "-Wno-sign-compare",
-      "-Wfloat-equal",
-      "-Wpointer-arith",
-      "-Wmissing-declarations",
-      "-Wno-unused-parameter",
-      "-Werror=array-bounds",
-      "-Wfatal-errors",
-      "-Werror=uninitialized",
-      "-Werror=init-self",
-      "-Werror=unused-but-set-variable",
-      "-Wno-missing-field-initializers",
-      "-Wno-trigraphs",
-      "-fno-strict-aliasing",
-      "-fomit-frame-pointer",
-      "-falign-functions=16",
-      "-ffunction-sections",
-      "-fdata-sections",
-      "-fno-strength-reduce",
-      "-fno-builtin-printf",
-      "-fno-builtin-fprintf",
-      "-fno-builtin-vprintf",
-      "-fno-builtin-vfprintf",
-      "-fno-builtin-puts",
-      "-mno-thumb-interwork",
-      "-mthumb",
-      "--specs=nano.specs",
-      "--specs=nosys.specs",
-      "-DCHIBIOS_BOARD_NAME=\"CubeOrange\"",
-      "-D__USE_CMSIS",
-      "-Werror=deprecated-declarations",
-      "-DNDEBUG=1",
-      "-Wno-error=double-promotion",
-      "-Wno-error=missing-declarations",
-      "-Wno-error=float-equal",
-      "-Wno-error=undef",
-      "-Wno-error=cpp",
-      "-fno-rtti",
-      "-fno-threadsafe-statics",
-      "-Werror",
-      "-MMD",
-      "-O2",
-      "-include",
-      "ap_config.h",
-      "-O2",
-      "-Ilibraries",
-      "-Ilibraries/GCS_MAVLink",
-      "-Imodules/uavcan/libuavcan/include/dsdlc_generated",
-      "-I.",
-      "-I../../libraries",
-      "-I../../libraries/AP_Common/missing",
-      "-I../../libraries/AP_GyroFFT/CMSIS_5/include",
-      "-I../../modules/uavcan/libuavcan/include",
-      "-I../../modules/ChibiOS/os/license",
-      "-I../../modules/ChibiOS/os/various/cpp_wrappers",
-      "-I../../modules/ChibiOS/ext/fatfs/source",
-      "-I../../modules/ChibiOS/os/common/portability/GCC",
-      "-I../../modules/ChibiOS/os/common/startup/ARMCMx/compilers/GCC",
-      "-I../../modules/ChibiOS/os/common/startup/ARMCMx/devices/STM32H7xx",
-      "-I../../modules/ChibiOS/os/common/ext/ARM/CMSIS/Core/Include",
-      "-I../../modules/ChibiOS/os/common/ext/ST/STM32H7xx",
-      "-I../../modules/ChibiOS/os/hal/include",
-      "-I../../modules/ChibiOS/os/hal/ports/common/ARMCMx",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/STM32H7xx",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/ADCv4",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/BDMAv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/CRYPv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/DACv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/DMAv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/EXTIv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/FDCANv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/GPIOv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/I2Cv3",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/MDMAv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/OTGv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/QUADSPIv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/SDMMCv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/SPIv3",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/RNGv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/RTCv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/TIMv1",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/USARTv2",
-      "-I../../modules/ChibiOS/os/hal/ports/STM32/LLD/xWDGv1",
-      "-I../../modules/ChibiOS/os/hal/osal/rt-nil",
-      "-I../../modules/ChibiOS/os/rt/include",
-      "-I../../modules/ChibiOS/os/oslib/include",
-      "-I../../modules/ChibiOS/os/common/ports/ARMCMx",
-      "-I../../modules/ChibiOS/os/common/ports/ARMCMx/compilers/GCC",
-      "-I../../modules/ChibiOS/os/hal/lib/streams",
-      "-I../../libraries/AP_HAL_ChibiOS/hwdef/common",
-      "-DSKETCHBOOK=\"/home/pratik/ardupilot_custom\"",
-      "-DAP_SCRIPTING_CHECKS=1",
-      "-DCONFIG_HAL_BOARD=HAL_BOARD_CHIBIOS",
-      "-DENABLE_HEAP=1",
-      "-DENABLE_ONVIF=0",
-      "-DENABLE_SCRIPTING=1",
-      "-DHAVE_STD_NULLPTR_T=0",
-      "-DLUA_32BITS=1",
-      "-DUSE_LIBC_REALLOC=0",
-      "-DUAVCAN_CPP_VERSION=UAVCAN_CPP03",
-      "-DUAVCAN_NO_ASSERTIONS=1",
-      "-DUAVCAN_NULLPTR=nullptr",
-      "-DFRAME_CONFIG=MULTICOPTER_FRAME",
-      "-DAPM_BUILD_DIRECTORY=APM_BUILD_ArduCopter",
-      "-DSKETCH=\"ArduCopter\"",
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_poshold.cpp",
       "-c",
-      "-oArduCopter/mode_poshold.cpp.40.o"
+      "-oArduCopter/mode_poshold.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_poshold.cpp"
   },
@@ -151220,7 +151025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_rtl.cpp",
       "-c",
-      "-oArduCopter/mode_rtl.cpp.40.o"
+      "-oArduCopter/mode_rtl.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_rtl.cpp"
   },
@@ -151420,7 +151225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_smart_rtl.cpp",
       "-c",
-      "-oArduCopter/mode_smart_rtl.cpp.40.o"
+      "-oArduCopter/mode_smart_rtl.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_smart_rtl.cpp"
   },
@@ -151620,7 +151425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_sport.cpp",
       "-c",
-      "-oArduCopter/mode_sport.cpp.40.o"
+      "-oArduCopter/mode_sport.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_sport.cpp"
   },
@@ -151820,7 +151625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_stabilize.cpp",
       "-c",
-      "-oArduCopter/mode_stabilize.cpp.40.o"
+      "-oArduCopter/mode_stabilize.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_stabilize.cpp"
   },
@@ -152020,7 +151825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_stabilize_heli.cpp",
       "-c",
-      "-oArduCopter/mode_stabilize_heli.cpp.40.o"
+      "-oArduCopter/mode_stabilize_heli.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_stabilize_heli.cpp"
   },
@@ -152220,7 +152025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_systemid.cpp",
       "-c",
-      "-oArduCopter/mode_systemid.cpp.40.o"
+      "-oArduCopter/mode_systemid.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_systemid.cpp"
   },
@@ -152420,7 +152225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_throw.cpp",
       "-c",
-      "-oArduCopter/mode_throw.cpp.40.o"
+      "-oArduCopter/mode_throw.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_throw.cpp"
   },
@@ -152620,7 +152425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_turtle.cpp",
       "-c",
-      "-oArduCopter/mode_turtle.cpp.40.o"
+      "-oArduCopter/mode_turtle.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_turtle.cpp"
   },
@@ -152820,7 +152625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/mode_zigzag.cpp",
       "-c",
-      "-oArduCopter/mode_zigzag.cpp.40.o"
+      "-oArduCopter/mode_zigzag.cpp.41.o"
     ],
     "file": "../../ArduCopter/mode_zigzag.cpp"
   },
@@ -153020,7 +152825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/motor_test.cpp",
       "-c",
-      "-oArduCopter/motor_test.cpp.40.o"
+      "-oArduCopter/motor_test.cpp.41.o"
     ],
     "file": "../../ArduCopter/motor_test.cpp"
   },
@@ -153220,7 +153025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/motors.cpp",
       "-c",
-      "-oArduCopter/motors.cpp.40.o"
+      "-oArduCopter/motors.cpp.41.o"
     ],
     "file": "../../ArduCopter/motors.cpp"
   },
@@ -153420,7 +153225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/navigation.cpp",
       "-c",
-      "-oArduCopter/navigation.cpp.40.o"
+      "-oArduCopter/navigation.cpp.41.o"
     ],
     "file": "../../ArduCopter/navigation.cpp"
   },
@@ -153620,7 +153425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/precision_landing.cpp",
       "-c",
-      "-oArduCopter/precision_landing.cpp.40.o"
+      "-oArduCopter/precision_landing.cpp.41.o"
     ],
     "file": "../../ArduCopter/precision_landing.cpp"
   },
@@ -153820,7 +153625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/radio.cpp",
       "-c",
-      "-oArduCopter/radio.cpp.40.o"
+      "-oArduCopter/radio.cpp.41.o"
     ],
     "file": "../../ArduCopter/radio.cpp"
   },
@@ -154020,7 +153825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/sensors.cpp",
       "-c",
-      "-oArduCopter/sensors.cpp.40.o"
+      "-oArduCopter/sensors.cpp.41.o"
     ],
     "file": "../../ArduCopter/sensors.cpp"
   },
@@ -154220,7 +154025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/standby.cpp",
       "-c",
-      "-oArduCopter/standby.cpp.40.o"
+      "-oArduCopter/standby.cpp.41.o"
     ],
     "file": "../../ArduCopter/standby.cpp"
   },
@@ -154420,7 +154225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/surface_tracking.cpp",
       "-c",
-      "-oArduCopter/surface_tracking.cpp.40.o"
+      "-oArduCopter/surface_tracking.cpp.41.o"
     ],
     "file": "../../ArduCopter/surface_tracking.cpp"
   },
@@ -154620,7 +154425,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/system.cpp",
       "-c",
-      "-oArduCopter/system.cpp.40.o"
+      "-oArduCopter/system.cpp.41.o"
     ],
     "file": "../../ArduCopter/system.cpp"
   },
@@ -154820,7 +154625,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/takeoff.cpp",
       "-c",
-      "-oArduCopter/takeoff.cpp.40.o"
+      "-oArduCopter/takeoff.cpp.41.o"
     ],
     "file": "../../ArduCopter/takeoff.cpp"
   },
@@ -155020,7 +154825,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/terrain.cpp",
       "-c",
-      "-oArduCopter/terrain.cpp.40.o"
+      "-oArduCopter/terrain.cpp.41.o"
     ],
     "file": "../../ArduCopter/terrain.cpp"
   },
@@ -155220,7 +155025,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/toy_mode.cpp",
       "-c",
-      "-oArduCopter/toy_mode.cpp.40.o"
+      "-oArduCopter/toy_mode.cpp.41.o"
     ],
     "file": "../../ArduCopter/toy_mode.cpp"
   },
@@ -155420,7 +155225,7 @@
       "-DSKETCHNAME=\"ArduCopter\"",
       "../../ArduCopter/tuning.cpp",
       "-c",
-      "-oArduCopter/tuning.cpp.40.o"
+      "-oArduCopter/tuning.cpp.41.o"
     ],
     "file": "../../ArduCopter/tuning.cpp"
   }
